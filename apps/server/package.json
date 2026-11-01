@@ -1,12 +1,12 @@
 {
-  "name": "@aleph/server",
+  "name": "@biblemates/server",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts"
   },
   "dependencies": {
-    "@aleph/shared": "workspace:*",
+    "@biblemates/shared": "workspace:*",
     "socket.io": "^4.8.4"
   }
 }

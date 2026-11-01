@@ -8,7 +8,7 @@ export default function ProgressBar() {
 
   const currentStepIndex = Number(pathname.split('-')[1]) - 1
 
-  const steps = [1, 2, 3, 4]
+  const steps = [1, 2]
 
   return (
       <View style={styles.progressBar}>

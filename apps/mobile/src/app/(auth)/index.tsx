@@ -2,6 +2,7 @@ import { Link } from "expo-router";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context"
 import { colors, spacing, typography, radii } from '../../theme/tokens'
+import { LinearGradient } from 'expo-linear-gradient'
 
 export default function Index() {
   const handlePress = () => {
@@ -10,8 +11,14 @@ export default function Index() {
   
   return (
     <>
-      <SafeAreaView style={styles.screen} >
-
+      <LinearGradient
+      style={styles.container}
+      colors={[colors.paper, '#ffecb8']}
+      start={{x:.3, y: .3}}
+      end={{x: 0, y: 0}}
+      >
+        <SafeAreaView style={styles.screen} >
+      
         <Text style={styles.logo}>A L E P H</Text>
         <View style={styles.footer}> 
           <View style={styles.heroTextContainer}>
@@ -32,17 +39,21 @@ export default function Index() {
             </Pressable>
           </Link>
         </View>
-      </SafeAreaView>
+        </SafeAreaView>
+        </LinearGradient>
+      
     </>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   screen: {
     flex: 1,
     paddingHorizontal: 24,
     justifyContent: 'space-between',
-    backgroundColor: colors.paper,
     paddingBottom: 12
   },
   logo: {

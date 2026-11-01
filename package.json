@@ -1,13 +1,13 @@
 {
-  "name": "aleph",
+  "name": "biblemates",
   "version": "1.0.0",
   "private": true,
   "packageManager": "pnpm@12.6.0",
   "scripts": {
-    "mobile": "pnpm --filter @aleph/mobile start",
-    "ios": "pnpm --filter @aleph/mobile ios",
-    "android": "pnpm --filter @aleph/mobile android",
-    "web": "pnpm --filter @aleph/mobile web"
+    "mobile": "pnpm --filter @biblemates/mobile start",
+    "ios": "pnpm --filter @biblemates/mobile ios",
+    "android": "pnpm --filter @biblemates/mobile android",
+    "web": "pnpm --filter @biblemates/mobile web"
   },
   "devDependencies": {
     "tsx": "^4.23.15",

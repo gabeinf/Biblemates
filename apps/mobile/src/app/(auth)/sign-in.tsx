@@ -7,7 +7,7 @@ export default function SignIn() {
     <SafeAreaView>
       <Text style={styles.backButton}>← Back</Text>
       <Text style={styles.title}>What's your number?</Text>
-      <Text style={styles.subHeading}>Invites travel by text, so Aleph signs you in the same way. No password to keep.</Text>
+      <Text style={styles.subHeading}>Invites travel by text, so Biblemates signs you in the same way. No password to keep.</Text>
       <Text style={styles.infoText}>Mobile number</Text>
 
     <View style={styles.mobileContainer}>
@@ -23,7 +23,7 @@ export default function SignIn() {
         <Text style={styles.buttonText}>Send my code</Text>
       </View>
 
-      <Text style={styles.footerText}>By continuing you agree to Aleph's terms. We never post anything to your group without you.</Text>
+      <Text style={styles.footerText}>By continuing you agree to Biblemates's terms. We never post anything to your group without you.</Text>
 
     </SafeAreaView>
   )

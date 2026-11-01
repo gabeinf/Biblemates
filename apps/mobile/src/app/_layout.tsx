@@ -1,12 +1,17 @@
 import { Stack, SplashScreen } from "expo-router";
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
+import { useAuthContext } from "../hooks/use-auth-context";
+import AuthProvider from "../providers/auth-provider";
 
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
 
 
+function RootNavigator() {
+
+  const { isLoggedIn } = useAuthContext();
+  
   const [fontsLoaded, fontError] = useFonts({
     'Lora': require('../../assets/fonts/Lora-VariableFont_wght.ttf'),
     'Lora-Italic': require('../../assets/fonts/Lora-Italic-VariableFont_wght.ttf'),
@@ -25,6 +30,25 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}/>
+    <Stack >
+      <Stack.Protected guard={!isLoggedIn}>
+        <Stack.Screen options={{ headerShown: false }} name="(auth)" />
+      </Stack.Protected>
+
+      <Stack.Protected guard={isLoggedIn}>
+        <Stack.Screen name="(main)" options={{ animation: 'fade', headerShown: false }} />
+      </Stack.Protected>
+    </Stack>
+
+
   );
+
+
 }
+  export default function RootLayout() {
+    return (
+      <AuthProvider>
+        <RootNavigator />
+      </AuthProvider>
+    )
+  }

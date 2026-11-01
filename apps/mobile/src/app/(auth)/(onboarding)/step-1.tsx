@@ -9,7 +9,7 @@ export default function StepOne() {
     <View style={styles.screen}>
 
       <View style={styles.body}>
-        <Text style={styles.heroText}>Aleph works two ways.</Text>
+        <Text style={styles.heroText}>Biblemates works two ways.</Text>
 
         <View style={styles.cardsContainer}>
           <View style={styles.card}>
@@ -21,7 +21,7 @@ export default function StepOne() {
           <View style={styles.card}>
             <Text style={styles.infoText}>TUESDAY NIGHTS · TOGETHER</Text>
             <Text style={styles.subTitle}>Live Study</Text>
-            <Text style={styles.subText}>{'The host turns the page and every screen\nfollows. You keep talking - on a call, or around the table - and Aleph keeps the place.'}</Text>
+            <Text style={styles.subText}>{'The host turns the page and every screen\nfollows. You keep talking - on a call, or around the table - and Biblemates keeps the place.'}</Text>
           </View>
         </View>
       </View>

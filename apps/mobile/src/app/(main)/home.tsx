@@ -1,11 +1,14 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native'
+import { View, Text, StyleSheet, Pressable, Button } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { spacing, typography, radii, colors } from '../../theme/tokens'
 import { socket } from '../../lib/socket'
 import { useEffect, useState } from 'react'
+import { useAuthContext } from '../../hooks/use-auth-context'
+import { supabase } from '../../lib/supabase'
 
 export default function Home() {
 
+  const { profile } = useAuthContext();
   const [rooms, setRooms] = useState<string[]>([])
 
   useEffect(() => {
@@ -20,11 +23,18 @@ export default function Home() {
     console.log("room:", res);
   }
 
+  async function onSignOutButtonPress () {
+    const {error} = await supabase.auth.signOut();
+    if (error) {
+      console.log('Error signing out:', error.message)
+    }
+  }
+
   return (
     <SafeAreaView style={styles.screen}>
 
       <View style={styles.header}>
-        <Text style={styles.userStatus}>Maishia Smith · Friday, 5:30 PM</Text>
+        <Text style={styles.userStatus}>{profile?.display_name} · Friday, 5:30 PM</Text>
         <Text style={styles.heroText}>Friday Night Study</Text>
 
         <Pressable style={styles.button} onPress={handleStartSession}>
@@ -32,6 +42,11 @@ export default function Home() {
         </Pressable>
 
         <View style={styles.divider}></View>
+
+        <View>
+          <Text>{profile?.display_name}</Text>
+          <Button title='Sign out' onPress={onSignOutButtonPress}/>
+        </View>
 
         {rooms.map(id => (
           <View key={id} style={styles.card}>

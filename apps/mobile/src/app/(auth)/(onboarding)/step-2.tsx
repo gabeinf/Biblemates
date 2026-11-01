@@ -2,37 +2,78 @@ import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { spacing, typography, colors, radii } from '../../../theme/tokens'
 import { Link } from 'expo-router'
+import { useState } from 'react';
+import { supabase } from '../../../lib/supabase';
 
 export default function StepTwo() {
 
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function signInWithEmail() {
+    setLoading(true);
+    console.log('Signing in')
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
+    if (error) {
+      console.log('Error signing in:', error.message)
+    }
+    setLoading(false)
+  }
 
   return (
 
     <View style={styles.screen}>
 
       <View style={styles.body}>
-        <Text style={styles.heroText}>What's your number?.</Text>
+        <Text style={styles.heroText}>Sign in</Text>
 
         <Text style={styles.subText}>Sign up and Invite others through text. No passwords to keep</Text>
 
 
 
 
+        <View style={styles.inputContainer}>
+          <View style={styles.mobileContainer}>
+            <Text style={styles.formDetail}>Email</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={(text => setEmail(text))}
+              value={email}
+            />
+          </View>
 
-        <View style={styles.mobileContainer}>
-          <Text style={styles.formDetail}>Mobile Number</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType='phone-pad'
-          />
+          <View style={styles.mobileContainer}>
+            <Text style={styles.formDetail}>Password</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={(text => setPassword(text))}
+              value={password}
+            />
+          </View>
+
+          <Pressable
+            style={styles.signUpButton}
+            onPress={signInWithEmail}
+          >
+            <Text>Sign in</Text>
+          </Pressable>
+          <Link href='/register' asChild>
+            <Pressable style={styles.signUpButton}>
+              <Text>Sign up</Text>
+            </Pressable>
+          </Link>
         </View>
-
 
       </View>
 
       <View style={styles.footer}>
         <Text style={styles.subText}>You can use one and never touch the other.</Text>
-        <Link href='/step-3' asChild>
+        <Link href='/home' asChild>
           <Pressable style={styles.button}>
             <Text style={styles.buttonText}>Continue</Text>
           </Pressable>
@@ -61,16 +102,27 @@ const styles = StyleSheet.create({
     color: colors.muted,
     fontFamily: typography.fontFamily.body
   },
+  inputContainer: {
+    gap: spacing.md
+  },
+
   mobileNumber: {
 
   },
   input: {
-    paddingHorizontal: spacing.lg
   },
   mobileContainer: {
     height: 52,
     borderWidth: 1,
-    borderRadius: radii.md
+    borderRadius: radii.md,
+    padding: 5,
+    borderColor: colors.muted
+  },
+  signUpButton: {
+    alignItems: 'center',
+    backgroundColor: colors.Gold,
+    borderRadius: 24,
+    padding: spacing.md,
   },
   subText: {
     color: colors.muted,

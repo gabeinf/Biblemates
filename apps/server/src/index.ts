@@ -1,4 +1,4 @@
-import { HELLO } from "@aleph/shared";
+import { HELLO } from "@biblemates/shared";
 import { Server } from "socket.io"
 
 const io = new Server(3000, { cors: { origin: "*" } }); // initializing the server istelf
