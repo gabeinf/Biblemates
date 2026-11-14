@@ -1,95 +1,81 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { spacing, typography, colors, radii } from '../../../theme/tokens'
-import { Link } from 'expo-router'
+import { StyleSheet, Text, View } from 'react-native'
+import { useRouter } from 'expo-router'
+import Ionicons from '@expo/vector-icons/Ionicons'
+import { Button } from '../../../components/ui'
+import { AuthScreen, FadeIn, ScreenTitle } from '../../../components/onboarding'
+import { colors, radii, spacing, typography } from '../../../theme/tokens'
 
-export default function StepOne() {
+const FEATURES = [
+  {
+    icon: 'book-outline',
+    title: 'One passage, every day',
+    body: 'Your circle reads the same passage, each at whatever time suits them.',
+  },
+  {
+    icon: 'chatbubbles-outline',
+    title: 'Reflect and pray together',
+    body: 'Share what stood out, read what your circle noticed, and lift up each other’s prayer requests.',
+  },
+  {
+    icon: 'sparkles-outline',
+    title: 'Ask what Scripture says',
+    body: 'Tell the Scripture companion what’s on your heart and it finds passages that speak to it.',
+  },
+] as const
+
+export default function HowItWorks() {
+  const router = useRouter()
+
   return (
+    <AuthScreen footer={<Button label="Continue" size="lg" onPress={() => router.push('/step-2')} />}>
+      <FadeIn>
+        <ScreenTitle eyebrow="How it works" title={'A few minutes a day,\nside by side.'} />
+      </FadeIn>
 
-    <View style={styles.screen}>
-
-      <View style={styles.body}>
-        <Text style={styles.heroText}>Biblemates works two ways.</Text>
-
-        <View style={styles.cardsContainer}>
-          <View style={styles.card}>
-            <Text style={styles.infoText}>ALL WEEK · ON YOUR OWN TIME</Text>
-            <Text style={styles.subTitle}>Together Reader</Text>
-            <Text style={styles.subText}>{'One shared Bible. Your group\'s highlights sit in the margin, and a verse that stops you can be nudged straight to them.'}</Text>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.infoText}>TUESDAY NIGHTS · TOGETHER</Text>
-            <Text style={styles.subTitle}>Live Study</Text>
-            <Text style={styles.subText}>{'The host turns the page and every screen\nfollows. You keep talking - on a call, or around the table - and Biblemates keeps the place.'}</Text>
-          </View>
-        </View>
+      <View style={styles.list}>
+        {FEATURES.map((f, i) => (
+          <FadeIn key={f.title} delay={120 + i * 100} style={styles.row}>
+            <View style={styles.icon}>
+              <Ionicons name={f.icon} size={22} color={colors.Gold} />
+            </View>
+            <View style={styles.text}>
+              <Text style={styles.rowTitle}>{f.title}</Text>
+              <Text style={styles.rowBody}>{f.body}</Text>
+            </View>
+          </FadeIn>
+        ))}
       </View>
-      <View style={styles.footer}>
-        <Text style={styles.subText}>You can use one and never touch the other.</Text>
-        <Link href='/step-2' asChild>
-          <Pressable style={styles.button}>
-            <Text style={styles.buttonText}>Continue</Text>
-          </Pressable>
-        </Link>
-      </View>
-    </View>
+
+      <FadeIn delay={480}>
+        <Text style={styles.note}>
+          Next you’ll create an account, then start a circle or join one with an invite code.
+        </Text>
+      </FadeIn>
+    </AuthScreen>
   )
-
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    paddingHorizontal: spacing.xl,
-    justifyContent: 'space-between'
-  },
-  body: {
-    gap: spacing.lg
-  },
-  heroText: {
-    fontFamily: typography.fontFamily.display,
-    fontSize: typography.fontSize.title,
-  },
-  cardsContainer: {
-    gap: spacing.lg
-  },
-  card: {
+  list: { gap: spacing.md, marginTop: spacing.xs },
+  row: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
+    borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
-    borderWidth: 1,
-    borderRadius: radii.sm,
-    justifyContent: 'space-between',
-    padding: spacing.lg,
-    gap: spacing.sm
   },
-  subTitle: {
-    fontFamily: typography.fontFamily.body,
-    fontSize: typography.fontSize.subTitle,
-
-  },
-  subText: {
-    color: colors.muted,
-    fontFamily: typography.fontFamily.body,
-    fontSize: typography.fontSize.bodySmall
-  },
-  infoText: {
-    color: colors.Gold,
-    fontSize: typography.fontSize.caption
-
-  },
-  footer: {
-    gap: spacing.lg
-  },
-  button: {
+  icon: {
+    width: 44,
+    height: 44,
+    borderRadius: radii.md,
     alignItems: 'center',
-    borderColor: colors.Gold,
-    borderWidth: 2,
-    borderRadius: radii.sm,
-    paddingVertical: spacing.ml
+    justifyContent: 'center',
+    backgroundColor: colors.goldSoft,
   },
-  buttonText: {
-    color: colors.Gold,
-    fontFamily: typography.fontFamily.body
-  }
-
+  text: { flex: 1, gap: 4 },
+  rowTitle: { fontFamily: typography.fontFamily.body, fontSize: typography.fontSize.bodySmall, color: colors.Ink },
+  rowBody: { fontFamily: typography.fontFamily.body, fontSize: 14, lineHeight: 20, color: colors.muted },
+  note: { fontFamily: typography.fontFamily.body, fontSize: 14, lineHeight: 20, color: colors.muted },
 })
