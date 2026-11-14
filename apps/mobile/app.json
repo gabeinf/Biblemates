@@ -8,17 +8,23 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.gabeinf.Biblemates"
+      "supportsTablet": false,
+      "appleTeamId": "YTL4NC2WW9",
+      "bundleIdentifier": "com.gabeinf.Biblemates",
+      "buildNumber": "1",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#F7C341",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.gabeinf.biblemates"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -28,7 +34,30 @@
       "expo-status-bar",
       "expo-sqlite",
       "expo-secure-store",
-      "expo-splash-screen"
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#F7C341"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#B68335"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Biblemates uses your photos so you can add a profile picture for your circle.",
+          "cameraPermission": false,
+          "microphonePermission": false
+        }
+      ],
+      "expo-font"
     ],
     "extra": {
       "router": {},

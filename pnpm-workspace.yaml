@@ -4,3 +4,6 @@ packages:
 
 allowBuilds:
   esbuild: true
+
+minimumReleaseAgeExclude:
+  - expo-sqlite@57.0.5
