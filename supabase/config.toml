@@ -1,0 +1,12 @@
+project_id = "biblemates"
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+# Both functions authenticate with the x-function-secret header instead of a JWT.
+[functions.push]
+verify_jwt = false
+
+[functions.daily-reminder]
+verify_jwt = false
