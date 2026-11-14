@@ -1,25 +1,22 @@
 import { AuthContext } from '../hooks/use-auth-context'
 import { supabase } from '../lib/supabase'
-import { PropsWithChildren, useEffect, useState } from 'react'
+import { PropsWithChildren, useCallback, useEffect, useState } from 'react'
+import type { Profile } from '../types/db'
 
 export default function AuthProvider({ children }: PropsWithChildren) {
   const [claims, setClaims] = useState<Record<string, any> | undefined | null>()
-  const [profile, setProfile] = useState<any>()
+  const [profile, setProfile] = useState<Profile | null>()
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   // Fetch the claims once, and subscribe to auth state changes
   useEffect(() => {
     const fetchClaims = async () => {
       setIsLoading(true)
-
       const { data, error } = await supabase.auth.getClaims()
-
       if (error) {
         console.error('Error fetching claims:', error)
       }
-
       setClaims(data?.claims ?? null)
-      setIsLoading(false)
     }
 
     fetchClaims()
@@ -27,35 +24,35 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, _session) => {
-      console.log('Auth state changed:', { event: _event })
       const { data } = await supabase.auth.getClaims()
       setClaims(data?.claims ?? null)
     })
 
-    // Cleanup subscription on unmount
     return () => {
       subscription.unsubscribe()
     }
   }, [])
 
+  const userId: string | null = claims?.sub ?? null
+
+  const refreshProfile = useCallback(async () => {
+    if (!userId) {
+      setProfile(null)
+      return
+    }
+    const { data } = await supabase
+      .from('profiles')
+      .select('id, display_name, avatar_url')
+      .eq('id', userId)
+      .maybeSingle()
+    setProfile(data)
+  }, [userId])
+
   // Fetch the profile when the claims change
   useEffect(() => {
-    const fetchProfile = async () => {
-      setIsLoading(true)
-
-      if (claims) {
-        const { data } = await supabase.from('profiles').select('*').eq('id', claims.sub).single()
-
-        setProfile(data)
-      } else {
-        setProfile(null)
-      }
-
-      setIsLoading(false)
-    }
-
-    fetchProfile()
-  }, [claims])
+    if (claims === undefined) return
+    refreshProfile().finally(() => setIsLoading(false))
+  }, [claims, refreshProfile])
 
   return (
     <AuthContext.Provider
@@ -63,7 +60,9 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         claims,
         isLoading,
         profile,
+        userId,
         isLoggedIn: claims != undefined,
+        refreshProfile,
       }}
     >
       {children}

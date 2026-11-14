@@ -2,11 +2,24 @@ export const colors = {
     paper: '#f3f2f2',
     Mat: '#eae9e9',
     Ink: '#201f1d',
-    Gold: '#B68335',
+    Gold: '#8c6911',
     muted: '#5B5A59',
     border: '#5b5a5966',
-    inactive: '#D1D0D0'
+    inactive: '#D1D0D0',
+    surface: '#ffffff',
+    goldSoft: '#B6833522',
+    success: '#4F7A4A',
+    danger: '#A3402E',
 } as const;
+
+/** Verse highlight swatches (stored by key in the `highlights.color` column). */
+export const highlightColors = {
+    gold: '#F4DFA8',
+    sage: '#D5E5C8',
+    sky: '#CFE2F0',
+    rose: '#F2D0CF',
+} as const;
+export type HighlightColor = keyof typeof highlightColors;
 
 export const spacing = {
     xxs: 4,
@@ -24,6 +37,7 @@ export const typography = {
     fontFamily: {
         display: 'CormorantGaramond',
         body: 'Lora',
+        bodyItalic: 'Lora-Italic',
     },
     fontSize: {
         caption: 12,
