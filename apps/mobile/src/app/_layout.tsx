@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { QueryClient, QueryClientProvider, focusManager } from "@tanstack/react-query";
 import { AppState } from "react-native";
 import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useAuthContext } from "../hooks/use-auth-context";
 import AuthProvider from "../providers/auth-provider";
 import AnimatedSplash from "../components/AnimatedSplash";
@@ -68,12 +69,14 @@ function RootNavigator() {
 
 export default function RootLayout() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <StatusBar style="dark" />
-        <RootNavigator />
-        <AnimatedSplash />
-      </AuthProvider>
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <StatusBar style="dark" />
+          <RootNavigator />
+          <AnimatedSplash />
+        </AuthProvider>
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   )
 }
