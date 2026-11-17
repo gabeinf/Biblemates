@@ -50,3 +50,8 @@ artifacts/
 .env
 .cache/
 supabase/.temp/
+
+# reference screenshots (local only: third-party screens, personal data)
+design/reference/**
+!design/reference/**/
+!design/reference/**/README.md
