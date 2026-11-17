@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, type TextInputInstance } from 'react-native'
 import { useRouter } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { supabase } from '../../../lib/supabase'
+import { clearDraft, getDraft } from '../../../lib/onboarding-draft'
 import { Button } from '../../../components/ui'
 import {
   AuthScreen,
@@ -28,7 +29,7 @@ function validate(name: string, email: string, password: string): Errors {
 
 export default function CreateAccount() {
   const router = useRouter()
-  const [name, setName] = useState('')
+  const [name, setName] = useState(() => getDraft().displayName ?? '')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<Errors>({})
@@ -57,6 +58,8 @@ export default function CreateAccount() {
     setLoading(false)
 
     if (error) return setErrors({ form: error.message })
+    // TODO(#23): write the draft's answers (circle, goal, stakes…) before clearing it.
+    clearDraft()
     // With email confirmation on there's no session yet. Otherwise the auth
     // guard takes over and moves on to circle setup.
     if (!data.session) setConfirmSent(true)
@@ -93,7 +96,7 @@ export default function CreateAccount() {
         <ScreenTitle
           eyebrow="Create your account"
           title="Let’s get you set up."
-          subtitle="Have an invite code? You’ll enter it right after this."
+          subtitle="Save your answers and start reading with your circle."
         />
       </FadeIn>
 

@@ -1,10 +1,13 @@
-import { useRouter } from 'expo-router'
+import { useState } from 'react'
+import { Redirect, useRouter } from 'expo-router'
 import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import { Avatar, Button } from '../../components/ui'
 import { FadeIn, SwitchLink } from '../../components/onboarding'
 import { colors, radii, spacing, typography } from '../../theme/tokens'
+import { takeResumeStep } from '../../hooks/use-onboarding'
+import { stepHref } from '../../lib/onboarding-flow'
 
 /** A small preview of the app: the day's passage and who in the circle has read it. */
 function PassagePreview() {
@@ -31,6 +34,10 @@ function PassagePreview() {
 
 export default function Welcome() {
   const router = useRouter()
+  // Picks up an unfinished onboarding where the user left it (once per launch).
+  const [resume] = useState(takeResumeStep)
+
+  if (resume !== null) return <Redirect href={stepHref(resume)} />
 
   return (
     <LinearGradient style={styles.flex} colors={['#fbefcf', colors.paper]} locations={[0, 0.55]}>
@@ -54,7 +61,7 @@ export default function Welcome() {
           </FadeIn>
 
           <FadeIn delay={360} style={{ gap: spacing.sm }}>
-            <Button label="Get started" size="lg" onPress={() => router.push('/step-1')} />
+            <Button label="Get started" size="lg" onPress={() => router.push(stepHref(3))} />
             <SwitchLink prompt="Already have an account?" action="Sign in" onPress={() => router.push('/sign-in')} />
           </FadeIn>
         </View>
