@@ -3,6 +3,8 @@ packages:
   - packages/*
 
 allowBuilds:
+  # Ships prebuilt binaries; its install script isn't needed.
+  '@parcel/watcher': false
   esbuild: true
 
 minimumReleaseAgeExclude:

@@ -1,5 +1,88 @@
 {
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "enabledPlugins": {
     "expo@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pnpm verify)",
+      "Bash(pnpm verify *)",
+      "Bash(pnpm run *)",
+      "Bash(pnpm typecheck)",
+      "Bash(pnpm lint)",
+      "Bash(pnpm test)",
+      "Bash(pnpm screenshots)",
+      "Bash(npm run *)",
+      "Bash(npx expo *)",
+      "Bash(npx playwright *)",
+      "Bash(pnpm exec playwright *)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git switch *)",
+      "Bash(git checkout -b *)",
+      "Bash(git fetch*)",
+      "Bash(git pull --ff-only*)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push -u origin *)",
+      "Bash(git push origin *)",
+      "Bash(gh pr create *)",
+      "Bash(gh pr view*)",
+      "Bash(gh pr diff*)",
+      "Bash(gh pr checks*)",
+      "Bash(gh pr comment *)",
+      "Bash(gh run list*)",
+      "Bash(gh run view *)",
+      "Bash(gh issue *)"
+    ],
+    "deny": [
+      "Bash(git push)",
+      "Bash(git push --force*)",
+      "Bash(git push * --force*)",
+      "Bash(git push -f*)",
+      "Bash(git push * -f*)",
+      "Bash(git push * +*)",
+      "Bash(git push * master)",
+      "Bash(git push * master:*)",
+      "Bash(git push * HEAD:master*)",
+      "Bash(git push * main)",
+      "Bash(git push * HEAD:main*)",
+      "Bash(git commit * --no-verify*)",
+      "Bash(gh pr merge*)",
+      "Bash(rm -rf *)",
+      "Bash(rm -fr *)",
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(**/.env)",
+      "Read(**/.env.*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/format-file.mjs\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/verify-gate.mjs\"",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
   }
 }

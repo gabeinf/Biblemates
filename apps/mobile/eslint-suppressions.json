@@ -1,0 +1,92 @@
+{
+  "src/app/(main)/(tabs)/bible.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    }
+  },
+  "src/app/(main)/(tabs)/home.tsx": {
+    "react/no-unescaped-entities": {
+      "count": 6
+    }
+  },
+  "src/app/(main)/(tabs)/study.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    },
+    "react/no-unescaped-entities": {
+      "count": 1
+    }
+  },
+  "src/app/(main)/_layout.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/app/(main)/chat.tsx": {
+    "react/no-unescaped-entities": {
+      "count": 1
+    }
+  },
+  "src/app/(main)/prayer.tsx": {
+    "react/no-unescaped-entities": {
+      "count": 2
+    }
+  },
+  "src/components/AnimatedSplash.tsx": {
+    "react-hooks/refs": {
+      "count": 10
+    }
+  },
+  "src/components/ProgressBar.tsx": {
+    "react-hooks/refs": {
+      "count": 4
+    }
+  },
+  "src/components/Skeleton.tsx": {
+    "react-hooks/refs": {
+      "count": 3
+    }
+  },
+  "src/components/bible/VerseActionSheet.tsx": {
+    "react-hooks/immutability": {
+      "count": 4
+    },
+    "react-hooks/refs": {
+      "count": 4
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    }
+  },
+  "src/components/chat/ChatBubble.tsx": {
+    "react-hooks/refs": {
+      "count": 12
+    },
+    "react/no-unescaped-entities": {
+      "count": 1
+    }
+  },
+  "src/components/chat/StreamingText.tsx": {
+    "react-hooks/purity": {
+      "count": 1
+    },
+    "react-hooks/refs": {
+      "count": 4
+    }
+  },
+  "src/components/onboarding.tsx": {
+    "react-hooks/refs": {
+      "count": 7
+    }
+  },
+  "src/providers/auth-provider.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/services/notifications.ts": {
+    "import/namespace": {
+      "count": 1
+    }
+  }
+}
