@@ -11,7 +11,11 @@ export default function AuthLayout() {
       }}
     >
       <Stack.Screen name="index" options={{ animation: 'fade' }} />
-      <Stack.Screen name="onboarding" />
+      {/* Onboarding fades in as a whole too; it never slides (see onboarding/_layout). */}
+      <Stack.Screen
+        name="onboarding"
+        options={{ animation: 'fade', animationMatchesGesture: true }}
+      />
       <Stack.Screen name="sign-in" />
     </Stack>
   )

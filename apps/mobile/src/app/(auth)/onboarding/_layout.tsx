@@ -49,13 +49,14 @@ export default function OnboardingLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          animation: 'slide_from_right',
+          // Onboarding never slides: each step fades in and its content eases in after
+          // it (FadeIn), so the flow reads as one continuous moment, splash included.
+          animation: 'fade',
+          // iOS swipe-back also crossfades instead of falling back to the default slide.
+          animationMatchesGesture: true,
           contentStyle: { backgroundColor: colors.paper },
         }}
-      >
-        {/* The splash dissolves into the hook instead of sliding, so launch feels like one moment. */}
-        <Stack.Screen name="2" options={{ animation: 'fade' }} />
-      </Stack>
+      />
     </SafeAreaView>
   )
 }

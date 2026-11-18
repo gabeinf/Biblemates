@@ -6,7 +6,7 @@
 import { Redirect, useLocalSearchParams } from 'expo-router'
 import { StyleSheet, View } from 'react-native'
 import { Button } from '../../../components/ui'
-import { AuthScreen, ScreenTitle } from '../../../components/onboarding'
+import { AuthScreen, FadeIn, ScreenTitle } from '../../../components/onboarding'
 import { useOnboardingNav } from '../../../hooks/use-onboarding'
 import { STEP_PURPOSES, parseStep } from '../../../lib/onboarding-flow'
 import { spacing } from '../../../theme/tokens'
@@ -39,12 +39,14 @@ export default function PlaceholderStep() {
     )
 
   return (
-    <AuthScreen footer={footer}>
-      <ScreenTitle
-        eyebrow="Coming soon"
-        title={STEP_PURPOSES[step]}
-        subtitle="This step hasn’t been built yet."
-      />
+    <AuthScreen footer={<FadeIn delay={120}>{footer}</FadeIn>}>
+      <FadeIn>
+        <ScreenTitle
+          eyebrow="Coming soon"
+          title={STEP_PURPOSES[step]}
+          subtitle="This step hasn’t been built yet."
+        />
+      </FadeIn>
     </AuthScreen>
   )
 }
