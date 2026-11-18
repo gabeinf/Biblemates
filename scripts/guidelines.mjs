@@ -4,6 +4,7 @@ import { execFileSync } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
 
 const MAX_LINES = 300
+const SELF = /^scripts\/guidelines\.(mjs|test\.mjs)$/
 const NOISE = /(^|\/)(pnpm-lock\.yaml|eslint-suppressions\.json)$|\.(png|jpe?g)$/i
 const LOGIC = /^(apps\/mobile\/src\/(lib|hooks|services)|packages\/shared\/src)\/.+\.tsx?$/
 const TEST = /\.test\.tsx?$/
@@ -24,7 +25,7 @@ export function check(ctx) {
       `new dependencies (${ctx.newDeps.join(', ')}): ask first, then add the "deps-approved" label`,
     )
 
-  const addedText = Object.entries(ctx.added)
+  const addedText = Object.entries(ctx.added).filter(([, ls]) => ls)
   if (addedText.some(([, ls]) => ls.some((l) => /eslint-disable/.test(l))))
     fails.push('adds an eslint-disable')
   if (ctx.suppressionsDelta > 0)
@@ -81,8 +82,9 @@ function main() {
   const added = {}
   let cur
   for (const l of git('diff', '-U0', range).split('\n')) {
-    if (l.startsWith('+++ b/')) added[(cur = l.slice(6))] = []
-    else if (cur && l.startsWith('+') && !l.startsWith('+++')) added[cur].push(l.slice(1))
+    // The gate's own files quote the patterns it forbids, so don't scan them.
+    if (l.startsWith('+++ b/')) added[(cur = l.slice(6))] = SELF.test(l.slice(6)) ? null : []
+    else if (added[cur] && l.startsWith('+') && !l.startsWith('+++')) added[cur].push(l.slice(1))
   }
   const newDeps = files
     .filter((f) => f.path.endsWith('package.json'))
