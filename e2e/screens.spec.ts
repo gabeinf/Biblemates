@@ -26,7 +26,11 @@ function onboardingRoutes(): { path: string; name: string }[] {
   return found.sort((a, b) => a.n - b.n)
 }
 
-const routes = [{ path: '/', name: 'smoke-root' }, ...onboardingRoutes()]
+// Named (non-numbered) onboarding steps. The join branch opens through its deep link so
+// the screenshot shows the code prefilled.
+const NAMED_ROUTES = [{ path: '/onboarding/join?code=f3a9c1', name: 'onboarding-join' }]
+
+const routes = [{ path: '/', name: 'smoke-root' }, ...onboardingRoutes(), ...NAMED_ROUTES]
 
 // Steps that move on by themselves after a moment. The page clock is frozen once they
 // render so the screenshot shows the step itself, not wherever it went next.
