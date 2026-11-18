@@ -12,8 +12,8 @@ const o = true
 const _ = false
 /** An example week, Monday first. Illustrative only: nothing here is the user's data. */
 const EXAMPLE_WEEK: readonly WeekRow[] = [
-  { label: 'You', days: [o, o, o, _, _, _, _] },
-  { label: 'Your circle', days: [o, _, _, o, _, o, _] },
+  { label: 'You', days: [_, o, _, o, _, o, _] },
+  { label: 'Your circle', days: [o, o, _, o, _, _, o] },
 ]
 
 export default function RhythmExplainer() {

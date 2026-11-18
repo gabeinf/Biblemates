@@ -25,10 +25,12 @@ export function rowSummary(row: WeekRow, names: readonly string[]): string {
   return `${row.label}: read ${list}`
 }
 
+/** `rows` must not change after mount: one animation is created per check. */
 export function WeekGrid({ rows, footnote }: { rows: readonly WeekRow[]; footnote: string }) {
   const reduceMotion = useReducedMotion()
   const initials = weekdayInitials()
-  const names = weekdayNames()
+  // The summary sentence is English, so the day names in it are too.
+  const names = weekdayNames('en-US')
   const checkedCount = rows.reduce((n, r) => n + r.days.filter(Boolean).length, 0)
   const [pops] = useState(() => Array.from({ length: checkedCount }, () => new Animated.Value(0)))
 

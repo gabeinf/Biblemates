@@ -3,7 +3,17 @@
  * English fallback so every screen draws the same week.
  */
 
-export const WEEKDAY_INITIALS_FALLBACK = ['M', 'T', 'W', 'T', 'F', 'S', 'S'] as const
+/** The one fallback week, used when `Intl` can't name the days. */
+export const WEEKDAY_NAMES_FALLBACK = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+  'Sunday',
+] as const
+export const WEEKDAY_INITIALS_FALLBACK = WEEKDAY_NAMES_FALLBACK.map((d) => d[0])
 
 // 2024-01-01 was a Monday, so these seven dates run Monday → Sunday.
 const MONDAY_UTC = Date.UTC(2024, 0, 1)
@@ -26,15 +36,5 @@ export function weekdayInitials(locale?: string): readonly string[] {
 
 /** Full day names, Monday first, for screen-reader labels. */
 export function weekdayNames(locale?: string): readonly string[] {
-  return (
-    weekday(locale, 'long') ?? [
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-      'Sunday',
-    ]
-  )
+  return weekday(locale, 'long') ?? WEEKDAY_NAMES_FALLBACK
 }
