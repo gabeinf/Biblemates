@@ -11,7 +11,8 @@ Follow these steps in order. Don't skip any.
 ## 1. Understand
 
 - `gh issue view $ARGUMENTS`: read the body and acceptance checklist.
-- Read the matching section of `docs/specs/onboarding.md` and the reference image(s) in `design/reference/onboarding/`.
+- Read the matching section of `docs/specs/onboarding.md`.
+- Don't open the reference PNGs yourself. Run the **design-check** subagent with `describe <NN>` and build from the text outline it returns. Images stay in the subagent's context instead of riding along on every later turn of this one.
 - Re-read the **Lessons** in `CLAUDE.md`.
 - If the issue is ambiguous or seems to need a new dependency, ask before writing code.
 
