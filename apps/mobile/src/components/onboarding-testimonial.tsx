@@ -46,7 +46,7 @@ export function TestimonialCard({ testimonial: t }: { testimonial: Testimonial }
 }
 
 const styles = StyleSheet.create({
-  stars: { flexDirection: 'row', gap: 2 },
+  stars: { flexDirection: 'row', gap: spacing.xxs },
   card: { gap: spacing.sm },
   head: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
   headText: { flex: 1, gap: spacing.xxs },

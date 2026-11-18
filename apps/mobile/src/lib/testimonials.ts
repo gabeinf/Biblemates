@@ -25,7 +25,7 @@ export const TESTIMONIALS: readonly Testimonial[] = [
     name: 'Grace',
     title: 'We stopped drifting',
     quote:
-      'My sister and I kept starting plans and quietly giving up by February. Seeing each other check in every morning is what finally kept us going.',
+      'My sister and I kept quitting plans by February. Seeing each other check in each morning is what kept us going.',
     rating: 5,
   },
   {

@@ -27,8 +27,8 @@ describe('testimonials data', () => {
       expect(t.rating).toBeGreaterThanOrEqual(1)
       expect(t.rating).toBeLessThanOrEqual(5)
       expect(t.title.length).toBeGreaterThan(0)
-      // Fits the card's 2–4 lines.
-      expect(t.quote.length).toBeLessThanOrEqual(180)
+      // Fits the card's 2–4 lines on a 375pt screen without being cut off.
+      expect(t.quote.length).toBeLessThanOrEqual(140)
     }
   })
 
