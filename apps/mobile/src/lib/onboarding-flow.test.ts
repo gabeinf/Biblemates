@@ -6,8 +6,15 @@ import {
   parseStep,
   prevStep,
   progress,
+  resumeStep,
+  SPLASH_MAX_MS,
+  SPLASH_MIN_MS,
+  SPLASH_MS,
+  SPLASH_VERSE,
+  splashDestination,
   stepHref,
   stepsFor,
+  verseRevealMs,
 } from './onboarding-flow'
 
 /** Walks the flow from step 1 by following nextStep, like a user tapping Continue. */
@@ -87,5 +94,34 @@ describe('onboarding flow', () => {
     expect(backHref(13, 'join')).toBe('/onboarding/join')
     expect(backHref(13, 'create')).toBe('/onboarding/12')
     expect(backHref(3, 'create')).toBe('/')
+  })
+})
+
+describe('splash (01)', () => {
+  it('resumes a saved draft at its step, on either path', () => {
+    expect(splashDestination(7)).toBe('/onboarding/7')
+    expect(splashDestination('join')).toBe('/onboarding/join')
+    expect(splashDestination(19)).toBe('/onboarding/19')
+  })
+
+  it('starts a new user at the hook (welcome stands in for 02)', () => {
+    expect(splashDestination(undefined)).toBe('/')
+  })
+
+  it('treats a draft on 01 or 02 as nothing to resume', () => {
+    expect(resumeStep(1)).toBeNull()
+    expect(resumeStep(2)).toBeNull()
+    expect(resumeStep(undefined)).toBeNull()
+    expect(resumeStep(3)).toBe(3)
+    expect(splashDestination(2)).toBe('/')
+  })
+
+  it('stays up between 1.2s and 2.5s, long enough for the verse to finish', () => {
+    expect(SPLASH_MS).toBeGreaterThanOrEqual(SPLASH_MIN_MS)
+    expect(SPLASH_MS).toBeLessThanOrEqual(SPLASH_MAX_MS)
+    // Every word plus the reference line, with a beat to read it.
+    const words = SPLASH_VERSE.split(' ').length
+    expect(verseRevealMs(words + 1) + 400).toBeLessThanOrEqual(SPLASH_MS)
+    expect(verseRevealMs(0)).toBe(0)
   })
 })

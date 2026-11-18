@@ -10,6 +10,12 @@ export const colors = {
     goldSoft: '#B6833522',
     success: '#4F7A4A',
     danger: '#A3402E',
+    /** Launch splash. `splash` must match the expo-splash-screen backgroundColor in app.json. */
+    splash: '#F7C341',
+    splashLight: '#FCE3A0',
+    splashDeep: '#E8A93A',
+    splashShade: '#D9932E',
+    onSplash: '#FFFFFF',
 } as const;
 
 /** Verse highlight swatches (stored by key in the `highlights.color` column). */

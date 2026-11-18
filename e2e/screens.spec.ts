@@ -28,6 +28,13 @@ function onboardingRoutes(): { path: string; name: string }[] {
 
 const routes = [{ path: '/', name: 'smoke-root' }, ...onboardingRoutes()]
 
+// Steps that move on by themselves after a moment. The page clock is frozen once they
+// render so the screenshot shows the step itself, not wherever it went next.
+const AUTO_ADVANCE = new Set(['/onboarding/1'])
+// Long enough for the native-splash overlay to fade out (the verse is static: the config
+// sets reducedMotion), and shorter than the step's own timer.
+const AUTO_ADVANCE_SETTLE_MS = 1000
+
 for (const route of routes) {
   test(`${route.path} renders`, async ({ page }) => {
     const errors: string[] = []
@@ -36,7 +43,31 @@ for (const route of routes) {
       if (msg.type() === 'error') errors.push(`console.error: ${msg.text()}`)
     })
 
+    const visited: string[] = []
+    page.on('framenavigated', (frame) => {
+      if (frame === page.mainFrame()) visited.push(new URL(frame.url()).pathname)
+    })
+
+    const autoAdvance = AUTO_ADVANCE.has(route.path)
+    if (autoAdvance) await page.clock.install()
+
     await page.goto(route.path, { waitUntil: 'networkidle' })
+
+    if (route.path === '/') {
+      // A cold launch shows the splash first, which then returns a new user here.
+      await expect.poll(() => visited, { message: 'launch never showed the splash' }).toContain('/onboarding/1')
+      await expect
+        .poll(() => new URL(page.url()).pathname, { message: 'splash never moved on', timeout: 10_000 })
+        .toBe('/')
+    }
+
+    if (autoAdvance) {
+      await page.locator('#root').getByText(/\S/).first().waitFor()
+      // pauseAt can't go backwards, so aim just past "now" (time still runs until it lands).
+      await page.clock.pauseAt(await page.evaluate(() => Date.now() + 50))
+      await page.clock.runFor(AUTO_ADVANCE_SETTLE_MS)
+      expect(new URL(page.url()).pathname, `${route.path} advanced before the screenshot`).toBe(route.path)
+    }
 
     // Wait for real content (fonts + auth gate resolve first), or bail early on an error.
     await expect

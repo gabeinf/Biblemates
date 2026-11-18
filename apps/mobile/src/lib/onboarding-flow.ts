@@ -95,3 +95,37 @@ export function progress(step: OnboardingStepId, path: Path | undefined) {
   const total = i <= FORK_INDEX ? CREATE.length : steps.length
   return { position: i + 1, total, fraction: (i + 1) / total }
 }
+
+/** 01 and 02 are entry screens, so a draft sitting on them has nothing to resume. */
+export function resumeStep(step: OnboardingStepId | undefined): OnboardingStepId | null {
+  return step === undefined || step === 1 || step === 2 ? null : step
+}
+
+/**
+ * Where the splash (01) sends a signed-out user: a saved draft resumes at its step, and
+ * everyone else starts at 02. Signed-in users never reach the splash: the root layout's
+ * guard sends them to /home. The welcome screen at "/" stands in for 02 until #5.
+ */
+export function splashDestination(draftStep: OnboardingStepId | undefined): string {
+  const resume = resumeStep(draftStep)
+  return resume === null ? '/' : stepHref(resume)
+}
+
+/** The splash stays up for SPLASH_MS once loading is done (spec: 1.2s–2.5s). */
+export const SPLASH_MIN_MS = 1200
+export const SPLASH_MAX_MS = 2500
+export const SPLASH_MS = 2000
+
+/** The splash verse, revealed word by word. */
+export const SPLASH_VERSE = 'Draw near to God, and he will draw near to you.'
+export const SPLASH_VERSE_REFERENCE = 'James 4:8'
+
+/** Word-by-word verse reveal on the splash. */
+export const VERSE_DELAY_MS = 300
+export const VERSE_STAGGER_MS = 70
+export const VERSE_WORD_MS = 320
+
+/** When the last of `words` finishes fading in, measured from when loading is done. */
+export function verseRevealMs(words: number): number {
+  return words === 0 ? 0 : VERSE_DELAY_MS + (words - 1) * VERSE_STAGGER_MS + VERSE_WORD_MS
+}
