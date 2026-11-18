@@ -3,7 +3,7 @@ name: reviewer
 description: Read-only code reviewer. Use after `pnpm verify` passes and before opening or updating a PR. Reads the branch diff, the linked issue, docs/specs/onboarding.md and CLAUDE.md, and reports problems. Never edits files.
 tools: Read, Grep, Glob, Bash
 disallowedTools: Edit, Write, NotebookEdit
-model: inherit
+model: sonnet
 color: purple
 ---
 
