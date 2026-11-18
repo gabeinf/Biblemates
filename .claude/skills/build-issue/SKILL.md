@@ -11,7 +11,8 @@ Follow these steps in order. Don't skip any.
 ## 1. Understand
 
 - `gh issue view $ARGUMENTS`: read the body and acceptance checklist.
-- Read the matching section of `docs/specs/onboarding.md`.
+- Read only your screen's section plus "Shared rules", never the whole 480-line spec:
+  `sed -n '/^## Shared rules/,/^## 01 /p;/^## <NN> /,/^## <NN+1> /p' docs/specs/onboarding.md`
 - Don't open the reference PNGs yourself. Run the **design-check** subagent with `describe <NN>` and build from the text outline it returns. Images stay in the subagent's context instead of riding along on every later turn of this one.
 - Re-read the **Lessons** in `CLAUDE.md`.
 - If the issue is ambiguous or seems to need a new dependency, ask before writing code.
@@ -43,12 +44,13 @@ All four steps must pass. If one fails, fix it and re-run. If the **same** error
 
 ## 5. Check
 
-Run both subagents (in parallel), passing the issue number and step number:
+**Round 1:** run **design-check** (on `artifacts/screenshots/onboarding-<NN>.png`) and **reviewer** (on `git diff origin/master...HEAD`) in parallel, passing the issue and step numbers.
 
-- **design-check**: on `artifacts/screenshots/onboarding-<NN>.png` vs. the reference.
-- **reviewer**: on the branch diff.
+**Round 2 (only if round 1 had a FAIL or BLOCKING item):** fix, re-run `pnpm verify`, then re-run **only the agent that failed**. Tell it the previous findings and give it just the fix: `git diff HEAD` before you commit it, or `git diff <round-1-sha>..HEAD`. It checks that each finding is resolved and that the fix broke nothing nearby. Don't re-run an agent that already passed, and don't re-review the whole branch.
 
-Fix every FAIL and BLOCKING item, then go back to step 4. Repeat until verify passes, design-check says `OVERALL: PASS`, and reviewer says `VERDICT: PASS`.
+**Stop after round 2.** If anything is still failing, stop and report it instead of starting round 3.
+
+Print one line per round so the loop is auditable: `Round N: <agent(s)> on <diff range> → PASS|FAIL (<n> findings)`.
 
 ## 6. Open the PR
 
