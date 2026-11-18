@@ -79,6 +79,34 @@ export function backHref(step: OnboardingStepId, path: Path | undefined): string
   return prev === null || prev === 1 ? stepHref(2) : stepHref(prev)
 }
 
+/**
+ * What each step is for. Users never see step numbers (those are only for files, routes
+ * and the spec). The placeholder screen uses these as its title; delete this map along
+ * with `[step].tsx` once every step has its own screen.
+ */
+export const STEP_PURPOSES: Readonly<Record<OnboardingStepId, string>> = {
+  1: 'Welcome',
+  2: 'Why we drift',
+  3: 'What draws you here',
+  4: 'Why it works',
+  5: 'Voices',
+  6: 'Your rhythm',
+  7: 'A little stakes',
+  8: 'Read together',
+  9: 'Start or join',
+  join: 'Join with a code',
+  10: 'Days per week',
+  11: 'How stakes work',
+  12: 'Pick your stakes',
+  13: 'Your name',
+  14: 'Your commitment',
+  15: 'Invite your circle',
+  16: 'Enjoying it so far?',
+  17: 'Reminders',
+  18: 'How you found us',
+  19: 'Save your plan',
+}
+
 export function hasHeader(step: OnboardingStepId): boolean {
   return !HEADERLESS.includes(step)
 }
