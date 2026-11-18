@@ -31,11 +31,11 @@ export function ChoiceRow({
         pressed && !selected && styles.rowPressed,
       ]}
     >
-      <Ionicons name={icon} size={22} color={selected ? colors.Gold : colors.muted} />
-      <Text style={[styles.label, selected && styles.labelSelected]}>{label}</Text>
+      <Ionicons name={icon} size={ICON} color={selected ? colors.Gold : colors.muted} />
+      <Text style={styles.label}>{label}</Text>
       {selected ? (
         <View style={[styles.radio, styles.radioSelected]}>
-          <Ionicons name="checkmark" size={16} color={colors.surface} />
+          <Ionicons name="checkmark" size={CHECK} color={colors.surface} />
         </View>
       ) : (
         <View style={styles.radio} />
@@ -44,14 +44,19 @@ export function ChoiceRow({
   )
 }
 
+// Sizes for this row only. 56pt rows clear the 44pt minimum hit area.
+const ROW_MIN_HEIGHT = 56
+const ICON = 22
 const RADIO = 24
+const CHECK = 16
+const STRONG_BORDER = 1.5
 
 const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
-    minHeight: 56,
+    minHeight: ROW_MIN_HEIGHT,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
     borderRadius: radii.lg,
@@ -59,7 +64,11 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     backgroundColor: colors.surface,
   },
-  rowSelected: { borderColor: colors.Gold, borderWidth: 1.5, backgroundColor: colors.goldSoft },
+  rowSelected: {
+    borderColor: colors.Gold,
+    borderWidth: STRONG_BORDER,
+    backgroundColor: colors.goldSoft,
+  },
   rowPressed: { backgroundColor: colors.Mat },
   label: {
     flex: 1,
@@ -67,12 +76,11 @@ const styles = StyleSheet.create({
     fontSize: typography.fontSize.bodySmall,
     color: colors.Ink,
   },
-  labelSelected: { color: colors.Ink },
   radio: {
     width: RADIO,
     height: RADIO,
     borderRadius: radii.full,
-    borderWidth: 1.5,
+    borderWidth: STRONG_BORDER,
     borderColor: colors.inactive,
     alignItems: 'center',
     justifyContent: 'center',
