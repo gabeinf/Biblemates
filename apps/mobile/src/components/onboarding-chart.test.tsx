@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, jest } from '@jest/globals'
-import { fireEvent, render, screen } from '@testing-library/react-native'
+import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
+import { act, fireEvent, render, screen } from '@testing-library/react-native'
 import { StyleSheet } from 'react-native'
 import { ChartCard } from './onboarding-chart'
 
@@ -34,6 +34,9 @@ describe('ChartCard', () => {
   beforeEach(() => {
     jest.useFakeTimers()
   })
+  afterEach(() => {
+    jest.useRealTimers()
+  })
 
   it('draws the whole chart at once under Reduce Motion', async () => {
     mockReduceMotion = true
@@ -47,6 +50,12 @@ describe('ChartCard', () => {
     await renderChart()
     expect(style('chart-reveal')[0].width).toBe(0)
     expect(style('chart-end').map((s) => s.opacity)).toEqual([0, 0])
+
+    await act(async () => {
+      jest.advanceTimersByTime(2000)
+    })
+    expect(style('chart-reveal')[0].width).toBeGreaterThan(WIDTH)
+    expect(style('chart-end').map((s) => s.opacity)).toEqual([1, 1])
   })
 
   it('reads as one image with a description for screen readers', async () => {

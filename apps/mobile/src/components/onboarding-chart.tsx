@@ -96,7 +96,9 @@ export function ChartCard({
 
   const onLayout = (e: LayoutChangeEvent) => setWidth(Math.round(e.nativeEvent.layout.width))
   const plotted = series.map((s) => ({ ...s, points: chartPoints(s.values, width, PLOT_HEIGHT) }))
-  const highestEnd = Math.min(...plotted.map((s) => s.points[s.points.length - 1]?.y ?? Infinity))
+  // The series that ends highest (smallest y); indexOf picks the first on a tie.
+  const endYs = plotted.map((s) => s.points[s.points.length - 1].y)
+  const highest = endYs.indexOf(Math.min(...endYs))
 
   return (
     <View style={styles.card} accessible accessibilityRole="image" accessibilityLabel={description}>
@@ -130,11 +132,11 @@ export function ChartCard({
                 ))}
               </View>
             </Animated.View>
-            {plotted.map((s) => {
+            {plotted.map((s, i) => {
               const end = s.points[s.points.length - 1]
               // The higher end gets its label above the dot, the others below, so labels
               // never sit on top of the other curve.
-              const above = end.y === highestEnd
+              const above = i === highest
               return (
                 <Animated.View
                   key={s.label}
