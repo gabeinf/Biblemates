@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { act, render, screen } from '@testing-library/react-native'
 import { STAKES_CYCLE_MS, StakesCarousel } from './onboarding-stakes'
+import { OnboardingDraftSchema } from '@biblemates/shared'
 import { GAMBLING_WORDS, STAKES_PRESETS } from '../lib/stakes'
 
 let mockReduceMotion = false
@@ -43,7 +44,8 @@ describe('StakesCarousel', () => {
   it('reads every example once to screen readers', async () => {
     mockReduceMotion = false
     await render(<StakesCarousel presets={STAKES_PRESETS} />)
-    for (const p of STAKES_PRESETS) expect(screen.getByLabelText(new RegExp(p.label))).toBeTruthy()
+    const card = screen.getByLabelText(/^This week's stakes/)
+    for (const p of STAKES_PRESETS) expect(card.props.accessibilityLabel).toContain(p.label)
   })
 })
 
@@ -52,5 +54,20 @@ describe('stakes presets', () => {
     expect(STAKES_PRESETS.length).toBeGreaterThanOrEqual(3)
     expect(new Set(STAKES_PRESETS.map((p) => p.id)).size).toBe(STAKES_PRESETS.length)
     for (const p of STAKES_PRESETS) expect(p.label).not.toMatch(GAMBLING_WORDS)
+  })
+
+  it('fits the draft schema, so 12 can save a preset label as is', () => {
+    for (const p of STAKES_PRESETS) {
+      expect(
+        OnboardingDraftSchema.safeParse({ stakes: { kind: 'preset', label: p.label } }).success,
+      ).toBe(true)
+    }
+  })
+
+  it('catches gambling language, including amounts', () => {
+    for (const bad of ['Loser buys $5', 'Friendly bet', 'Winner gets cash']) {
+      expect(bad).toMatch(GAMBLING_WORDS)
+    }
+    expect('Coffee on me').not.toMatch(GAMBLING_WORDS)
   })
 })

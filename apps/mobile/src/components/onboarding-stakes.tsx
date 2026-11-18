@@ -3,7 +3,7 @@
  * dot row under it. Cycling pauses under Reduce Motion. Screen readers hear every example
  * once instead of a value that keeps changing.
  */
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Animated, StyleSheet, Text, View } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useReducedMotion } from 'react-native-reanimated'
@@ -31,11 +31,18 @@ export function StakesCarousel({ presets }: { presets: readonly StakesPreset[] }
     return () => clearInterval(id)
   }, [reduceMotion, presets.length])
 
-  // Each new example fades in.
+  // Each new example fades in, including when the cycle wraps back to the first one.
+  const mounted = useRef(false)
   useEffect(() => {
-    if (reduceMotion || index === 0) return
+    if (!mounted.current) {
+      mounted.current = true
+      return
+    }
+    if (reduceMotion) return
     fade.setValue(0)
-    Animated.timing(fade, { toValue: 1, duration: FADE_MS, useNativeDriver: true }).start()
+    const anim = Animated.timing(fade, { toValue: 1, duration: FADE_MS, useNativeDriver: true })
+    anim.start()
+    return () => anim.stop()
   }, [index, reduceMotion, fade])
 
   const current = presets[index]

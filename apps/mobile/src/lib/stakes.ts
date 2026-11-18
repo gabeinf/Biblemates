@@ -13,12 +13,17 @@ export type StakesPreset = {
   icon: keyof typeof Ionicons.glyphMap
 }
 
-export const STAKES_PRESETS: readonly StakesPreset[] = [
+export const STAKES_PRESETS = [
   { id: 'coffee', label: 'Coffee on me', icon: 'cafe-outline' },
   { id: 'dinner', label: 'I cook dinner', icon: 'restaurant-outline' },
   { id: 'pray', label: 'Pray for you by name', icon: 'heart-outline' },
   { id: 'note', label: 'Handwritten note', icon: 'mail-outline' },
-]
+] as const satisfies readonly StakesPreset[]
 
-/** Words that would turn friendly stakes into gambling. Used by tests on every preset. */
-export const GAMBLING_WORDS = /\b(bet|bets|betting|wager|gamble|gambling|money|cash|pay|\$)/i
+export type StakesPresetId = (typeof STAKES_PRESETS)[number]['id']
+
+/**
+ * Words that would turn friendly stakes into gambling. Tests run every preset through it,
+ * and 12 can reuse it to check custom stakes text.
+ */
+export const GAMBLING_WORDS = /\b(bet|bets|betting|wager|gamble|gambling|money|cash|pay)\b|\$/i
