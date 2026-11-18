@@ -47,7 +47,8 @@ or run `graphify explain "<symbol>"` before grepping or opening whole files.
 - Before saying a task is done, run `pnpm verify` and show its output. A Stop hook enforces this.
 - Keep PRs small: one screen or one fix each. If a change grows past ~300 lines, split it and say so.
 - Don't copy brand, copy or assets from `design/reference/`. Structure only, with original copy and visuals.
-- Ask before adding a dependency.
+- Ask before adding a dependency. CI's `guidelines` check (`scripts/guidelines.mjs`) enforces the scriptable rules here
+  (size, deps, suppressions, tests, PR body) and labels passing PRs `gate:pass`. It never merges.
 - Keep images out of the main session: don't `Read` PNGs from `design/reference/` or `artifacts/screenshots/`.
   Use the `design-check` subagent (`describe <NN>` for a layout outline, or a normal check for pass/fail).
 - If the same error survives 3 attempts, stop and explain instead of looping.
