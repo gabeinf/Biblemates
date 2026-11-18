@@ -4,7 +4,7 @@
  */
 import { useEffect, useState } from 'react'
 import { Animated, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native'
-import { useReduceMotion } from '../hooks/use-reduce-motion'
+import { useReducedMotion } from 'react-native-reanimated'
 import { chartPoints, segmentBox, type Point } from '../lib/chart-geometry'
 import { colors, radii, spacing, typography } from '../theme/tokens'
 
@@ -70,12 +70,12 @@ export function ChartCard({
   endLabel: string
 }) {
   const [width, setWidth] = useState(0)
-  const reduceMotion = useReduceMotion()
+  const reduceMotion = useReducedMotion()
   const [reveal] = useState(() => new Animated.Value(0))
   const [endFade] = useState(() => new Animated.Value(0))
 
   useEffect(() => {
-    if (width === 0 || reduceMotion === null) return
+    if (width === 0) return
     if (reduceMotion) {
       reveal.setValue(1)
       endFade.setValue(1)
@@ -96,39 +96,49 @@ export function ChartCard({
 
   const onLayout = (e: LayoutChangeEvent) => setWidth(Math.round(e.nativeEvent.layout.width))
   const plotted = series.map((s) => ({ ...s, points: chartPoints(s.values, width, PLOT_HEIGHT) }))
+  const highestEnd = Math.min(...plotted.map((s) => s.points[s.points.length - 1]?.y ?? Infinity))
 
   return (
     <View style={styles.card} accessible accessibilityRole="image" accessibilityLabel={description}>
       <Text style={styles.title}>{title}</Text>
-      <View style={styles.plot} onLayout={onLayout}>
+      <View testID="chart-plot" style={styles.plot} onLayout={onLayout}>
         {[0, 0.5, 1].map((g) => (
           <View key={g} style={[styles.grid, { top: PLOT_PAD + g * PLOT_HEIGHT }]} />
         ))}
         {width > 0 ? (
           <>
             <Animated.View
+              testID="chart-reveal"
               style={[
                 styles.reveal,
                 {
-                  width: reveal.interpolate({ inputRange: [0, 1], outputRange: [0, width + LINE] }),
+                  width: reveal.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, width + LINE * 2],
+                  }),
                 },
               ]}
             >
-              {plotted.map((s) => (
-                <Curve
-                  key={s.label}
-                  points={s.points}
-                  color={s.color}
-                  thickness={s.emphasis ? LINE : LINE_THIN}
-                />
-              ))}
+              <View style={styles.curves}>
+                {plotted.map((s) => (
+                  <Curve
+                    key={s.label}
+                    points={s.points}
+                    color={s.color}
+                    thickness={s.emphasis ? LINE : LINE_THIN}
+                  />
+                ))}
+              </View>
             </Animated.View>
             {plotted.map((s) => {
               const end = s.points[s.points.length - 1]
-              const above = s.emphasis
+              // The higher end gets its label above the dot, the others below, so labels
+              // never sit on top of the other curve.
+              const above = end.y === highestEnd
               return (
                 <Animated.View
                   key={s.label}
+                  testID="chart-end"
                   style={[StyleSheet.absoluteFill, { opacity: endFade }]}
                 >
                   <View
@@ -185,13 +195,15 @@ const styles = StyleSheet.create({
     color: colors.Ink,
   },
   plot: { height: PLOT_HEIGHT + PLOT_PAD * 2 },
+  // Padded by a line width on every side so rounded caps at the edges aren't clipped.
   reveal: {
     position: 'absolute',
-    left: 0,
-    top: PLOT_PAD,
-    height: PLOT_HEIGHT,
+    left: -LINE,
+    top: PLOT_PAD - LINE,
+    height: PLOT_HEIGHT + LINE * 2,
     overflow: 'hidden',
   },
+  curves: { position: 'absolute', left: LINE, top: LINE },
   grid: {
     position: 'absolute',
     left: 0,
