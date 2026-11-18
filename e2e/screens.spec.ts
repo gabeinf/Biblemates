@@ -54,11 +54,11 @@ for (const route of routes) {
     await page.goto(route.path, { waitUntil: 'networkidle' })
 
     if (route.path === '/') {
-      // A cold launch shows the splash first, which then returns a new user here.
+      // A cold launch shows the splash first, which then sends a new user to the hook (02).
       await expect.poll(() => visited, { message: 'launch never showed the splash' }).toContain('/onboarding/1')
       await expect
         .poll(() => new URL(page.url()).pathname, { message: 'splash never moved on', timeout: 10_000 })
-        .toBe('/')
+        .toBe('/onboarding/2')
     }
 
     if (autoAdvance) {
