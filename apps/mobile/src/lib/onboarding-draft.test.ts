@@ -3,7 +3,6 @@ import {
   clearDraft,
   getDraft,
   mergeDraft,
-  parseDraft,
   resetDraftCacheForTests,
   updateDraft,
 } from './onboarding-draft'
@@ -40,33 +39,30 @@ describe('mergeDraft', () => {
   })
 })
 
-describe('parseDraft', () => {
-  it('returns an empty draft for missing, corrupt or invalid data', () => {
-    expect(parseDraft(null)).toEqual({})
-    expect(parseDraft('{not json')).toEqual({})
-    expect(parseDraft(JSON.stringify({ daysPerWeek: 9 }))).toEqual({})
-  })
-
-  it('keeps a valid draft', () => {
-    const draft = { step: 'join', path: 'join', inviteCode: 'ABC123', daysPerWeek: 4 }
-    expect(parseDraft(JSON.stringify(draft))).toEqual(draft)
-  })
-})
-
 describe('draft store', () => {
-  it('survives a restart: saved answers come back from storage', () => {
+  it('keeps answers while the app is open', () => {
     updateDraft({ step: 7, intent: 'habit' })
     updateDraft({ step: 8 })
-
-    resetDraftCacheForTests() // simulate the app being killed and reopened
     expect(getDraft()).toEqual({ step: 8, intent: 'habit' })
   })
 
-  it('clearDraft wipes storage and memory', () => {
+  it('starts over when the app is closed and reopened', () => {
+    updateDraft({ step: 7, intent: 'habit' })
+    resetDraftCacheForTests() // simulate the app being killed and reopened
+    expect(getDraft()).toEqual({})
+  })
+
+  it('never writes to storage, and deletes a draft an older build saved', () => {
+    store.set('onboarding:draft', JSON.stringify({ step: 7 }))
+    expect(getDraft()).toEqual({})
+    expect(store.has('onboarding:draft')).toBe(false)
+    updateDraft({ step: 9 })
+    expect(store.size).toBe(0)
+  })
+
+  it('clearDraft wipes the draft', () => {
     updateDraft({ step: 12 })
     clearDraft()
-    expect(getDraft()).toEqual({})
-    resetDraftCacheForTests()
     expect(getDraft()).toEqual({})
   })
 })

@@ -40,19 +40,19 @@ Copy in quotes is a draft. Tweak it freely, but keep the meaning.
 
 ## 01 · Splash
 
-- **Purpose:** brand moment while fonts, session and draft state load.
+- **Purpose:** brand moment while fonts and session load.
 - **Layout:** full-bleed background artwork (our own). Centred mark above a one-line verse in
   serif type that fades in word by word.
 - **Inputs:** none.
 - **Buttons:** none. Auto-advances.
-- **Leads to:** a signed-in user with a finished onboarding goes to `(main)/(tabs)`. A user with
-  a saved draft resumes at their last step. Everyone else goes to 02.
+- **Leads to:** a signed-in user with a finished onboarding goes to `(main)/(tabs)`. Everyone
+  else goes to 02. Onboarding never resumes: closing the app starts it over.
 
 **Acceptance**
 
 - [ ] Shows for at least 1.2s and no more than 2.5s (min only applies once loading is done).
 - [ ] Verse text animates in, and honors Reduce Motion (static text instead).
-- [ ] Routes correctly for all three cases: done, resumable draft, new.
+- [ ] Routes correctly for both cases: done, and everyone else (always 02, even mid-flow before the app closed).
 - [ ] No back button or progress bar.
 - [ ] Artwork is original and themed through tokens. No reference imagery.
 - [ ] Reuses or replaces `AnimatedSplash` rather than duplicating it.
@@ -413,20 +413,27 @@ Copy in quotes is a draft. Tweak it freely, but keep the meaning.
 - [ ] Invite-code chip works when no code was entered earlier.
 - [ ] Lands on `(main)/(tabs)` with the circle visible.
 
+Note: the draft lives in memory only (see "Flow wiring + persistence"), so it must be written
+in the same app session as sign-up. If email confirmation sends the user out of the app, or a
+web OAuth redirect reloads the page, the draft is gone. #23 must handle this (for example,
+write the draft during `signUp`, or skip email confirmation for this flow).
+
 ---
 
 ## Flow wiring + persistence
 
-- **Purpose:** make the steps one flow that survives restarts.
+- **Purpose:** make the steps one flow. Answers last for the app session only.
 - **Scope:** route migration from `(onboarding)/step-N` to `onboarding/<N>`, shared header with
-  step-indexed progress, a typed onboarding draft (Zod schema in `packages/shared`) persisted
-  locally (`expo-secure-store` or `expo-sqlite`, both installed), resume logic in 01, branch
-  handling (create vs. join), and the final write in 19.
+  step-indexed progress, a typed onboarding draft (Zod schema in `packages/shared`) held in
+  memory, branch handling (create vs. join), and the final write in 19. The draft is not
+  saved to disk: closing the app mid-flow starts onboarding over at 01.
 
 **Acceptance**
 
-- [ ] Draft schema lives in `packages/shared` and is validated on read.
-- [ ] Killing the app mid-flow and reopening resumes at the same step with answers intact.
+- [ ] Draft type comes from the schema in `packages/shared`.
+- [ ] Killing the app mid-flow and reopening starts over at 01 → 02 with an empty draft.
+  ("Starts over" is about app launch. Opening a step URL directly, by deep link or web reload,
+  shows that step with an empty draft.)
 - [ ] Progress bar is computed from the active path, so the join path's progress stays monotonic.
 - [ ] Back navigation works from every step, and Android hardware back matches.
 - [ ] Old `step-1`/`step-2` routes are removed, with no dead links (`index.tsx`, sign-in links).

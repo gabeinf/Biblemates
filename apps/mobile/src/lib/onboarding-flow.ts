@@ -69,7 +69,7 @@ export function prevStep(step: OnboardingStepId, path: Path | undefined): Onboar
 }
 
 /**
- * Where "back" goes when there's no history to pop (cold resume, deep link). The splash
+ * Where "back" goes when there's no history to pop (deep link, web reload). The splash
  * (01) is never a back target: it would only bounce the user forward again, so the
  * hook (02) is as far back as the flow goes. 02 itself has no back target: on Android
  * the layout lets the system handle back there.
@@ -98,19 +98,12 @@ export function progress(step: OnboardingStepId, path: Path | undefined) {
   return { position: i + 1, total, fraction: (i + 1) / total }
 }
 
-/** 01 and 02 are entry screens, so a draft sitting on them has nothing to resume. */
-export function resumeStep(step: OnboardingStepId | undefined): OnboardingStepId | null {
-  return step === undefined || step === 1 || step === 2 ? null : step
-}
-
 /**
- * Where the splash (01) sends a signed-out user: a saved draft resumes at its step, and
- * everyone else starts at the hook (02). Signed-in users never reach the splash: the root
- * layout's guard sends them to /home.
+ * Where the splash (01) sends a signed-out user: always the hook (02). Onboarding isn't
+ * saved across launches, so closing the app starts over. Signed-in users never reach the
+ * splash: the root layout's guard sends them to /home.
  */
-export function splashDestination(draftStep: OnboardingStepId | undefined): string {
-  return stepHref(resumeStep(draftStep) ?? 2)
-}
+export const SPLASH_DESTINATION = stepHref(2)
 
 /** The splash stays up for SPLASH_MS once loading is done (spec: 1.2s–2.5s). */
 export const SPLASH_MIN_MS = 1200

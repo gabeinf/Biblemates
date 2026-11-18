@@ -27,7 +27,7 @@ export function useOnboardingNav() {
     [router, step],
   )
 
-  /** Pops the stack, or, after a cold resume with no history, opens the previous step. */
+  /** Pops the stack, or, with no history (deep link, web reload), opens the previous step. */
   const goBack = useCallback(() => {
     if (router.canGoBack()) return router.back()
     router.replace(step === null ? '/' : backHref(step, getDraft().path))
@@ -40,7 +40,7 @@ let launchHandled = false
 
 /**
  * True until "/" has been shown once in this app session, so the first visit opens the
- * splash (01), which resumes a saved draft. After that, "/" shows the welcome screen.
+ * splash (01), which opens the hook (02). After that, "/" shows the welcome screen.
  * A pure read, safe to call while rendering; `markLaunchHandled` records the visit.
  */
 export function isLaunchPending(): boolean {

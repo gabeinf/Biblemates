@@ -34,7 +34,7 @@ function PassagePreview() {
 
 export default function Welcome() {
   const router = useRouter()
-  // On launch, show the splash first; it resumes an unfinished onboarding or opens the hook (02).
+  // On launch, show the splash first; it then opens the hook (02).
   const [launch] = useState(isLaunchPending)
   useEffect(markLaunchHandled, [])
 

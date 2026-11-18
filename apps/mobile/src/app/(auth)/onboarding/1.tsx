@@ -5,19 +5,18 @@
  */
 import { useEffect, useState } from 'react'
 import { useRouter } from 'expo-router'
-import { Animated, Easing, Image, StyleSheet, Text, View } from 'react-native'
+import { Animated, Easing, Image, StyleSheet, View } from 'react-native'
 import { useReducedMotion } from 'react-native-reanimated'
 import { LinearGradient } from 'expo-linear-gradient'
 import { SPLASH_LOGO, SPLASH_LOGO_WIDTH } from '../../../components/AnimatedSplash'
-import { getDraft } from '../../../lib/onboarding-draft'
 import {
+  SPLASH_DESTINATION,
   SPLASH_MS,
   SPLASH_VERSE,
   SPLASH_VERSE_REFERENCE,
   VERSE_DELAY_MS,
   VERSE_STAGGER_MS,
   VERSE_WORD_MS,
-  splashDestination,
 } from '../../../lib/onboarding-flow'
 import { useAppReady } from '../../../lib/splash'
 import { colors, radii, spacing, typography } from '../../../theme/tokens'
@@ -106,11 +105,11 @@ export default function Splash() {
   const router = useRouter()
   const ready = useAppReady()
 
-  // The clock starts once fonts, session and draft have loaded (the app-ready signal).
+  // The clock starts once fonts and session have loaded (the app-ready signal).
   // Signed-in users never get here: the root guard sends them to /home.
   useEffect(() => {
     if (!ready) return
-    const t = setTimeout(() => router.replace(splashDestination(getDraft().step)), SPLASH_MS)
+    const t = setTimeout(() => router.replace(SPLASH_DESTINATION), SPLASH_MS)
     return () => clearTimeout(t)
   }, [ready, router])
 

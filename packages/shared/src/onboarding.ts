@@ -5,11 +5,12 @@ export const OnboardingStepIdSchema = z.union([z.number().int().min(1).max(19), 
 export type OnboardingStepId = z.infer<typeof OnboardingStepIdSchema>
 
 /**
- * Answers collected during onboarding, saved on-device so the flow survives restarts.
+ * Answers collected during onboarding. Held in memory for the app session only: closing
+ * the app starts onboarding over.
  * Everything is optional: each step fills in its own fields.
  */
 export const OnboardingDraftSchema = z.object({
-  /** Last step the user reached, so we can resume there. */
+  /** Last step the user reached in this session. */
   step: OnboardingStepIdSchema.optional(),
   /** Chosen at step 09: start a new circle, or join one with a code. */
   path: z.enum(['create', 'join']).optional(),
