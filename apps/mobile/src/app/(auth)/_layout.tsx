@@ -11,7 +11,7 @@ export default function AuthLayout() {
       }}
     >
       <Stack.Screen name="index" options={{ animation: 'fade' }} />
-      <Stack.Screen name="(onboarding)" />
+      <Stack.Screen name="onboarding" />
       <Stack.Screen name="sign-in" />
     </Stack>
   )

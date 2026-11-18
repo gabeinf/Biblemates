@@ -59,7 +59,7 @@ export default function SignIn() {
         footer={
           <>
             <Button label="Sign in" size="lg" loading={loading} onPress={signIn} />
-            <SwitchLink prompt="New to Biblemates?" action="Create an account" onPress={() => router.replace('/step-1')} />
+            <SwitchLink prompt="New to Biblemates?" action="Create an account" onPress={() => router.replace('/')} />
           </>
         }
       >
