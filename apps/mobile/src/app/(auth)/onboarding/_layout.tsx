@@ -24,6 +24,8 @@ export default function OnboardingLayout() {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
       // The splash has nowhere to go back to, and leaving it would skip the resume.
       if (step === 1) return true
+      // The hook (02) is where the flow starts, so back leaves the app as usual.
+      if (step === 2) return false
       if (router.canGoBack()) return false
       goBack()
       return true

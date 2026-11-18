@@ -69,12 +69,14 @@ export function prevStep(step: OnboardingStepId, path: Path | undefined): Onboar
 }
 
 /**
- * Where "back" goes when there's no history to pop (cold resume, deep link).
- * The welcome screen stands in for 01–02 until those screens are built (#4, #5).
+ * Where "back" goes when there's no history to pop (cold resume, deep link). The splash
+ * (01) is never a back target: it would only bounce the user forward again, so the
+ * hook (02) is as far back as the flow goes. 02 itself has no back target: on Android
+ * the layout lets the system handle back there.
  */
 export function backHref(step: OnboardingStepId, path: Path | undefined): string {
   const prev = prevStep(step, path)
-  return prev === null || prev === 1 || prev === 2 ? '/' : stepHref(prev)
+  return prev === null || prev === 1 ? stepHref(2) : stepHref(prev)
 }
 
 export function hasHeader(step: OnboardingStepId): boolean {
@@ -103,12 +105,11 @@ export function resumeStep(step: OnboardingStepId | undefined): OnboardingStepId
 
 /**
  * Where the splash (01) sends a signed-out user: a saved draft resumes at its step, and
- * everyone else starts at 02. Signed-in users never reach the splash: the root layout's
- * guard sends them to /home. The welcome screen at "/" stands in for 02 until #5.
+ * everyone else starts at the hook (02). Signed-in users never reach the splash: the root
+ * layout's guard sends them to /home.
  */
 export function splashDestination(draftStep: OnboardingStepId | undefined): string {
-  const resume = resumeStep(draftStep)
-  return resume === null ? '/' : stepHref(resume)
+  return stepHref(resumeStep(draftStep) ?? 2)
 }
 
 /** The splash stays up for SPLASH_MS once loading is done (spec: 1.2s–2.5s). */
@@ -129,3 +130,33 @@ export const VERSE_WORD_MS = 320
 export function verseRevealMs(words: number): number {
   return words === 0 ? 0 : VERSE_DELAY_MS + (words - 1) * VERSE_STAGGER_MS + VERSE_WORD_MS
 }
+
+/** A week of the plan on the hook (02): each reader's seven days, read or missed. */
+export type HookWeek = { label: string; together: boolean; days: readonly (readonly boolean[])[] }
+
+/** Made-up readers for the hook illustration. */
+export const HOOK_READERS = ['Ana Reyes', 'Ben Cole', 'Joy Kim'] as const
+
+const o = true
+const _ = false
+/** Week 1 everyone reads every day; by week 3 the days have mostly slipped. */
+export const HOOK_WEEKS: readonly HookWeek[] = [
+  {
+    label: 'Week 1',
+    together: true,
+    days: [
+      [o, o, o, o, o, o, o],
+      [o, o, o, o, o, o, o],
+      [o, o, o, o, o, o, o],
+    ],
+  },
+  {
+    label: 'Week 3',
+    together: false,
+    days: [
+      [o, _, _, o, _, _, _],
+      [_, o, _, _, _, _, _],
+      [_, _, _, _, o, _, _],
+    ],
+  },
+]

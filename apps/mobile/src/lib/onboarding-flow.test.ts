@@ -2,6 +2,8 @@ import { describe, expect, it } from '@jest/globals'
 import {
   backHref,
   hasHeader,
+  HOOK_READERS,
+  HOOK_WEEKS,
   nextStep,
   parseStep,
   prevStep,
@@ -90,10 +92,10 @@ describe('onboarding flow', () => {
     expect(progress(10, 'join').position).toBe(10)
   })
 
-  it('back with no history goes to the previous step, or welcome before step 3', () => {
+  it('back with no history goes to the previous step, never past the hook', () => {
     expect(backHref(13, 'join')).toBe('/onboarding/join')
     expect(backHref(13, 'create')).toBe('/onboarding/12')
-    expect(backHref(3, 'create')).toBe('/')
+    expect(backHref(3, 'create')).toBe('/onboarding/2')
   })
 })
 
@@ -104,8 +106,8 @@ describe('splash (01)', () => {
     expect(splashDestination(19)).toBe('/onboarding/19')
   })
 
-  it('starts a new user at the hook (welcome stands in for 02)', () => {
-    expect(splashDestination(undefined)).toBe('/')
+  it('starts a new user at the hook (02)', () => {
+    expect(splashDestination(undefined)).toBe('/onboarding/2')
   })
 
   it('treats a draft on 01 or 02 as nothing to resume', () => {
@@ -113,7 +115,8 @@ describe('splash (01)', () => {
     expect(resumeStep(2)).toBeNull()
     expect(resumeStep(undefined)).toBeNull()
     expect(resumeStep(3)).toBe(3)
-    expect(splashDestination(2)).toBe('/')
+    expect(splashDestination(1)).toBe('/onboarding/2')
+    expect(splashDestination(2)).toBe('/onboarding/2')
   })
 
   it('stays up between 1.2s and 2.5s, long enough for the verse to finish', () => {
@@ -123,5 +126,25 @@ describe('splash (01)', () => {
     const words = SPLASH_VERSE.split(' ').length
     expect(verseRevealMs(words + 1) + 400).toBeLessThanOrEqual(SPLASH_MS)
     expect(verseRevealMs(0)).toBe(0)
+  })
+})
+
+describe('hook (02)', () => {
+  it('leads to step 03 on either path', () => {
+    expect(nextStep(2, undefined)).toBe(3)
+    expect(nextStep(2, 'join')).toBe(3)
+    expect(hasHeader(2)).toBe(false)
+  })
+
+  it('shows a full week 1 against a mostly missed week 3', () => {
+    const [before, after] = HOOK_WEEKS
+    const share = (w: (typeof HOOK_WEEKS)[number]) =>
+      w.days.flat().filter(Boolean).length / w.days.flat().length
+    for (const w of HOOK_WEEKS) {
+      expect(w.days).toHaveLength(HOOK_READERS.length)
+      w.days.forEach((row) => expect(row).toHaveLength(7))
+    }
+    expect(share(before)).toBe(1)
+    expect(share(after)).toBeLessThan(0.5)
   })
 })
