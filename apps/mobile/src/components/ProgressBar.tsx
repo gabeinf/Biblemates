@@ -15,7 +15,7 @@ export default function ProgressBar({ position, total, fraction }: Props) {
     <View
       style={styles.track}
       accessibilityRole="progressbar"
-      accessibilityLabel={`Step ${position} of ${total}`}
+      accessibilityLabel="Onboarding progress"
       accessibilityValue={{ min: 1, max: total, now: position }}
     >
       <Animated.View
