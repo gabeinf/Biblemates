@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import { Animated, Easing, StyleSheet } from 'react-native'
 import * as SplashScreen from 'expo-splash-screen'
 import { useAppReady } from '../lib/splash'
+import { colors } from '../theme/tokens'
 
 // Keep in sync with the expo-splash-screen plugin in app.json so the hand-off
-// from the native splash is pixel-identical.
-export const SPLASH_BACKGROUND = '#F7C341'
-const LOGO_WIDTH = 180
+// from the native splash is pixel-identical. The onboarding splash (/onboarding/1)
+// draws the same mark in the same place, so this overlay hands off to it seamlessly.
+export const SPLASH_LOGO = require('../../assets/splash-icon.png')
+export const SPLASH_LOGO_WIDTH = 180
 
 /**
  * A JS copy of the native splash, drawn over the app. Once the app is ready it
@@ -52,7 +54,7 @@ export default function AnimatedSplash() {
       style={[StyleSheet.absoluteFill, styles.container, { opacity: fade, pointerEvents: ready ? 'none' : 'auto' }]}
     >
       <Animated.Image
-        source={require('../../assets/splash-icon.png')}
+        source={SPLASH_LOGO}
         style={[styles.logo, { transform: [{ translateY }, { scale }] }]}
         resizeMode="contain"
         fadeDuration={0}
@@ -64,11 +66,11 @@ export default function AnimatedSplash() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: SPLASH_BACKGROUND,
+    backgroundColor: colors.splash,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 1000,
     elevation: 1000,
   },
-  logo: { width: LOGO_WIDTH, height: LOGO_WIDTH },
+  logo: { width: SPLASH_LOGO_WIDTH, height: SPLASH_LOGO_WIDTH },
 })

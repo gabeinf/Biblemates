@@ -36,20 +36,18 @@ export function useOnboardingNav() {
   return { step, goNext, goBack }
 }
 
-let resumeOffered = false
+let launchHandled = false
 
 /**
- * The step to resume at on launch, offered once per app session so going back to the
- * welcome screen doesn't bounce the user straight back into the flow.
+ * True until "/" has been shown once in this app session, so the first visit opens the
+ * splash (01), which resumes a saved draft. After that, "/" shows the welcome screen.
+ * A pure read, safe to call while rendering; `markLaunchHandled` records the visit.
  */
-export function takeResumeStep(): OnboardingStepId | null {
-  if (resumeOffered) return null
-  markResumeOffered()
-  const { step } = getDraft()
-  return step === undefined || step === 1 || step === 2 ? null : step
+export function isLaunchPending(): boolean {
+  return !launchHandled
 }
 
-/** Called when the user is already in the flow (e.g. a deep link), so welcome won't redirect later. */
-export function markResumeOffered() {
-  resumeOffered = true
+/** Called once "/" or any step has shown, so later visits to "/" skip the splash. */
+export function markLaunchHandled() {
+  launchHandled = true
 }
