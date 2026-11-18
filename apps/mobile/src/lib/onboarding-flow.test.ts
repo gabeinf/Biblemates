@@ -12,6 +12,7 @@ import {
   SPLASH_MIN_MS,
   SPLASH_MS,
   SPLASH_VERSE,
+  STEP_PURPOSES,
   SPLASH_DESTINATION,
   stepHref,
   stepsFor,
@@ -130,5 +131,15 @@ describe('hook (02)', () => {
     }
     expect(share(before)).toBe(1)
     expect(share(after)).toBeLessThan(0.5)
+  })
+})
+
+describe('step names', () => {
+  it('gives every step on both paths a purpose, never a number', () => {
+    for (const path of ['create', 'join'] as const)
+      for (const step of stepsFor(path)) {
+        expect(STEP_PURPOSES[step]).toBeTruthy()
+        expect(STEP_PURPOSES[step]).not.toMatch(/\d|step/i)
+      }
   })
 })

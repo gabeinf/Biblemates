@@ -8,7 +8,7 @@ import { StyleSheet, View } from 'react-native'
 import { Button } from '../../../components/ui'
 import { AuthScreen, ScreenTitle } from '../../../components/onboarding'
 import { useOnboardingNav } from '../../../hooks/use-onboarding'
-import { parseStep } from '../../../lib/onboarding-flow'
+import { STEP_PURPOSES, parseStep } from '../../../lib/onboarding-flow'
 import { spacing } from '../../../theme/tokens'
 
 export default function PlaceholderStep() {
@@ -42,7 +42,7 @@ export default function PlaceholderStep() {
     <AuthScreen footer={footer}>
       <ScreenTitle
         eyebrow="Coming soon"
-        title={step === 'join' ? 'Join with a code' : `Step ${step}`}
+        title={STEP_PURPOSES[step]}
         subtitle="This step hasn’t been built yet."
       />
     </AuthScreen>

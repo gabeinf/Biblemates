@@ -52,7 +52,10 @@ export default function OnboardingLayout() {
           animation: 'slide_from_right',
           contentStyle: { backgroundColor: colors.paper },
         }}
-      />
+      >
+        {/* The splash dissolves into the hook instead of sliding, so launch feels like one moment. */}
+        <Stack.Screen name="2" options={{ animation: 'fade' }} />
+      </Stack>
     </SafeAreaView>
   )
 }
