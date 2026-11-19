@@ -18,6 +18,7 @@ import {
   useToggleBookmark,
 } from '../../../hooks/queries'
 import { useUserId } from '../../../hooks/use-auth-context'
+import { useShowPaywallAfterFirstReading } from '../../../hooks/use-paywall'
 import { getBook, nextChapter, prevChapter } from '../../../constants/books'
 import { saveReadingPosition } from '../../../services/annotations'
 import { currentDay, isDayDone } from '../../../lib/study-day'
@@ -71,6 +72,7 @@ export default function Bible() {
   const cs = useCircleStudy(circle.id)
   const completions = useCompletions(cs.data?.id)
   const markDone = useMarkDayComplete(cs.data?.id ?? '')
+  const showPaywall = useShowPaywallAfterFirstReading()
   const today = cs.data ? currentDay(cs.data) : undefined
   const isTodaysReading = !!today && today.book_id === bookId && today.chapter === chapterNum
   const doneToday = !!today && isDayDone(completions.data ?? [], userId, today.day_number)
@@ -221,7 +223,7 @@ export default function Bible() {
           ListFooterComponent={
             <View style={{ gap: spacing.lg, marginTop: spacing.lg }}>
               {isTodaysReading && !doneToday && (
-                <Pressable style={styles.doneBanner} onPress={() => markDone.mutate(today!.day_number)}>
+                <Pressable style={styles.doneBanner} onPress={() => markDone.mutate(today!.day_number, { onSuccess: showPaywall })}>
                   <Ionicons name="checkmark-circle-outline" size={20} color={colors.surface} />
                   <Text style={styles.doneBannerText}>Mark Day {today!.day_number} as read</Text>
                 </Pressable>
