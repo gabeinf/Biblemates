@@ -77,6 +77,7 @@ New errors fail verify. When you fix suppressed errors in a file you're touching
 <!-- When the human corrects a repeated mistake, add a one-line rule here: what to do, and why. -->
 
 - 2026-11-19: chore with no issue: create one first (`gh issue create`); guidelines requires `Closes #N`.
+- 2026-11-19: `pnpm verify` screenshots fails with "http://127.0.0.1:4173 is already used" when another worktree's `serve-static` holds the port. Don't kill it; check `lsof -nP -iTCP:4173`, wait for it to free, or run playwright once with a throwaway config on another port.
 
 ## Keyboard-aware layouts (required)
 
