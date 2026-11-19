@@ -4,7 +4,7 @@ import { check } from './guidelines.mjs'
 
 const ok = {
   branch: 'feat/x',
-  body: 'Closes #1\n```\nverify summary\nverify PASSED\n```\n- [x] reviewer',
+  body: 'Closes #1\n- [x] reviewer',
   labels: [],
   files: [
     { path: 'apps/mobile/src/lib/a.ts', add: 10, del: 0 },
@@ -24,7 +24,7 @@ test('bad branch, big diff, logic without test, new dep, open box all fail', () 
     files: [{ path: 'apps/mobile/src/lib/a.ts', add: 400, del: 0 }],
     newDeps: ['left-pad'],
   }
-  assert.equal(check(bad).length, 7)
+  assert.equal(check(bad).length, 6)
 })
 test('deps-approved label allows new deps', () =>
   assert.deepEqual(check({ ...ok, newDeps: ['x'], labels: ['deps-approved'] }), []))

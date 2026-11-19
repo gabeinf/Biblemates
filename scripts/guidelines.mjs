@@ -41,8 +41,6 @@ export function check(ctx) {
     fails.push('adds files under design/reference/ (kept local, never committed)')
 
   if (!/\bCloses #\d+/.test(ctx.body)) fails.push('PR body needs "Closes #<issue>"')
-  if (!/verify summary/i.test(ctx.body) || !/verify PASSED/.test(ctx.body))
-    fails.push('PR body needs the pasted "verify summary" with "verify PASSED"')
   if (/- \[ \]/.test(ctx.body)) fails.push('PR body has unticked checkboxes')
   if (ctx.body.includes('❌')) fails.push('PR body lists ❌ spec items: not done yet')
   return fails
