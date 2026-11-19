@@ -15,6 +15,9 @@ gh run view <run-id> --log-failed             # only the failing steps' logs
 
 Find the first real error, not the cascade after it.
 
+- **`guidelines` failures:** every line in the log ends with `| fix: <command>`. Read the `fix:` line and apply it; no guessing. After a PR-body fix the check reruns on its own (the workflow listens to `edited`).
+- **Cancelled, timed-out or startup-failed job** (not a real failure): rerun only the failed job, never the whole pipeline: `gh run rerun <run-id> --failed`. The merge steward does this once per run; if the same check fails again, treat it as real.
+
 ## 2. Reproduce locally
 
 Run the same step: `pnpm verify` (or a single step while iterating, e.g. `pnpm verify lint`).
@@ -36,3 +39,9 @@ gh pr checks --watch
 ```
 
 Report the final check status, plus what broke and what fixed it.
+
+## 5. Record the lesson
+
+If the failure was a new class (not already in `CLAUDE.md` → "Lessons"), append one dated line there: `- YYYY-MM-DD: <what to do, and why>`. Skip it for a repeat of a listed class.
+
+If the same check still fails after 3 fix attempts, stop and report what you tried and what's blocking.

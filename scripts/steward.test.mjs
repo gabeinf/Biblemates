@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { pick } from './steward.mjs'
+import { flakyRuns, pick } from './steward.mjs'
 
 const pr = (number, over = {}) => ({
   number,
@@ -66,4 +66,24 @@ test('status contexts are keyed by context and fall back to completedAt', () => 
     { context: 'ci/x', state: 'SUCCESS', completedAt: '2026-11-19T18:00:00Z' },
   ]
   assert.equal(pick([pr(1, { statusCheckRollup })], false).action, 'update')
+})
+
+const url = (id, job = 9) => `https://github.com/o/r/actions/runs/${id}/job/${job}`
+test('flakyRuns: latest CANCELLED/TIMED_OUT/STARTUP_FAILURE checks, deduped by run id', () => {
+  const statusCheckRollup = [
+    { name: 'verify', conclusion: 'CANCELLED', startedAt: '1', detailsUrl: url(11, 1) },
+    { name: 'lint', conclusion: 'TIMED_OUT', startedAt: '1', detailsUrl: url(11, 2) },
+    { name: 'guidelines', conclusion: 'STARTUP_FAILURE', startedAt: '1', detailsUrl: url(22) },
+  ]
+  assert.deepEqual(flakyRuns(pr(1, { statusCheckRollup })), ['11', '22'])
+})
+test('flakyRuns ignores real failures, superseded runs and contexts without a run id', () => {
+  const statusCheckRollup = [
+    { name: 'verify', conclusion: 'FAILURE', startedAt: '1', detailsUrl: url(11) },
+    { name: 'guidelines', conclusion: 'CANCELLED', startedAt: '1', detailsUrl: url(22) },
+    { name: 'guidelines', conclusion: 'SUCCESS', startedAt: '2', detailsUrl: url(23) },
+    { context: 'ci/x', state: 'ERROR', completedAt: '1', detailsUrl: 'https://example.com' },
+    { name: 'noUrl', conclusion: 'CANCELLED', startedAt: '1' },
+  ]
+  assert.deepEqual(flakyRuns(pr(1, { statusCheckRollup })), [])
 })

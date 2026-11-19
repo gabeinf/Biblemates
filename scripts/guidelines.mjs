@@ -15,35 +15,56 @@ const DEP_KEYS = ['dependencies', 'devDependencies', 'peerDependencies', 'option
 
 // Size is deliberately not a rule: what matters is that the change is measurable.
 // ctx: { branch, body, labels[], files[{path,add,del}], added{path:[line]}, newDeps[], suppressionsDelta }
+// Every failure line ends in "| fix: <exact command or edit>" so an agent reading only the log can act.
 export function check(ctx) {
   const fails = []
+  const pr = ctx.pr ?? '<pr>'
   const real = ctx.files.filter((f) => !NOISE.test(f.path))
 
   if (!/^(feat|fix|chore)\//.test(ctx.branch))
-    fails.push(`branch "${ctx.branch}" must start with feat/, fix/ or chore/`)
+    fails.push(
+      `branch "${ctx.branch}" must start with feat/, fix/ or chore/ | fix: git branch -m ${ctx.branch} chore/<slug> && git push -u origin HEAD, then open a new PR from it (a PR's head branch can't be renamed)`,
+    )
   if (ctx.newDeps.length && !ctx.labels.includes('deps-approved'))
     fails.push(
-      `new dependencies (${ctx.newDeps.join(', ')}): ask first, then add the "deps-approved" label`,
+      `new dependencies (${ctx.newDeps.join(', ')}): ask first | fix: ask the user; once approved, gh pr edit ${pr} --add-label deps-approved; otherwise remove them from package.json and the lockfile`,
     )
 
   const addedText = Object.entries(ctx.added).filter(([, ls]) => ls)
   if (addedText.some(([, ls]) => ls.some((l) => /eslint-disable/.test(l))))
-    fails.push('adds an eslint-disable')
+    fails.push('adds an eslint-disable | fix: delete the comment and fix the lint error it hides')
   if (ctx.suppressionsDelta > 0)
-    fails.push('grows eslint-suppressions.json (baseline may only shrink)')
+    fails.push(
+      'grows eslint-suppressions.json (baseline may only shrink) | fix: git checkout origin/master -- apps/mobile/eslint-suppressions.json, then fix the new lint errors in code',
+    )
   if (addedText.some(([, ls]) => ls.some((l) => SKIPPED.test(l))))
-    fails.push('adds a skipped or focused test')
+    fails.push(
+      'adds a skipped or focused test | fix: remove .skip/.only/xit/xdescribe and make the test pass',
+    )
 
   const testable = real.filter((f) => TESTABLE.test(f.path) && !TEST.test(f.path))
   if (testable.length && !real.some((f) => TEST.test(f.path)))
-    fails.push(`${testable[0].path} changed but no Jest test or e2e spec did`)
+    fails.push(
+      `${testable[0].path} changed but no Jest test or e2e spec did | fix: add or extend a colocated *.test.ts(x) (or e2e/*.spec.ts) that covers it, then pnpm verify test`,
+    )
 
   if (real.some((f) => f.path.startsWith('design/reference/') && !f.path.endsWith('README.md')))
-    fails.push('adds files under design/reference/ (kept local, never committed)')
+    fails.push(
+      `adds files under design/reference/ (kept local, never committed) | fix: git ls-files design/reference | grep -v 'README.md$' | xargs git rm --cached && git commit -m "chore: untrack design/reference"`,
+    )
 
-  if (!/\bCloses #\d+/.test(ctx.body)) fails.push('PR body needs "Closes #<issue>"')
-  if (/- \[ \]/.test(ctx.body)) fails.push('PR body has unticked checkboxes')
-  if (ctx.body.includes('❌')) fails.push('PR body lists ❌ spec items: not done yet')
+  if (!/\bCloses #\d+/.test(ctx.body))
+    fails.push(
+      `PR body needs "Closes #<issue>" | fix: find it with gh issue list; if none exists, create one: gh issue create --title "<title>" --body "<why>"; then gh pr edit ${pr} --body-file <file with "Closes #<issue>">`,
+    )
+  if (/- \[ \]/.test(ctx.body))
+    fails.push(
+      `PR body has unticked checkboxes | fix: tick each done item ("- [x]") or delete it, then gh pr edit ${pr} --body-file <file>`,
+    )
+  if (ctx.body.includes('❌'))
+    fails.push(
+      `PR body lists ❌ spec items: not done yet | fix: build the missing items, re-run design-check, mark them ✅, then gh pr edit ${pr} --body-file <file>`,
+    )
   return fails
 }
 
@@ -81,7 +102,7 @@ export function findOverlap(me, others, isShared) {
   const blockers = overlaps.filter((o) => o.number < me.number && o.files.some(isShared))
   const fails = blockers.map(
     (o) =>
-      `#${o.number} (older) also changes shared-surface file(s) ${o.files.filter(isShared).join(', ')}: wait for it to merge, then update this branch`,
+      `#${o.number} (older) also changes shared-surface file(s) ${o.files.filter(isShared).join(', ')}: wait for it to merge | fix: once #${o.number} is merged, gh pr update-branch ${me.number} (or git merge origin/master and push); don't edit those files meanwhile`,
   )
   return { overlaps, fails }
 }
@@ -175,6 +196,7 @@ function main() {
   const fails = check({
     branch: BRANCH,
     body: PR_BODY,
+    pr: process.env.PR,
     labels: LABELS.split(',').filter(Boolean),
     files,
     added,
