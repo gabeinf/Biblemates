@@ -36,14 +36,21 @@ pnpm verify lint    # run one step while iterating (doesn't count as done)
 
 Screenshots land in `artifacts/screenshots/` (gitignored).
 
+Code map: `graphify update .` rebuilds `graphify-out/` (local AST, no tokens, gitignored).
+For "where is / what calls / how does X connect" questions, read `graphify-out/GRAPH_REPORT.md`
+or run `graphify explain "<symbol>"` before grepping or opening whole files.
+
 ## Workflow rules
 
 - Never commit to `master`. One issue = one branch = one PR. Branches: `feat/…`, `fix/…`, `chore/…`.
-- Push with an explicit branch (`git push -u origin HEAD`), never bare `git push`. Never force-push. Never merge PRs: a human does.
+- Push with an explicit branch (`git push -u origin HEAD`), never bare `git push`. Never force-push. Claude never merges PRs: CI's auto-merge does it once `verify` and `guidelines` pass.
 - Before saying a task is done, run `pnpm verify` and show its output. A Stop hook enforces this.
 - Keep PRs small: one screen or one fix each. If a change grows past ~300 lines, split it and say so.
 - Don't copy brand, copy or assets from `design/reference/`. Structure only, with original copy and visuals.
-- Ask before adding a dependency.
+- Ask before adding a dependency. CI's `guidelines` check (`scripts/guidelines.mjs`) enforces the scriptable rules here
+  (size, deps, suppressions, tests, PR body) labels passing PRs `gate:pass` and turns on auto-merge.
+- Keep images out of the main session: don't `Read` PNGs from `design/reference/` or `artifacts/screenshots/`.
+  Use the `design-check` subagent (`describe <NN>` for a layout outline, or a normal check for pass/fail).
 - If the same error survives 3 attempts, stop and explain instead of looping.
 - Fix causes, not checks: no skipped tests, `eslint-disable`, or new lint suppressions to get green.
 - Don't read `.env*` files. Public config comes from `EXPO_PUBLIC_*` vars, and verify uses placeholders.
