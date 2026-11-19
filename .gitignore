@@ -55,3 +55,6 @@ supabase/.temp/
 design/reference/**
 !design/reference/**/
 !design/reference/**/README.md
+
+# graphify knowledge graph (local, rebuilt per machine)
+graphify-out/

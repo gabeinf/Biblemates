@@ -11,7 +11,8 @@ Follow these steps in order. Don't skip any.
 ## 1. Understand
 
 - `gh issue view $ARGUMENTS`: read the body and acceptance checklist.
-- Read the matching section of `docs/specs/onboarding.md` and the reference image(s) in `design/reference/onboarding/`.
+- Read the matching section of `docs/specs/onboarding.md`.
+- Don't open the reference PNGs yourself. Run the **design-check** subagent with `describe <NN>` and build from the text outline it returns. Images stay in the subagent's context instead of riding along on every later turn of this one.
 - Re-read the **Lessons** in `CLAUDE.md`.
 - If the issue is ambiguous or seems to need a new dependency, ask before writing code.
 
@@ -26,7 +27,7 @@ Never work on `master`. One issue = one branch = one PR.
 
 ## 3. Build
 
-- Keep the change small: one screen or one fix. If it's heading past ~300 changed lines, stop, split it into a new issue, and say so.
+- One screen or one fix per PR. Size is not limited, but every UI or logic change needs a Jest test or e2e spec so CI can measure it.
 - Each step lives at its own route: `apps/mobile/src/app/(auth)/onboarding/<n>.tsx` → `/onboarding/<n>`. The `(auth)` group keeps it behind the signed-out guard.
 - Reuse components in `apps/mobile/src/components/` and tokens in `apps/mobile/src/theme/`.
 - Write original copy and visuals. Copy structure only from the reference, never its brand, wording or art.
@@ -61,6 +62,6 @@ Fill every section of `.github/pull_request_template.md`:
 - `Closes #$ARGUMENTS`
 - Mark each spec checklist item ✅/❌ using the design-check result.
 - **Screenshots:** CI uploads `artifacts/screenshots/` as the `screenshots` build artifact. Link the workflow run and name the files; reference images are in `design/reference/onboarding/`.
-- **How verified:** paste the `verify summary` block from your last run.
+- **How verified:** leave the template line; CI `verify` is the proof.
 
 Finish by giving the PR URL and the final verify summary.
