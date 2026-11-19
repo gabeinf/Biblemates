@@ -40,7 +40,7 @@ Never work on `master`. One issue = one branch = one PR.
 pnpm verify
 ```
 
-All four steps must pass. If one fails, fix it and re-run. If the **same** error survives 3 attempts, stop and explain what's blocking instead of looping.
+All four steps must pass. If one fails, fix it and re-run only that step (`pnpm verify lint`, `pnpm verify test`…), then run the full `pnpm verify` once at the end. If the **same** error survives 3 attempts, stop and explain what's blocking instead of looping.
 
 ## 5. Check
 

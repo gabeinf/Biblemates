@@ -1,6 +1,7 @@
-# Runs `pnpm verify` on every PR and on pushes to master, and uploads the screenshots.
-# The master run is the safety net: PRs merge without being up to date, so it catches two
-# individually-green PRs that break each other.
+# Runs `pnpm verify` on every PR, hourly on master, and on pushes to master; uploads screenshots.
+# PRs merge via auto-merge as github-actions, and GitHub does NOT fire push workflows for those
+# merges (confirmed 2026-11-19). The hourly run is the safety net that catches two green PRs
+# that break each other; the push trigger covers manual merges.
 # The job is named `verify`: make it a required check in branch protection.
 name: verify
 
@@ -8,6 +9,8 @@ on:
   pull_request:
   push:
     branches: [master]
+  schedule:
+    - cron: '17 * * * *' # runs on the default branch (master)
 
 concurrency:
   group: verify-${{ github.ref }}
