@@ -1,0 +1,51 @@
+# Scripted CLAUDE.md rules (scripts/guidelines.mjs). Make the `guidelines` job a required check.
+# On pass it labels the PR `gate:pass` and turns on GitHub auto-merge (squash), which waits for
+# every required check (verify + guidelines) before merging. Needs repo setting "Allow auto-merge".
+name: guidelines
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited, labeled, unlabeled]
+
+concurrency:
+  group: guidelines-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  guidelines:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      PR: ${{ github.event.pull_request.number }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Check guidelines
+        id: gate
+        run: node scripts/guidelines.mjs
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+      - name: Label gate:pass
+        if: success()
+        run: |
+          gh label create gate:pass --color 0E8A16 --description "Scripted guidelines pass" --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
+          gh pr edit "$PR" --add-label gate:pass --repo "$GITHUB_REPOSITORY"
+          gh pr merge "$PR" --auto --squash --repo "$GITHUB_REPOSITORY"
+      - name: Remove gate:pass and cancel auto-merge
+        if: failure()
+        run: |
+          gh pr edit "$PR" --remove-label gate:pass --repo "$GITHUB_REPOSITORY" || true
+          gh pr merge "$PR" --disable-auto --repo "$GITHUB_REPOSITORY" || true
