@@ -33,7 +33,7 @@ export function resetCodeForTests() {
 export default function InviteCircle() {
   const { goNext } = useOnboardingNav()
   const [code] = useState(getCode)
-  const [copied, setCopied] = useState(false)
+  const [copy, setCopy] = useState<'idle' | 'copied' | 'failed'>('idle')
   const opened = useRef(false)
 
   const share = useCallback(async () => {
@@ -41,6 +41,7 @@ export default function InviteCircle() {
       const result = await Share.share({
         message: `Read the Bible with me on Biblemates. Join my circle: biblemates://join/${code} (code ${code})`,
       })
+      // shortcut: Android reports sharedAction once the chooser opens, so invitedAt there means "sheet opened"; upgrade if we need confirmed shares.
       if (result.action === Share.sharedAction) updateDraft({ invitedAt: new Date().toISOString() })
     } catch {
       // Sharing is never a gate: no share sheet (web, a refusal) just leaves the code on screen.
@@ -54,12 +55,12 @@ export default function InviteCircle() {
     share()
   }, [share])
 
-  const copy = async () => {
+  const copyCode = async () => {
     try {
       await Clipboard.setStringAsync(code)
-      setCopied(true)
+      setCopy('copied')
     } catch {
-      setCopied(false)
+      setCopy('failed')
     }
   }
 
@@ -75,19 +76,30 @@ export default function InviteCircle() {
       <FadeIn delay={120} style={styles.body}>
         <Card style={styles.card}>
           <Text style={styles.label}>Your invite code</Text>
-          <Text style={styles.code} accessibilityLabel={`Invite code ${code.split('').join(' ')}`}>
+          <Text
+            style={styles.code}
+            selectable
+            accessibilityLabel={`Invite code ${code.split('').join(' ')}`}
+          >
             {code}
           </Text>
         </Card>
         <Button label="Share invite" variant="outline" size="lg" onPress={share} />
         <Button
-          label={copied ? 'Copied' : 'Copy code'}
+          label={copy === 'copied' ? 'Copied' : 'Copy code'}
           variant="outline"
           size="lg"
-          onPress={copy}
+          onPress={copyCode}
         />
         <View accessibilityLiveRegion="polite">
-          {copied ? <Text style={styles.confirm}>Code copied to your clipboard.</Text> : null}
+          {copy === 'copied' ? (
+            <Text style={styles.confirm}>Code copied to your clipboard.</Text>
+          ) : null}
+          {copy === 'failed' ? (
+            <Text style={[styles.confirm, styles.failed]}>
+              Copy failed. Select the code instead.
+            </Text>
+          ) : null}
         </View>
       </FadeIn>
     </StepScreen>
@@ -114,4 +126,5 @@ const styles = StyleSheet.create({
     color: colors.success,
     textAlign: 'center',
   },
+  failed: { color: colors.danger },
 })

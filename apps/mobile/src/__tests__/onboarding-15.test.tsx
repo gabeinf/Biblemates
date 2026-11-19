@@ -66,6 +66,13 @@ describe('15 · Invite your circle', () => {
     expect(await screen.findByText('Code copied to your clipboard.')).toBeTruthy()
   })
 
+  it('says so when the copy fails', async () => {
+    jest.mocked(Clipboard.setStringAsync).mockRejectedValueOnce(new Error('denied'))
+    await render(<InviteCircle />)
+    await fireEvent.press(screen.getByRole('button', { name: 'Copy code' }))
+    expect(await screen.findByText("Copy failed. Select the code instead.")).toBeTruthy()
+  })
+
   it('does not re-open the sheet when coming back after sharing', async () => {
     updateDraft({ invitedAt: new Date().toISOString() })
     await render(<InviteCircle />)
