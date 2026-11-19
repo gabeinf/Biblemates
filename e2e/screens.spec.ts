@@ -108,3 +108,20 @@ for (const route of routes) {
     expect(errors, `errors on ${route.path}`).toEqual([])
   })
 }
+
+// Spec 08: "Fits on a 667pt-tall screen without overlapping the button." The body
+// scrolls, so the button can't be covered; this checks it doesn't need to scroll at all.
+test('/onboarding/8 fits a 375×667 screen without scrolling', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 667 })
+  await page.goto('/onboarding/8', { waitUntil: 'networkidle' })
+  await page.getByText('Watch each other show up').waitFor()
+  const overflow = await page.evaluate(() =>
+    [...document.querySelectorAll('div')]
+      .filter(
+        (d) => ['auto', 'scroll'].includes(getComputedStyle(d).overflowY) && d.clientHeight > 100,
+      )
+      .map((d) => d.scrollHeight - d.clientHeight),
+  )
+  expect(overflow.length, 'no scroll container found').toBeGreaterThan(0)
+  expect(Math.max(...overflow), 'content overflows by this many px').toBeLessThanOrEqual(0)
+})

@@ -73,7 +73,9 @@ const FADE_HEIGHT = spacing.xxl
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   screen: { flex: 1, backgroundColor: colors.paper },
+  // flexGrow lets a step give spare height to one child (08's card stack); others ignore it.
   content: {
+    flexGrow: 1,
     paddingHorizontal: spacing.lg,
     paddingTop: spacing.md,
     paddingBottom: spacing.lg,
