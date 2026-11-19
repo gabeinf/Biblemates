@@ -56,6 +56,15 @@ or run `graphify explain "<symbol>"` before grepping or opening whole files.
 - Fix causes, not checks: no skipped tests, `eslint-disable`, or new lint suppressions to get green.
 - Don't read `.env*` files. Public config comes from `EXPO_PUBLIC_*` vars, and verify uses placeholders.
 
+## Parallel agents
+
+Full process: `.claude/skills/clear-issues/SKILL.md`.
+
+- At most 3 builders at once, one worktree each, from `origin/master`.
+- Issues touching the shared surface (listed in that skill) run one at a time.
+- Start a wave only when master is verified green (latest verify run is on the `origin/master` SHA).
+- GitHub (issues, PRs, `git worktree list`) is the source of truth, not chat memory.
+
 ## Lint baseline
 
 `apps/mobile/eslint-suppressions.json` holds lint errors that existed before linting was adopted.
