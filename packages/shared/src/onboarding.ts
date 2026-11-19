@@ -19,9 +19,10 @@ export const OnboardingDraftSchema = z.object({
     .object({ kind: z.enum(['preset', 'custom']), label: z.string().min(1).max(40) })
     .optional(),
   displayName: z.string().trim().min(1).max(30).optional(),
+  /** A circle's invite code: 6 uppercase hex characters (circles.invite_code). */
   inviteCode: z
     .string()
-    .regex(/^[A-Z0-9]{6}$/)
+    .regex(/^[0-9A-F]{6}$/)
     .optional(),
   committedAt: z.iso.datetime().optional(),
   invitedAt: z.iso.datetime().optional(),
