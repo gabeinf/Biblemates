@@ -125,3 +125,23 @@ test('/onboarding/8 fits a 375×667 screen without scrolling', async ({ page }) 
   expect(overflow.length, 'no scroll container found').toBeGreaterThan(0)
   expect(Math.max(...overflow), 'content overflows by this many px').toBeLessThanOrEqual(0)
 })
+
+// Spec 14: a real drag on the pad unlocks "I'm in"; "Clear" locks it again.
+test('/onboarding/14 unlocks on a drawn stroke and Clear resets it', async ({ page }) => {
+  await page.goto('/onboarding/14', { waitUntil: 'networkidle' })
+  const pad = page.getByLabel('Signature pad. Draw your signature with one finger.')
+  const button = page.getByRole('button', { name: 'I’m in →' })
+  await pad.waitFor()
+  await expect(button).toHaveAttribute('aria-disabled', 'true')
+
+  const box = (await pad.boundingBox())!
+  await page.mouse.move(box.x + 30, box.y + 80)
+  await page.mouse.down()
+  await page.mouse.move(box.x + 120, box.y + 40, { steps: 8 })
+  await page.mouse.move(box.x + 220, box.y + 110, { steps: 8 })
+  await page.mouse.up()
+  await expect(button).not.toHaveAttribute('aria-disabled', 'true')
+
+  await page.getByRole('button', { name: 'Clear signature' }).click()
+  await expect(button).toHaveAttribute('aria-disabled', 'true')
+})
