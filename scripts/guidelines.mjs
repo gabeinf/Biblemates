@@ -1,6 +1,7 @@
 // CI gate: checks the scriptable rules from CLAUDE.md on a PR. Zero tokens, runs in seconds.
 // Passing means "nothing here needs more testing by the rules"; a human still merges.
 import { execFileSync } from 'node:child_process'
+import { appendFileSync, readFileSync } from 'node:fs'
 import { pathToFileURL } from 'node:url'
 
 const SELF = /^scripts\/guidelines\.(mjs|test\.mjs)$/
@@ -46,6 +47,45 @@ export function check(ctx) {
   return fails
 }
 
+// The shared-surface list has one definition: the clear-issues skill. Parse its backticked paths.
+const SKILL = new URL('../.claude/skills/clear-issues/SKILL.md', import.meta.url)
+export function sharedMatcher(md) {
+  const section = md.split(/^## Shared surface$/m)[1]?.split(/^## /m)[0] ?? ''
+  const globs = section
+    .split('\n')
+    .filter((l) => l.startsWith('- '))
+    .flatMap((l) => [...l.matchAll(/`([^`]+)`/g)].map((m) => m[1]))
+  if (!globs.length) throw new Error('no "## Shared surface" list found in clear-issues SKILL.md')
+  const res = globs.map(
+    (g) =>
+      new RegExp(
+        `^${g
+          .replace(/[.+?^${}()|[\]\\]/g, '\\$&')
+          .replace(/\*\*/g, '\0')
+          .replace(/\*/g, '[^/]*')
+          .replace(/\0/g, '.*')}$`,
+      ),
+  )
+  return (path) => res.some((r) => r.test(path))
+}
+
+// Compare this PR with other open PRs. Any shared file is reported ("overlap" label); overlap on the
+// shared surface also fails, unless this PR is the oldest (lowest number) of the PRs on that file.
+// me: { number, files[] }, others: [{ number, files[] }], isShared: path => boolean
+export function findOverlap(me, others, isShared) {
+  const mine = new Set(me.files)
+  const overlaps = others
+    .filter((o) => o.number !== me.number)
+    .map((o) => ({ number: o.number, files: o.files.filter((f) => mine.has(f)) }))
+    .filter((o) => o.files.length)
+  const blockers = overlaps.filter((o) => o.number < me.number && o.files.some(isShared))
+  const fails = blockers.map(
+    (o) =>
+      `#${o.number} (older) also changes shared-surface file(s) ${o.files.filter(isShared).join(', ')}: wait for it to merge, then update this branch`,
+  )
+  return { overlaps, fails }
+}
+
 const git = (...a) => execFileSync('git', a, { encoding: 'utf8', maxBuffer: 1 << 28 })
 const show = (rev, path) => {
   try {
@@ -64,6 +104,46 @@ const countSum = (json) => {
     typeof v?.count === 'number' ? ((n += v.count), v) : v,
   )
   return n
+}
+
+// Needs the CI env (PR, GH_TOKEN); skipped locally. Labels and the job summary are best effort.
+function overlapCheck(paths) {
+  const { PR, GITHUB_REPOSITORY: repo, GITHUB_STEP_SUMMARY: summary } = process.env
+  if (!PR) return []
+  const gh = (...a) => execFileSync('gh', [...a, '--repo', repo], { encoding: 'utf8' })
+  // shortcut: gh returns at most ~100 files per PR, so a huge PR can hide an overlap; page the API if it matters.
+  const others = JSON.parse(
+    gh('pr', 'list', '--state', 'open', '--limit', '200', '--json', 'number,files'),
+  ).map((p) => ({ number: p.number, files: p.files.map((f) => f.path) }))
+  const { overlaps, fails } = findOverlap(
+    { number: Number(PR), files: paths },
+    others,
+    sharedMatcher(readFileSync(SKILL, 'utf8')),
+  )
+  try {
+    if (overlaps.length) {
+      gh(
+        'label',
+        'create',
+        'overlap',
+        '--color',
+        'FBCA04',
+        '--description',
+        'Touches files of another open PR',
+      )
+    }
+  } catch {} // label already exists
+  try {
+    gh('pr', 'edit', PR, overlaps.length ? '--add-label' : '--remove-label', 'overlap')
+  } catch {} // removing a label that isn't there
+  if (overlaps.length) {
+    const text = `### Overlap with other open PRs\n${overlaps
+      .map((o) => `- #${o.number}: ${o.files.map((f) => `\`${f}\``).join(', ')}`)
+      .join('\n')}\n`
+    console.log(text)
+    if (summary) appendFileSync(summary, text)
+  }
+  return fails
 }
 
 function main() {
@@ -101,6 +181,7 @@ function main() {
     newDeps,
     suppressionsDelta,
   })
+  fails.push(...overlapCheck(files.map((f) => f.path)))
   if (fails.length) {
     console.error(
       `guidelines: ${fails.length} problem(s)\n${fails.map((f) => `  ✗ ${f}`).join('\n')}`,
