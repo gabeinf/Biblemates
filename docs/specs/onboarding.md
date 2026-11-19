@@ -450,24 +450,31 @@ write the draft during `signUp`, or skip email confirmation for this flow).
   on a gated feature.
 - **Form:** a dismissible full-screen sheet with a close button. Closing it returns the user to
   where they were, with nothing locked by that act alone.
+- **Completed reading (defined):** the first successful "Mark Day N as read" in the Bible tab
+  (`useMarkDayComplete`). The "shown" flag is stored on the device, so the sheet opens once per device.
 - **Plans:** rows are single select, with the selected row outlined. Savings badges are computed
   from the store prices (for example, the per-period price of a longer plan against the shortest
   one), never typed in. Prices always come from the store, never hard-coded. Terms, Privacy and
   Restore links all work. Reference `IMG_2212` is for structure only; copy, plan names and visuals
   are original.
-- **Not decided:** the IAP provider. It is a new dependency and needs a separate approval
-  (see Open questions, item 5) before any code. Plan lineup and feature checklist are also open.
-- **Build:** tracked in the follow-up issue "Paywall: build the plan-picker sheet", blocked on the
-  provider decision.
+- **Decided:** the IAP provider is RevenueCat (`react-native-purchases`). One yearly subscription,
+  $39.99/year, configured in the store product. The store product has a 7-day free trial for new
+  subscribers only. The app never hard-codes the price, trial length or dates: it shows the
+  trial, timeline and "No payment due now" only when the package has a free intro offer and the
+  user is intro-eligible, and counts the dates from today. The reminder step appears only when a
+  local reminder notification is actually scheduled.
+- **No key, no sheet:** without `EXPO_PUBLIC_REVENUECAT_API_KEY` and `EXPO_PUBLIC_PRIVACY_URL`, or
+  when no offering loads, the paywall never shows and never blocks the app.
+- **Build:** tracked in issue #83.
 
 **Acceptance**
 
 - [x] Placement decision recorded in this spec.
-- [ ] Paywall dismissible (close button) unless the decision says otherwise.
-- [ ] Plan rows are single select, with the selected row outlined. Savings badges are computed, not typed in.
-- [ ] Terms, Privacy and Restore links work.
-- [ ] Never interrupts the flow between 01 and 19.
-- [ ] Prices come from the store and are never hard-coded.
+- [x] Paywall dismissible (close button) unless the decision says otherwise.
+- [x] Plan rows are single select, with the selected row outlined. Savings badges are computed, not typed in.
+- [x] Terms, Privacy and Restore links work.
+- [x] Never interrupts the flow between 01 and 19.
+- [x] Prices come from the store and are never hard-coded.
 
 ---
 
