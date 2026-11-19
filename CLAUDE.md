@@ -44,6 +44,7 @@ or run `graphify explain "<symbol>"` before grepping or opening whole files.
 
 - Never commit to `master`. One issue = one branch = one PR. Branches: `feat/…`, `fix/…`, `chore/…`.
 - Push with an explicit branch (`git push -u origin HEAD`), never bare `git push`. Never force-push. Claude never merges PRs: CI's auto-merge does it once `verify` and `guidelines` pass.
+- Merge steward (`scripts/steward.mjs`, `steward.yml`) updates one ready PR at a time; it needs repo secret `MERGE_BOT_TOKEN` (no-ops without it), and only then turn on branch protection "require up to date".
 - Before saying a task is done, run `pnpm verify` and show its output. A Stop hook enforces this.
 - One screen or one fix per PR. Size doesn't matter; testability does: any change under `apps/mobile/src/{app,components,lib,hooks,services}`
   or `packages/shared` must ship with a Jest test or an `e2e/*.spec.ts` change.
