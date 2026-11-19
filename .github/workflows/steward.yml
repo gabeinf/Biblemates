@@ -22,12 +22,14 @@ jobs:
   steward:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    env:
-      GH_TOKEN: ${{ secrets.MERGE_BOT_TOKEN }}
-      GH_REPO: ${{ github.repository }}
     steps:
       - uses: actions/checkout@v4 # default branch only; never PR code, this job holds a secret
+        with:
+          ref: ${{ github.event.repository.default_branch }}
       - uses: actions/setup-node@v4
         with:
           node-version: 24
       - run: node scripts/steward.mjs
+        env:
+          GH_TOKEN: ${{ secrets.MERGE_BOT_TOKEN }}
+          GH_REPO: ${{ github.repository }}

@@ -56,7 +56,7 @@ function main() {
     '--json',
     'conclusion',
   )
-  const masterRed = run?.conclusion === 'failure'
+  const masterRed = ['failure', 'timed_out'].includes(run?.conclusion)
 
   const open = json('issue', 'list', '--label', 'master-red', '--state', 'open', '--json', 'number')
   if (masterRed && !open.length) {
@@ -64,6 +64,7 @@ function main() {
       'label',
       'create',
       'master-red',
+      '--force', // label survives a previous red; plain create would throw
       '--color',
       'B60205',
       '--description',
@@ -89,6 +90,8 @@ function main() {
     'list',
     '--state',
     'open',
+    '--limit',
+    '200',
     '--json',
     'number,isDraft,labels,autoMergeRequest,mergeStateStatus,createdAt,statusCheckRollup',
   )
