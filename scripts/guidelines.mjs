@@ -3,23 +3,23 @@
 import { execFileSync } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
 
-const MAX_LINES = 300
 const SELF = /^scripts\/guidelines\.(mjs|test\.mjs)$/
 const NOISE = /(^|\/)(pnpm-lock\.yaml|eslint-suppressions\.json)$|\.(png|jpe?g)$/i
-const LOGIC = /^(apps\/mobile\/src\/(lib|hooks|services)|packages\/shared\/src)\/.+\.tsx?$/
-const TEST = /\.test\.tsx?$/
+// Anything that can change behavior or pixels must come with something that measures it.
+const TESTABLE =
+  /^(apps\/mobile\/src\/(lib|hooks|services|app|components)|packages\/shared\/src)\/.+\.tsx?$/
+const TEST = /\.test\.tsx?$|^e2e\/.+\.spec\.ts$/
 const SKIPPED = /\b(?:it|test|describe)\.(?:skip|only)\b|\bx(?:it|describe)\(/
 const DEP_KEYS = ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']
 
+// Size is deliberately not a rule: what matters is that the change is measurable.
 // ctx: { branch, body, labels[], files[{path,add,del}], added{path:[line]}, newDeps[], suppressionsDelta }
 export function check(ctx) {
   const fails = []
   const real = ctx.files.filter((f) => !NOISE.test(f.path))
-  const lines = real.reduce((n, f) => n + f.add + f.del, 0)
 
   if (!/^(feat|fix|chore)\//.test(ctx.branch))
     fails.push(`branch "${ctx.branch}" must start with feat/, fix/ or chore/`)
-  if (lines > MAX_LINES) fails.push(`${lines} changed lines (max ~${MAX_LINES}): split the PR`)
   if (ctx.newDeps.length && !ctx.labels.includes('deps-approved'))
     fails.push(
       `new dependencies (${ctx.newDeps.join(', ')}): ask first, then add the "deps-approved" label`,
@@ -33,9 +33,9 @@ export function check(ctx) {
   if (addedText.some(([, ls]) => ls.some((l) => SKIPPED.test(l))))
     fails.push('adds a skipped or focused test')
 
-  const logic = real.filter((f) => LOGIC.test(f.path) && !TEST.test(f.path))
-  if (logic.length && !real.some((f) => TEST.test(f.path)))
-    fails.push(`logic changed (${logic[0].path}…) but no test file changed`)
+  const testable = real.filter((f) => TESTABLE.test(f.path) && !TEST.test(f.path))
+  if (testable.length && !real.some((f) => TEST.test(f.path)))
+    fails.push(`${testable[0].path} changed but no Jest test or e2e spec did`)
 
   if (real.some((f) => f.path.startsWith('design/reference/') && !f.path.endsWith('README.md')))
     fails.push('adds files under design/reference/ (kept local, never committed)')

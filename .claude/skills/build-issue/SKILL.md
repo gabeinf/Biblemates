@@ -27,7 +27,7 @@ Never work on `master`. One issue = one branch = one PR.
 
 ## 3. Build
 
-- Keep the change small: one screen or one fix. If it's heading past ~300 changed lines, stop, split it into a new issue, and say so.
+- One screen or one fix per PR. Size is not limited, but every UI or logic change needs a Jest test or e2e spec so CI can measure it.
 - Each step lives at its own route: `apps/mobile/src/app/(auth)/onboarding/<n>.tsx` → `/onboarding/<n>`. The `(auth)` group keeps it behind the signed-out guard.
 - Reuse components in `apps/mobile/src/components/` and tokens in `apps/mobile/src/theme/`.
 - Write original copy and visuals. Copy structure only from the reference, never its brand, wording or art.
