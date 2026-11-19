@@ -22,8 +22,7 @@ Copy in quotes is a draft. Tweak it freely, but keep the meaning.
 ## Shared rules (apply to every screen)
 
 - **Route:** step `N` lives at `apps/mobile/src/app/(auth)/onboarding/<N>.tsx` → `/onboarding/<N>`.
-  The join branch is `/onboarding/join`. Today's `(onboarding)/step-1.tsx` and `step-2.tsx`
-  get replaced (see "Flow wiring + persistence").
+  The join branch is `/onboarding/join`.
 - **Chrome:** steps 03–19 show the shared header: back button on the left and a progress bar
   that fills by step index. 01 and 02 have no header.
 - **Primary button:** one full-width primary button pinned to the bottom safe area. It is
@@ -31,7 +30,8 @@ Copy in quotes is a draft. Tweak it freely, but keep the meaning.
 - **State:** each step reads and writes the onboarding draft store (see wiring). Going back
   never loses an answer.
 - **Theme:** colors, spacing and type come only from `theme/tokens.ts`. Reuse `components/`
-  (`Button`, `AuthScreen`, `ScreenTitle`, `FadeIn`, `BackButton`, `ProgressBar`) before adding new ones.
+  (`Button`, `StepScreen`, `StepHeading`, `ChoiceRow`, `TextField`, `FadeIn`, `BackButton`, `ProgressBar`)
+  before adding new ones. Check `components/ui.tsx` and `components/onboarding*.tsx` first.
 - **A11y:** every tappable has an accessible label and a hit area of at least 44pt.
   Selection cards expose `accessibilityState.selected`.
 - **Screenshot:** `e2e/screens.spec.ts` captures each step as `artifacts/screenshots/onboarding-NN.png`.
