@@ -445,12 +445,24 @@ write the draft during `signUp`, or skip email confirmation for this flow).
 - **Purpose:** decide where, and whether, a paywall appears. Reference `IMG_2212` shows a
   plan-picker paywall (3 plan rows, the selected one outlined, savings badges, a feature
   checklist, and Terms / Privacy / Restore links) shown after onboarding, on top of the home screen.
-- **Decision needed:** placement (after 19, after the first completed reading, or on a gated
-  feature like the Scripture companion), plans, and the IAP provider (new dependency).
+- **Decision (placement):** the paywall appears **once, after the user's first completed reading**.
+  It never appears during the 01 to 19 flow (never between 01 and 19), not right after 19, and not
+  on a gated feature.
+- **Form:** a dismissible full-screen sheet with a close button. Closing it returns the user to
+  where they were, with nothing locked by that act alone.
+- **Plans:** rows are single select, with the selected row outlined. Savings badges are computed
+  from the store prices (for example, the per-period price of a longer plan against the shortest
+  one), never typed in. Prices always come from the store, never hard-coded. Terms, Privacy and
+  Restore links all work. Reference `IMG_2212` is for structure only; copy, plan names and visuals
+  are original.
+- **Not decided:** the IAP provider. It is a new dependency and needs a separate approval
+  (see Open questions, item 5) before any code. Plan lineup and feature checklist are also open.
+- **Build:** tracked in the follow-up issue "Paywall: build the plan-picker sheet", blocked on the
+  provider decision.
 
 **Acceptance**
 
-- [ ] Placement decision recorded in this spec.
+- [x] Placement decision recorded in this spec.
 - [ ] Paywall dismissible (close button) unless the decision says otherwise.
 - [ ] Plan rows are single select, with the selected row outlined. Savings badges are computed, not typed in.
 - [ ] Terms, Privacy and Restore links work.
