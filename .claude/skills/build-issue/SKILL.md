@@ -62,6 +62,6 @@ Fill every section of `.github/pull_request_template.md`:
 - `Closes #$ARGUMENTS`
 - Mark each spec checklist item ✅/❌ using the design-check result.
 - **Screenshots:** CI uploads `artifacts/screenshots/` as the `screenshots` build artifact. Link the workflow run and name the files; reference images are in `design/reference/onboarding/`.
-- **How verified:** paste the `verify summary` block from your last run.
+- **How verified:** leave the template line; CI `verify` is the proof.
 
 Finish by giving the PR URL and the final verify summary.

@@ -25,9 +25,7 @@ Closes #
 
 ## How verified
 
-```
-<!-- paste the "verify summary" block from `pnpm verify` -->
-```
+CI `verify` is the proof. Nothing to paste.
 
 - [ ] design-check: OVERALL: PASS
 - [ ] reviewer: VERDICT: PASS
