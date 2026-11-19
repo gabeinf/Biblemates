@@ -1,0 +1,33 @@
+# Merge steward (scripts/steward.mjs): keeps one ready PR current with master at a time.
+# Needs secret MERGE_BOT_TOKEN (fine-grained PAT or App token with contents + pull-requests +
+# issues write): GITHUB_TOKEN pushes fire no workflows. Without it, this job logs a notice and passes.
+name: steward
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+  workflow_run:
+    workflows: [verify, guidelines]
+    types: [completed]
+
+concurrency:
+  group: steward
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  steward:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.MERGE_BOT_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4 # default branch only; never PR code, this job holds a secret
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node scripts/steward.mjs

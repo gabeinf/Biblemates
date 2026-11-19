@@ -43,7 +43,12 @@ jobs:
         run: |
           gh label create gate:pass --color 0E8A16 --description "Scripted guidelines pass" --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
           gh pr edit "$PR" --add-label gate:pass --repo "$GITHUB_REPOSITORY"
-          gh pr merge "$PR" --auto --squash --repo "$GITHUB_REPOSITORY"
+      - name: Enable auto-merge
+        if: success()
+        # MERGE_BOT_TOKEN (when set) makes the merge fire the push verify run; see steward.yml.
+        env:
+          GH_TOKEN: ${{ secrets.MERGE_BOT_TOKEN || github.token }}
+        run: gh pr merge "$PR" --auto --squash --repo "$GITHUB_REPOSITORY"
       - name: Remove gate:pass and cancel auto-merge
         if: failure()
         run: |
