@@ -5,8 +5,16 @@ import { execFileSync } from 'node:child_process'
 import { pathToFileURL } from 'node:url'
 
 const FAILED = ['FAILURE', 'TIMED_OUT', 'CANCELLED', 'STARTUP_FAILURE', 'ERROR']
-const failed = (pr) =>
-  (pr.statusCheckRollup ?? []).some((c) => FAILED.includes(c.conclusion ?? c.state))
+// gh's rollup keeps superseded runs (a CANCELLED run then its rerun), so judge only the latest per check.
+const failed = (pr) => {
+  const latest = new Map()
+  for (const c of pr.statusCheckRollup ?? []) {
+    const key = c.name ?? c.context
+    const at = (x) => x.startedAt ?? x.completedAt ?? ''
+    if (!latest.has(key) || at(c) >= at(latest.get(key))) latest.set(key, c)
+  }
+  return [...latest.values()].some((c) => FAILED.includes(c.conclusion ?? c.state))
+}
 
 // pr: gh `pr list --json` shape. Returns { action: 'update' | 'none', pr?, reason }.
 export function pick(prs, masterRed) {
