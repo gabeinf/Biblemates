@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 export const colors = {
     paper: '#f3f2f2',
     Mat: '#eae9e9',
@@ -46,6 +48,8 @@ export const typography = {
         display: 'CormorantGaramond',
         body: 'Lora',
         bodyItalic: 'Lora-Italic',
+        /** System monospace, for codes. */
+        mono: Platform.select({ ios: 'Menlo', android: 'monospace', default: 'ui-monospace, Menlo, monospace' }),
     },
     fontSize: {
         caption: 12,

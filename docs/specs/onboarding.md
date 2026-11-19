@@ -212,7 +212,7 @@ Copy in quotes is a draft. Tweak it freely, but keep the meaning.
 - **Layout:** headline, a 6-character code field (auto-uppercase, monospace), helper text, and
   a primary button. Pasting a full invite link pulls the code out of it.
 - **Inputs:** invite code (6 chars, required).
-- **Buttons:** "Join circle" → validate the code and save the circle id to the draft → 13.
+- **Buttons:** "Join circle" → check the code format (6 hex characters, as `circles.invite_code` makes them) and save the code to the draft → 13. The circle itself is looked up when `join_circle` runs in 19.
 - **Note:** the actual `join_circle` RPC runs after sign-up in 19. Before auth we only show a
   preview lookup if one exists. Otherwise we validate the format and defer.
 
