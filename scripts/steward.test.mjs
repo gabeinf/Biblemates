@@ -41,3 +41,29 @@ test('conflicting or failing PRs do not block the queue', () => {
   ]
   assert.equal(pick(prs, false).pr.number, 3)
 })
+test('a superseded CANCELLED run does not block a newer SUCCESS of the same check', () => {
+  const statusCheckRollup = [
+    { name: 'guidelines', conclusion: 'CANCELLED', startedAt: '2026-11-19T17:44:25Z' },
+    { name: 'guidelines', conclusion: 'SUCCESS', startedAt: '2026-11-19T17:44:29Z' },
+    { name: 'verify', conclusion: 'SUCCESS', startedAt: '2026-11-19T17:44:20Z' },
+  ]
+  assert.equal(pick([pr(1, { statusCheckRollup })], false).pr.number, 1)
+  assert.equal(
+    pick([pr(1, { statusCheckRollup: [...statusCheckRollup].reverse() })], false).action,
+    'update',
+  )
+})
+test('a newer FAILURE after an older SUCCESS still blocks the PR', () => {
+  const statusCheckRollup = [
+    { name: 'verify', conclusion: 'FAILURE', startedAt: '2026-11-19T17:44:29Z' },
+    { name: 'verify', conclusion: 'SUCCESS', startedAt: '2026-11-19T17:44:25Z' },
+  ]
+  assert.equal(pick([pr(1, { statusCheckRollup })], false).action, 'none')
+})
+test('status contexts are keyed by context and fall back to completedAt', () => {
+  const statusCheckRollup = [
+    { context: 'ci/x', state: 'ERROR', completedAt: '2026-11-19T17:00:00Z' },
+    { context: 'ci/x', state: 'SUCCESS', completedAt: '2026-11-19T18:00:00Z' },
+  ]
+  assert.equal(pick([pr(1, { statusCheckRollup })], false).action, 'update')
+})
