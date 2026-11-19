@@ -9,6 +9,7 @@ import { Image } from 'react-native';
 import { currentDayNumber } from '../lib/study-day';
 import { supabase } from '../lib/supabase';
 import { useAuthContext, useUserId } from './use-auth-context';
+import { useShowPaywallAfterFirstReading } from './use-paywall';
 import * as circles from '../services/circles';
 import * as study from '../services/study';
 import * as refl from '../services/reflections';
@@ -149,11 +150,16 @@ export function useCompletions(csId: string | undefined) {
   });
 }
 
+/** Marking a study day as read is the app's "completed reading": it can open the one-time paywall. */
 export function useMarkDayComplete(csId: string) {
   const qc = useQueryClient();
   const userId = useUserId();
+  const showPaywall = useShowPaywallAfterFirstReading();
   return useMutation({
     mutationFn: (day: number) => study.markDayComplete(csId, day),
+    onSuccess: () => {
+      void showPaywall();
+    },
     onMutate: async (day) => {
       // Optimistic: the checkmark should feel instant.
       const key = qk.completions(csId);

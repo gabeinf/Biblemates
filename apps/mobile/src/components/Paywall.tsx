@@ -144,10 +144,16 @@ export default function Paywall({
           {`Renews${plan.period ? ` every ${plan.period}` : ''} at ${plan.price} until you cancel. Cancel any time in your store account settings.`}
         </Muted>
         <View style={styles.links}>
-          <Pressable accessibilityRole="link" onPress={() => Linking.openURL(termsUrl)}>
+          <Pressable
+            accessibilityRole="link"
+            onPress={() => Linking.openURL(termsUrl).catch(() => {})}
+          >
             <Text style={styles.link}>Terms</Text>
           </Pressable>
-          <Pressable accessibilityRole="link" onPress={() => Linking.openURL(privacyUrl)}>
+          <Pressable
+            accessibilityRole="link"
+            onPress={() => Linking.openURL(privacyUrl).catch(() => {})}
+          >
             <Text style={styles.link}>Privacy</Text>
           </Pressable>
           <Pressable accessibilityRole="button" disabled={busy} onPress={onRestore}>

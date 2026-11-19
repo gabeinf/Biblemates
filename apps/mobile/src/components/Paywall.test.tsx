@@ -111,7 +111,7 @@ describe('Paywall', () => {
   })
 
   it('wires subscribe, restore, Terms and Privacy', async () => {
-    const open = jest.spyOn(Linking, 'openURL').mockResolvedValue(undefined as never)
+    const open = jest.spyOn(Linking, 'openURL').mockResolvedValue(true as never)
     const { h } = await setup([plan()])
     await fireEvent.press(screen.getByText('Continue'))
     await fireEvent.press(screen.getByText('Restore'))

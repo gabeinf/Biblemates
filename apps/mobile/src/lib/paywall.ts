@@ -93,6 +93,7 @@ export function shortDate(d: Date): string {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
 }
 
+/** Per device, not per user: a second account on the same phone is not offered the sheet again. */
 export function hasSeenPaywall(): boolean {
   try {
     return globalThis.localStorage?.getItem(SEEN_KEY) === '1'
