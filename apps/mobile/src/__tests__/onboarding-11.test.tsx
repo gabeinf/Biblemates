@@ -9,7 +9,9 @@ jest.mock('../hooks/use-onboarding', () => ({
 }))
 
 describe('11 · Stakes rules', () => {
-  beforeEach(() => mockGoNext.mockClear())
+  beforeEach(() => {
+    mockGoNext.mockClear()
+  })
 
   it('shows the three outcomes in order', async () => {
     await render(<StakesRules />)
