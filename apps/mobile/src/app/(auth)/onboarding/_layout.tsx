@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import ProgressBar from '../../../components/ProgressBar'
 import { BackButton } from '../../../components/onboarding'
 import { markLaunchHandled, useCurrentStep, useOnboardingNav } from '../../../hooks/use-onboarding'
-import { updateDraft, useOnboardingDraft } from '../../../lib/onboarding-draft'
+import { useOnboardingDraft } from '../../../lib/onboarding-draft'
 import { hasHeader, progress } from '../../../lib/onboarding-flow'
 import { colors, spacing } from '../../../theme/tokens'
 
@@ -17,12 +17,12 @@ export default function OnboardingLayout() {
 
   useEffect(markLaunchHandled, [])
 
-  // Android back: let the stack pop when it can; with no history (cold resume, deep
+  // Android back: let the stack pop when it can; with no history (a deep
   // link) go to the previous step like the header button, instead of leaving the app.
   useEffect(() => {
     if (Platform.OS !== 'android') return
     const sub = BackHandler.addEventListener('hardwareBackPress', () => {
-      // The splash has nowhere to go back to, and leaving it would skip the resume.
+      // The splash moves on by itself; back there would leave mid-launch.
       if (step === 1) return true
       // The hook (02) is where the flow starts, so back leaves the app as usual.
       if (step === 2) return false
@@ -32,12 +32,6 @@ export default function OnboardingLayout() {
     })
     return () => sub.remove()
   }, [router, goBack, step])
-
-  // Remember where the user is so a restart resumes here. The splash (01) doesn't save:
-  // it reads the saved step to resume, so writing 1 would wipe it.
-  useEffect(() => {
-    if (step !== null && step !== 1) updateDraft({ step })
-  }, [step])
 
   const showHeader = step !== null && hasHeader(step)
 
@@ -55,7 +49,11 @@ export default function OnboardingLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          animation: 'slide_from_right',
+          // Onboarding never slides: each step fades in and its content eases in after
+          // it (FadeIn), so the flow reads as one continuous moment, splash included.
+          animation: 'fade',
+          // iOS swipe-back also crossfades instead of falling back to the default slide.
+          animationMatchesGesture: true,
           contentStyle: { backgroundColor: colors.paper },
         }}
       />

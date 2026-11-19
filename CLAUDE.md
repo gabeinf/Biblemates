@@ -67,3 +67,48 @@ New errors fail verify. When you fix suppressed errors in a file you're touching
 <!-- When the human corrects a repeated mistake, add a one-line rule here: what to do, and why. -->
 
 - (none yet)
+
+## Keyboard-aware layouts (required)
+
+Applies to: any screen or sheet that contains a TextInput AND any bottom-anchored
+element (footer button, CTA, toolbar, input bar, tab bar).
+
+Requirements:
+
+1. The footer must stay visible and tappable above the on-screen keyboard on BOTH
+   iOS and Android. It must never be covered by or hidden behind the keyboard.
+2. The footer must move with the keyboard frame by frame, using the keyboard's own
+   timing. Don't snap it into place after the keyboard finishes opening.
+3. The focused input must never be hidden behind the footer. Scrollable content
+   must reserve space equal to the footer height plus spacing.
+4. Safe area: when the keyboard is closed, the footer respects the bottom safe-area
+   inset. When the keyboard is open, drop that inset so there's no gap.
+5. Tapping the footer button while the keyboard is open must work on the first tap.
+   Set keyboardShouldPersistTaps="handled" on scroll containers.
+6. Keyboard height is NOT fixed while the keyboard is open. On iOS it changes
+   when the QuickType/AutoFill suggestion bar appears or disappears (for example,
+   when focus moves to a password or one-time-code field), when the user switches
+   to the emoji or a third-party keyboard, and when an inputAccessoryView is
+   present. The footer and scroll offset must react to every height change,
+   not just to the keyboard opening and closing.
+
+Implementation (use this, don't improvise):
+
+- Use react-native-keyboard-controller. The app root is wrapped in <KeyboardProvider>.
+- Footer: wrap it in <KeyboardStickyView offset={{ closed: 0, opened: insets.bottom }}>.
+- Content: use <KeyboardAwareScrollView bottomOffset={footerHeight + 16}>.
+- If you need custom animation, drive it from useReanimatedKeyboardAnimation()
+  (or Reanimated's useAnimatedKeyboard) on the UI thread.
+
+Never:
+
+- Pin a footer with position: 'absolute', bottom: 0 without a keyboard offset.
+- Animate from Keyboard.addListener + setState (it causes lag and a jump).
+- Rely on KeyboardAvoidingView alone for a sticky footer (it behaves inconsistently
+  on Android, especially with edge-to-edge layouts).
+- Read the keyboard height once on show and store it in state or a constant.
+- Hardcode a keyboard height or a "suggestion bar" offset.
+
+Before you finish, check: "If the keyboard opens on this screen, where does the
+footer go, and can I still see the focused input?" If you can't answer both,
+the screen isn't done.
