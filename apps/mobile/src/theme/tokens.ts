@@ -10,6 +10,8 @@ export const colors = {
     goldSoft: '#B6833522',
     success: '#4F7A4A',
     danger: '#A3402E',
+    /** Owes-something outcomes: amber, darker than Gold so it reads as a warning. */
+    warning: '#9A5B13',
     /** Launch splash. `splash` must match the expo-splash-screen backgroundColor in app.json. */
     splash: '#F7C341',
     splashLight: '#FCE3A0',
