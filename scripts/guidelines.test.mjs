@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
-import { check } from './guidelines.mjs'
+import { readFileSync } from 'node:fs'
+import { check, findOverlap, sharedMatcher } from './guidelines.mjs'
 
 const ok = {
   branch: 'feat/x',
@@ -43,3 +44,46 @@ test('eslint-disable and .skip are caught', () =>
     check({ ...ok, added: { 'a.ts': ['// eslint-disable-next-line', "it.skip('x')"] } }).length,
     2,
   ))
+
+const shared = sharedMatcher(
+  readFileSync(new URL('../.claude/skills/clear-issues/SKILL.md', import.meta.url), 'utf8'),
+)
+test('shared surface is read from the clear-issues skill', () => {
+  for (const p of [
+    'package.json',
+    'pnpm-lock.yaml',
+    'packages/shared/src/a/b.ts',
+    'apps/mobile/src/app/(auth)/onboarding/_layout.tsx',
+    'apps/mobile/src/theme/tokens.ts',
+  ])
+    assert.ok(shared(p), p)
+  for (const p of ['apps/mobile/src/app/(auth)/onboarding/5.tsx', 'apps/mobile/package.json'])
+    assert.ok(!shared(p), p)
+  assert.throws(() => sharedMatcher('# nothing'))
+})
+test('disjoint PRs are unaffected', () =>
+  assert.deepEqual(
+    findOverlap({ number: 5, files: ['a'] }, [{ number: 2, files: ['b'] }], shared),
+    {
+      overlaps: [],
+      fails: [],
+    },
+  ))
+test('plain overlap is reported but never fails', () => {
+  const r = findOverlap(
+    { number: 5, files: ['a', 'b'] },
+    [{ number: 2, files: ['b', 'c'] }],
+    shared,
+  )
+  assert.deepEqual(r, { overlaps: [{ number: 2, files: ['b'] }], fails: [] })
+})
+test('shared-surface overlap fails unless this PR is the oldest', () => {
+  const files = ['package.json', 'x.ts']
+  const others = [
+    { number: 2, files: ['package.json'] },
+    { number: 9, files: ['package.json'] },
+  ]
+  assert.equal(findOverlap({ number: 5, files }, others, shared).fails.length, 1) // #2 is older
+  assert.deepEqual(findOverlap({ number: 1, files }, others, shared).fails, []) // oldest wins
+  assert.deepEqual(findOverlap({ number: 5, files }, [{ number: 5, files }], shared).overlaps, [])
+})
