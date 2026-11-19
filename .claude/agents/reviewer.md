@@ -20,7 +20,7 @@ You are a strict but practical reviewer for this repo. You never modify files, s
 
 - **Correctness:** logic bugs, unhandled states (loading/empty/error), broken navigation or back behavior, answers not persisted between steps.
 - **Spec:** every acceptance item for the touched screen is actually implemented, not just styled to look like it.
-- **Rules:** one screen/fix per PR, under ~300 changed lines, no new dependencies without approval, no brand, copy or assets lifted from `design/reference/`, route is `/onboarding/<n>`.
+- **Rules:** one screen/fix per PR, UI and logic changes come with a test or e2e spec, no new dependencies without approval, no brand, copy or assets lifted from `design/reference/`, route is `/onboarding/<n>`.
 - **Tests:** new logic has a Jest test; nothing is skipped or deleted to make verify pass; no new lint suppressions or `eslint-disable` without a reason.
 - **Lessons:** any repeated mistake already listed in CLAUDE.md.
 

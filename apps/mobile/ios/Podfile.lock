@@ -1455,6 +1455,53 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - react-native-keyboard-controller (1.22.7):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-cxxstableapi
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - react-native-keyboard-controller/common (= 1.22.7)
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
+  - react-native-keyboard-controller/common (1.22.7):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-cxxstableapi
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - react-native-safe-area-context (5.11.1):
     - hermes-engine
     - RCTRequired
@@ -2201,7 +2248,7 @@ DEPENDENCIES:
   - boost (from `build/rndeps-facades/boost`)
   - DoubleConversion (from `build/rndeps-facades/DoubleConversion`)
   - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@58.0.16_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-col_7b734cd8c7d74270975b64fee9857a10/node_modules/expo-constants/ios`)"
-  - "Expo (from `../../../node_modules/.pnpm/expo@58.0.25_@babel+core@7.29.7_supports-color@8.1.1__@expo+dom-webview@58.0.2_@expo+me_997665703d28140ddb1b3dff295d9d18/node_modules/expo`)"
+  - "Expo (from `../../../node_modules/.pnpm/expo@58.0.25_@babel+core@7.29.7_supports-color@8.1.1__@expo+dom-webview@58.0.2_@expo+me_282e7e2004414f22a066226368fe01f1/node_modules/expo`)"
   - "ExpoApplication (from `../../../node_modules/.pnpm/expo-application@58.1.2_expo@58.0.25/node_modules/expo-application/ios`)"
   - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@58.0.21_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-color@8_cab4b7e539a94ce47030f065ae74d3fa/node_modules/expo-asset/ios`)"
   - "ExpoClipboard (from `../../../node_modules/.pnpm/expo-clipboard@58.0.4_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-colo_a3d418d1bf82476ad818048b0939bd50/node_modules/expo-clipboard/ios`)"
@@ -2220,12 +2267,12 @@ DEPENDENCIES:
   - "ExpoModulesWorklets (from `../../../node_modules/.pnpm/expo-modules-core@58.1.0_react-native-worklets@0.13.0_@babel+core@7.29.7_supports-color_f012ed63c7ad04cfbb39931ca817dabd/node_modules/expo-modules-core/ExpoModulesWorklets.podspec`)"
   - "ExpoModulesWorkletsAdapter (from `../../../node_modules/.pnpm/expo-modules-core@58.1.0_react-native-worklets@0.13.0_@babel+core@7.29.7_supports-color_f012ed63c7ad04cfbb39931ca817dabd/node_modules/expo-modules-core`)"
   - "ExpoNotifications (from `../../../node_modules/.pnpm/expo-notifications@58.1.9_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-_7d48e8de830bd038a9a12b7e5d5f990a/node_modules/expo-notifications/ios`)"
-  - "ExpoRouter (from `../../../node_modules/.pnpm/expo-router@58.0.31_ef3d35d6d0b57e5bbc6e98671fd3a8a9/node_modules/expo-router/ios`)"
+  - "ExpoRouter (from `../../../node_modules/.pnpm/expo-router@58.0.31_618be063f4e4345471bffe5c40817737/node_modules/expo-router/ios`)"
   - "ExpoSecureStore (from `../../../node_modules/.pnpm/expo-secure-store@58.0.3_expo@58.0.25/node_modules/expo-secure-store/ios`)"
   - "ExpoSplashScreen (from `../../../node_modules/.pnpm/expo-splash-screen@58.0.14_expo@58.0.25_supports-color@8.1.1_typescript@6.0.3/node_modules/expo-splash-screen/ios`)"
   - "ExpoSQLite (from `../../../node_modules/.pnpm/expo-sqlite@58.0.17_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-color@_dedf53ce84541f60a51800f9df6cdc2c/node_modules/expo-sqlite/ios`)"
   - "ExpoStatusBar (from `../../../node_modules/.pnpm/expo-status-bar@58.0.5_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-col_875dff6b4a9dee084eb29c57f1ff2444/node_modules/expo-status-bar/ios`)"
-  - "ExpoSystemUI (from `../../../node_modules/.pnpm/expo-system-ui@58.0.7_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-colo_64bb548002d659f4252672b0e9f6ef47/node_modules/expo-system-ui/ios`)"
+  - "ExpoSystemUI (from `../../../node_modules/.pnpm/expo-system-ui@58.0.7_expo@58.0.25_react-native-web@0.21.4_react-dom@19.3.0_react@19.3._40bbef3550ce992a9a1757f169a49017/node_modules/expo-system-ui/ios`)"
   - fast_float (from `build/rndeps-facades/fast_float`)
   - FBLazyVector (from `build/rncore-facades/FBLazyVector`)
   - fmt (from `build/rndeps-facades/fmt`)
@@ -2272,6 +2319,7 @@ DEPENDENCIES:
   - "React-Mapbuffer (from `../../../node_modules/.pnpm/react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1__@react-native+metro-config_9529ca47ba526b359c681ed0b6ccb3cf/node_modules/react-native/ReactCommon`)"
   - "React-microtasksnativemodule (from `../../../node_modules/.pnpm/react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1__@react-native+metro-config_9529ca47ba526b359c681ed0b6ccb3cf/node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)"
   - "React-mutationobservernativemodule (from `../../../node_modules/.pnpm/react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1__@react-native+metro-config_9529ca47ba526b359c681ed0b6ccb3cf/node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver`)"
+  - "react-native-keyboard-controller (from `../../../node_modules/.pnpm/react-native-keyboard-controller@1.22.7_react-native-reanimated@4.7.1_react-native-work_2d9f52646a319990780ed51abf3895da/node_modules/react-native-keyboard-controller`)"
   - "react-native-safe-area-context (from `../../../node_modules/.pnpm/react-native-safe-area-context@5.11.1_react-native@0.88.1_@babel+core@7.29.7_supports-c_3e761bdd78dd5b26c96a43c2a3ab6455/node_modules/react-native-safe-area-context`)"
   - "React-NativeModulesApple (from `../../../node_modules/.pnpm/react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1__@react-native+metro-config_9529ca47ba526b359c681ed0b6ccb3cf/node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)"
   - "React-networking (from `../../../node_modules/.pnpm/react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1__@react-native+metro-config_9529ca47ba526b359c681ed0b6ccb3cf/node_modules/react-native/ReactCommon/react/networking`)"
@@ -2326,7 +2374,7 @@ EXTERNAL SOURCES:
   EXConstants:
     :path: "../../../node_modules/.pnpm/expo-constants@58.0.16_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-col_7b734cd8c7d74270975b64fee9857a10/node_modules/expo-constants/ios"
   Expo:
-    :path: "../../../node_modules/.pnpm/expo@58.0.25_@babel+core@7.29.7_supports-color@8.1.1__@expo+dom-webview@58.0.2_@expo+me_997665703d28140ddb1b3dff295d9d18/node_modules/expo"
+    :path: "../../../node_modules/.pnpm/expo@58.0.25_@babel+core@7.29.7_supports-color@8.1.1__@expo+dom-webview@58.0.2_@expo+me_282e7e2004414f22a066226368fe01f1/node_modules/expo"
   ExpoApplication:
     :path: "../../../node_modules/.pnpm/expo-application@58.1.2_expo@58.0.25/node_modules/expo-application/ios"
   ExpoAsset:
@@ -2364,7 +2412,7 @@ EXTERNAL SOURCES:
   ExpoNotifications:
     :path: "../../../node_modules/.pnpm/expo-notifications@58.1.9_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-_7d48e8de830bd038a9a12b7e5d5f990a/node_modules/expo-notifications/ios"
   ExpoRouter:
-    :path: "../../../node_modules/.pnpm/expo-router@58.0.31_ef3d35d6d0b57e5bbc6e98671fd3a8a9/node_modules/expo-router/ios"
+    :path: "../../../node_modules/.pnpm/expo-router@58.0.31_618be063f4e4345471bffe5c40817737/node_modules/expo-router/ios"
   ExpoSecureStore:
     :path: "../../../node_modules/.pnpm/expo-secure-store@58.0.3_expo@58.0.25/node_modules/expo-secure-store/ios"
   ExpoSplashScreen:
@@ -2374,7 +2422,7 @@ EXTERNAL SOURCES:
   ExpoStatusBar:
     :path: "../../../node_modules/.pnpm/expo-status-bar@58.0.5_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-col_875dff6b4a9dee084eb29c57f1ff2444/node_modules/expo-status-bar/ios"
   ExpoSystemUI:
-    :path: "../../../node_modules/.pnpm/expo-system-ui@58.0.7_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-colo_64bb548002d659f4252672b0e9f6ef47/node_modules/expo-system-ui/ios"
+    :path: "../../../node_modules/.pnpm/expo-system-ui@58.0.7_expo@58.0.25_react-native-web@0.21.4_react-dom@19.3.0_react@19.3._40bbef3550ce992a9a1757f169a49017/node_modules/expo-system-ui/ios"
   fast_float:
     :path: build/rndeps-facades/fast_float
   FBLazyVector:
@@ -2466,6 +2514,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1__@react-native+metro-config_9529ca47ba526b359c681ed0b6ccb3cf/node_modules/react-native/ReactCommon/react/nativemodule/microtasks"
   React-mutationobservernativemodule:
     :path: "../../../node_modules/.pnpm/react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1__@react-native+metro-config_9529ca47ba526b359c681ed0b6ccb3cf/node_modules/react-native/ReactCommon/react/nativemodule/mutationobserver"
+  react-native-keyboard-controller:
+    :path: "../../../node_modules/.pnpm/react-native-keyboard-controller@1.22.7_react-native-reanimated@4.7.1_react-native-work_2d9f52646a319990780ed51abf3895da/node_modules/react-native-keyboard-controller"
   react-native-safe-area-context:
     :path: "../../../node_modules/.pnpm/react-native-safe-area-context@5.11.1_react-native@0.88.1_@babel+core@7.29.7_supports-c_3e761bdd78dd5b26c96a43c2a3ab6455/node_modules/react-native-safe-area-context"
   React-NativeModulesApple:
@@ -2631,6 +2681,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 50c4d7a1ff3f18413cbaf897c8b5ce46baa491b3
   React-microtasksnativemodule: 0207d6133274a7cbfc3d0dae326e3055c8cfcf9e
   React-mutationobservernativemodule: b97a67c29f724d18a92379e7390f24350acb433a
+  react-native-keyboard-controller: b0f7a2c7e3741625fcb3805ffbfcb3743df4c81e
   react-native-safe-area-context: 56700b839169ce88ffcec68c40447916fe512462
   React-NativeModulesApple: 8cfb2f308f48c48068c96b932e7f0e4297c23342
   React-networking: 3325cf73ecbdaacab0da91260b094baf36061a56
