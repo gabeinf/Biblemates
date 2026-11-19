@@ -6,14 +6,25 @@ import { pathToFileURL } from 'node:url'
 
 const FAILED = ['FAILURE', 'TIMED_OUT', 'CANCELLED', 'STARTUP_FAILURE', 'ERROR']
 // gh's rollup keeps superseded runs (a CANCELLED run then its rerun), so judge only the latest per check.
-const failed = (pr) => {
+const latestChecks = (pr) => {
   const latest = new Map()
   for (const c of pr.statusCheckRollup ?? []) {
     const key = c.name ?? c.context
-    const at = (x) => x.startedAt ?? x.completedAt ?? ''
+    const at = (x) => x.startedAt || x.completedAt || '\uffff' // not started yet = newest
     if (!latest.has(key) || at(c) >= at(latest.get(key))) latest.set(key, c)
   }
-  return [...latest.values()].some((c) => FAILED.includes(c.conclusion ?? c.state))
+  return [...latest.values()]
+}
+const failed = (pr) => latestChecks(pr).some((c) => FAILED.includes(c.conclusion ?? c.state))
+
+// Infra flakes (not a real failure of the code): worth one rerun of just the failed job.
+const FLAKY = ['CANCELLED', 'TIMED_OUT', 'STARTUP_FAILURE']
+// Run ids of this PR's latest-per-check flakes. Status contexts have no run id in detailsUrl: skipped.
+export function flakyRuns(pr) {
+  const ids = latestChecks(pr)
+    .filter((c) => FLAKY.includes(c.conclusion))
+    .map((c) => /\/actions\/runs\/(\d+)/.exec(c.detailsUrl ?? '')?.[1])
+  return [...new Set(ids.filter(Boolean))]
 }
 
 // pr: gh `pr list --json` shape. Returns { action: 'update' | 'none', pr?, reason }.
@@ -103,6 +114,18 @@ function main() {
     '--json',
     'number,isDraft,labels,autoMergeRequest,mergeStateStatus,createdAt,statusCheckRollup',
   )
+  // One rerun per run: attempt > 1 means it was already rerun, so a second failure is left for /fix-ci.
+  for (const id of new Set(prs.flatMap(flakyRuns))) {
+    try {
+      if (json('run', 'view', id, '--json', 'attempt').attempt > 1) continue
+      gh('run', 'rerun', id, '--failed')
+      console.log(`steward: reran failed jobs of run ${id}`)
+    } catch (e) {
+      console.log(
+        `steward: could not rerun run ${id}: ${(e.stderr || e.message).toString().trim().split('\n')[0]}`,
+      ) // e.g. run still in progress
+    }
+  }
   const r = pick(prs, masterRed)
   console.log(`steward: ${r.action}: ${r.reason}`)
   if (r.action === 'update') gh('pr', 'update-branch', String(r.pr.number))

@@ -76,7 +76,7 @@ New errors fail verify. When you fix suppressed errors in a file you're touching
 
 <!-- When the human corrects a repeated mistake, add a one-line rule here: what to do, and why. -->
 
-- (none yet)
+- 2026-11-19: chore with no issue: create one first (`gh issue create`); guidelines requires `Closes #N`.
 
 ## Keyboard-aware layouts (required)
 

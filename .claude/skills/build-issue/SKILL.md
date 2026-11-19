@@ -10,6 +10,7 @@ Follow these steps in order. Don't skip any.
 
 ## 1. Understand
 
+- No issue number (a chore or fix with no issue)? Create one first: `gh issue create --title "<title>" --body "<why>"`, and use its number as `#N` everywhere below. The PR body needs `Closes #N` or the `guidelines` gate fails.
 - `gh issue view $ARGUMENTS`: read the body and acceptance checklist.
 - Read only your screen's section plus "Shared rules", never the whole 480-line spec:
   `sed -n '/^## Shared rules/,/^## 01 /p;/^## <NN> /,/^## <NN+1> /p' docs/specs/onboarding.md`
@@ -70,4 +71,6 @@ Fill every section of `.github/pull_request_template.md`:
 - **Screenshots:** CI uploads `artifacts/screenshots/` as the `screenshots` build artifact. Link the workflow run and name the files; reference images are in `design/reference/onboarding/`.
 - **How verified:** leave the template line; CI `verify` is the proof.
 
-Finish by giving the PR URL and the final verify summary.
+## 7. Watch it
+
+Right after opening the PR, call `watch_pull_request` on it. If a check goes red, run `/fix-ci` yourself; don't wait for the user to ask. Never merge: CI's auto-merge does it. Give the PR URL and the final verify summary.

@@ -87,3 +87,30 @@ test('shared-surface overlap fails unless this PR is the oldest', () => {
   assert.deepEqual(findOverlap({ number: 1, files }, others, shared).fails, []) // oldest wins
   assert.deepEqual(findOverlap({ number: 5, files }, [{ number: 5, files }], shared).overlaps, [])
 })
+
+test('every failure line names its remedy, with the PR number filled in', () => {
+  const bad = {
+    ...ok,
+    pr: '7',
+    branch: 'wip',
+    body: 'nothing\n- [ ] x ❌',
+    files: [{ path: 'apps/mobile/src/lib/a.ts', add: 4, del: 0 }],
+    newDeps: ['left-pad'],
+    suppressionsDelta: 1,
+    added: { 'a.ts': ['// eslint-disable-next-line', "it.skip('x')"] },
+  }
+  const fails = check(bad)
+  assert.equal(fails.length, 9)
+  for (const f of fails) assert.match(f, / \| fix: /, f)
+  assert.ok(
+    fails.some((f) => f.includes('gh issue create') && f.includes('gh pr edit 7 --body-file')),
+  )
+})
+test('overlap failure tells how to proceed', () => {
+  const { fails } = findOverlap(
+    { number: 5, files: ['package.json'] },
+    [{ number: 2, files: ['package.json'] }],
+    shared,
+  )
+  assert.match(fails[0], / \| fix: .*gh pr update-branch/)
+})

@@ -1,6 +1,7 @@
 # Merge steward (scripts/steward.mjs): keeps one ready PR current with master at a time.
 # Needs secret MERGE_BOT_TOKEN (fine-grained PAT or App token with contents + pull-requests +
-# issues write): GITHUB_TOKEN pushes fire no workflows. Without it, this job logs a notice and passes.
+# issues + actions write, to rerun cancelled jobs): GITHUB_TOKEN pushes fire no workflows.
+# Without it, this job logs a notice and passes.
 name: steward
 
 on:

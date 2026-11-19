@@ -50,6 +50,7 @@ Drop an issue if a PR (open or merged) closes it, or a worktree/branch is alread
 
 - **Master green** = the latest `verify` run on master has `conclusion: success` and its `headSha` equals `git rev-parse origin/master`. Auto-merges fire no push run (see `verify.yml`), so after merges a SHA mismatch or in-progress run means unverified: wait for the hourly run. Red: launch `/fix-ci` on master first and wait.
 - One worktree thread per issue, from `origin/master`, running `/build-issue <N>`. Never launch two on the same file.
+- Call `watch_pull_request` on every PR a builder opens (read them from `gh pr list`), so you are woken if the builder thread is gone. On a red check, run `/fix-ci` on that PR or launch a builder for it (one worktree, from the PR branch); don't wait for the user.
 - Don't poll builders. Next wave starts when the previous wave's PRs have merged (`gh pr list --state merged`) and master is green again (same check).
 
 ## Rules
