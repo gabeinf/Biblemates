@@ -16,23 +16,28 @@ const ok = {
 }
 
 test('clean PR passes', () => assert.deepEqual(check(ok), []))
-test('bad branch, big diff, logic without test, new dep, open box all fail', () => {
+test('bad branch, logic without test, new dep, open box all fail', () => {
   const bad = {
     ...ok,
     branch: 'wip',
     body: 'nothing\n- [ ] x',
-    files: [{ path: 'apps/mobile/src/lib/a.ts', add: 400, del: 0 }],
+    files: [{ path: 'apps/mobile/src/lib/a.ts', add: 4, del: 0 }],
     newDeps: ['left-pad'],
   }
-  assert.equal(check(bad).length, 6)
+  assert.equal(check(bad).length, 5)
 })
 test('deps-approved label allows new deps', () =>
   assert.deepEqual(check({ ...ok, newDeps: ['x'], labels: ['deps-approved'] }), []))
-test('lockfile and suppressions do not count as lines', () =>
+test('size is not a rule', () =>
+  assert.deepEqual(check({ ...ok, files: [{ ...ok.files[0], add: 5000 }, ok.files[1]] }), []))
+test('UI change needs a test, and an e2e spec counts', () => {
+  const ui = { path: 'apps/mobile/src/app/(auth)/onboarding/5.tsx', add: 50, del: 0 }
+  assert.equal(check({ ...ok, files: [ui] }).length, 1)
   assert.deepEqual(
-    check({ ...ok, files: [...ok.files, { path: 'pnpm-lock.yaml', add: 900, del: 0 }] }),
+    check({ ...ok, files: [ui, { path: 'e2e/screens.spec.ts', add: 2, del: 0 }] }),
     [],
-  ))
+  )
+})
 test('eslint-disable and .skip are caught', () =>
   assert.equal(
     check({ ...ok, added: { 'a.ts': ['// eslint-disable-next-line', "it.skip('x')"] } }).length,
