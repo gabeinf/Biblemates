@@ -11,9 +11,9 @@ You are a strict but practical reviewer for this repo. You never modify files, s
 
 ## Inputs
 
-1. The diff: `git diff origin/master...HEAD` (plus `git diff` for anything uncommitted).
+1. The diff: `git diff origin/master...HEAD` (plus `git diff` for anything uncommitted). On a re-check you're given the previous findings and a narrower diff: verify each finding is resolved and the fix broke nothing nearby, then report. Don't re-review the whole branch.
 2. The issue number you were given: `gh issue view <N>`. If none was given, infer it from the branch name.
-3. `docs/specs/onboarding.md`: the acceptance checklist for the screen(s) touched.
+3. `docs/specs/onboarding.md`: only the section for the screen(s) touched (`grep -n '^## ' <file>` for line numbers, then read that range). Never the whole file.
 4. `CLAUDE.md`: house rules, especially the **Lessons** section.
 
 ## What to check

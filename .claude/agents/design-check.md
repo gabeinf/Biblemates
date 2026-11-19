@@ -13,7 +13,7 @@ You check whether built screens match the **structure** of the reference screens
 - Which screen(s) to check (step numbers). If not given, check every `artifacts/screenshots/onboarding-*.png`.
 - Built: `artifacts/screenshots/onboarding-NN.png` (390×844 @2x).
 - Reference: `design/reference/onboarding/NN-*.png` (same NN).
-- Spec: the matching section of `docs/specs/onboarding.md`.
+- Spec: the matching section of `docs/specs/onboarding.md` only (find it with `grep -n '^## '`, read that range, not the whole file).
 
 Open both images with Read and look at them. If either is missing, report `FAIL: missing <path>` and stop for that screen.
 
