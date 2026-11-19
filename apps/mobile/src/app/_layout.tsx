@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider, focusManager } from "@tanstack/react-
 import { AppState } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import { useAuthContext } from "../hooks/use-auth-context";
 import AuthProvider from "../providers/auth-provider";
 import AnimatedSplash from "../components/AnimatedSplash";
@@ -70,13 +71,16 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <StatusBar style="dark" />
-          <RootNavigator />
-          <AnimatedSplash />
-        </AuthProvider>
-      </QueryClientProvider>
+      {/* Keyboard-aware layouts (sticky footers, scroll-to-input) need this at the root. See CLAUDE.md. */}
+      <KeyboardProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <StatusBar style="dark" />
+            <RootNavigator />
+            <AnimatedSplash />
+          </AuthProvider>
+        </QueryClientProvider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   )
 }

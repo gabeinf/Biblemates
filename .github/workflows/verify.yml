@@ -1,10 +1,13 @@
-# Runs `pnpm verify` on every PR and uploads the screenshots. Not on pushes to master: the PR run
-# already tested the merged result (branch protection requires up-to-date branches).
+# Runs `pnpm verify` on every PR and on pushes to master, and uploads the screenshots.
+# The master run is the safety net: PRs merge without being up to date, so it catches two
+# individually-green PRs that break each other.
 # The job is named `verify`: make it a required check in branch protection.
 name: verify
 
 on:
   pull_request:
+  push:
+    branches: [master]
 
 concurrency:
   group: verify-${{ github.ref }}
