@@ -29,4 +29,4 @@ CI `verify` is the proof. Nothing to paste.
 
 - [ ] design-check: OVERALL: PASS
 - [ ] reviewer: VERDICT: PASS
-- [ ] Under ~300 changed lines, no new dependencies (or approved in the issue)
+- [ ] No new dependencies (or approved in the issue)
