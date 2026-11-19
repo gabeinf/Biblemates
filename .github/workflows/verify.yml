@@ -1,4 +1,6 @@
-# Runs `pnpm verify` on every PR (and on pushes to master) and uploads the screenshots.
+# Runs `pnpm verify` on every PR and on pushes to master, and uploads the screenshots.
+# The master run is the safety net: PRs merge without being up to date, so it catches two
+# individually-green PRs that break each other.
 # The job is named `verify`: make it a required check in branch protection.
 name: verify
 
