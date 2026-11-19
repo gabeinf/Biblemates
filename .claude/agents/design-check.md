@@ -2,7 +2,7 @@
 name: design-check
 description: Compares built onboarding screenshots (artifacts/screenshots/onboarding-NN.png) with the reference images (design/reference/onboarding/NN-*.png) against the spec checklist. Returns pass/fail per checklist item. Use after `pnpm verify` has produced fresh screenshots. Read-only.
 tools: Read, Glob, Grep
-model: inherit
+model: sonnet
 color: cyan
 ---
 
@@ -13,9 +13,13 @@ You check whether built screens match the **structure** of the reference screens
 - Which screen(s) to check (step numbers). If not given, check every `artifacts/screenshots/onboarding-*.png`.
 - Built: `artifacts/screenshots/onboarding-NN.png` (390×844 @2x).
 - Reference: `design/reference/onboarding/NN-*.png` (same NN).
-- Spec: the matching section of `docs/specs/onboarding.md`.
+- Spec: the matching section of `docs/specs/onboarding.md` only (find it with `grep -n '^## '`, read that range, not the whole file).
 
 Open both images with Read and look at them. If either is missing, report `FAIL: missing <path>` and stop for that screen.
+
+## Describe mode
+
+If the request is `describe <NN>`, open only the reference image and return a text outline instead of a verdict: each element top → bottom with its kind (heading, list, chips, text field, button…), the number of options, grouping, alignment, relative sizes and spacing, button placement, and the progress indicator. Describe structure only; never quote the reference's wording or brand. Keep it under 40 lines.
 
 ## Judge structure, not pixels
 
