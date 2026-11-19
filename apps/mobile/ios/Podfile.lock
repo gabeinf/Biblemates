@@ -107,6 +107,8 @@ PODS:
     - ExpoModulesCore
   - ExpoStatusBar (58.0.5):
     - ExpoModulesCore
+  - ExpoStoreReview (58.0.3):
+    - ExpoModulesCore
   - ExpoSystemUI (58.0.7):
     - ExpoModulesCore
   - fast_float (8.0.0):
@@ -2272,6 +2274,7 @@ DEPENDENCIES:
   - "ExpoSplashScreen (from `../../../node_modules/.pnpm/expo-splash-screen@58.0.14_expo@58.0.25_supports-color@8.1.1_typescript@6.0.3/node_modules/expo-splash-screen/ios`)"
   - "ExpoSQLite (from `../../../node_modules/.pnpm/expo-sqlite@58.0.17_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-color@_dedf53ce84541f60a51800f9df6cdc2c/node_modules/expo-sqlite/ios`)"
   - "ExpoStatusBar (from `../../../node_modules/.pnpm/expo-status-bar@58.0.5_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-col_875dff6b4a9dee084eb29c57f1ff2444/node_modules/expo-status-bar/ios`)"
+  - "ExpoStoreReview (from `../../../node_modules/.pnpm/expo-store-review@58.0.3_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-c_03bfd3efcbfea36490dee46b9cc519f2/node_modules/expo-store-review/ios`)"
   - "ExpoSystemUI (from `../../../node_modules/.pnpm/expo-system-ui@58.0.7_expo@58.0.25_react-native-web@0.21.4_react-dom@19.3.0_react@19.3._40bbef3550ce992a9a1757f169a49017/node_modules/expo-system-ui/ios`)"
   - fast_float (from `build/rndeps-facades/fast_float`)
   - FBLazyVector (from `build/rncore-facades/FBLazyVector`)
@@ -2421,6 +2424,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-sqlite@58.0.17_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-color@_dedf53ce84541f60a51800f9df6cdc2c/node_modules/expo-sqlite/ios"
   ExpoStatusBar:
     :path: "../../../node_modules/.pnpm/expo-status-bar@58.0.5_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-col_875dff6b4a9dee084eb29c57f1ff2444/node_modules/expo-status-bar/ios"
+  ExpoStoreReview:
+    :path: "../../../node_modules/.pnpm/expo-store-review@58.0.3_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-c_03bfd3efcbfea36490dee46b9cc519f2/node_modules/expo-store-review/ios"
   ExpoSystemUI:
     :path: "../../../node_modules/.pnpm/expo-system-ui@58.0.7_expo@58.0.25_react-native-web@0.21.4_react-dom@19.3.0_react@19.3._40bbef3550ce992a9a1757f169a49017/node_modules/expo-system-ui/ios"
   fast_float:
@@ -2635,6 +2640,7 @@ SPEC CHECKSUMS:
   ExpoSplashScreen: 5df81b55f086d8acc7a24008537514f5379aa6f9
   ExpoSQLite: afd9a672ba4aef96495e077ded35423bb8a7b2d4
   ExpoStatusBar: 38eff05a54229c9a388cb56cef29117b8dc77eb1
+  ExpoStoreReview: 70299dc7a36228eb985a8bbd3f65307a8a519c31
   ExpoSystemUI: bfbae2409cccd81019ac00a8f57a8724f0534cfd
   fast_float: 7c925d1cebf8328d4018d061f49377e9f887e3b4
   FBLazyVector: 07cb4c5b92110c132f2bb73b908e87f35cbe0a19
