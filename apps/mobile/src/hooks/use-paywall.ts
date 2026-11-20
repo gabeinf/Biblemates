@@ -39,7 +39,8 @@ export function useShowPaywallAfterFirstReading() {
 
   const { registerPlacement } = usePlacement({
     onPresent: markPaywallSeen,
-    onSkip: () => void openSheet(),
+    // A holdout is an experiment arm that must see no paywall, so it gets no fallback either.
+    onSkip: (reason) => reason?.type !== 'Holdout' && void openSheet(),
     onError: () => void openSheet(),
   })
 

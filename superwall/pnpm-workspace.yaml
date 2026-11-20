@@ -1,4 +1,0 @@
-allowBuilds:
-  # Both ship prebuilt binaries as optional platform packages; the studio runs without their scripts.
-  '@swc/core': false
-  esbuild: false

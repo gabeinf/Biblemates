@@ -43,7 +43,11 @@ function SuperwallSync() {
 
   useEffect(
     () =>
-      watchCustomerInfo((info) => void user.current.setSubscriptionStatus(superwallStatus(info))),
+      watchCustomerInfo((info) =>
+        user.current
+          .setSubscriptionStatus(superwallStatus(info))
+          .catch((e) => console.warn('Superwall status sync failed', e)),
+      ),
     [],
   )
 

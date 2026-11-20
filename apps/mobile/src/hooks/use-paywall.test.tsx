@@ -9,7 +9,11 @@ const mockLoad = jest.fn<() => Promise<unknown>>()
 const mockSeen = jest.fn<() => boolean>()
 const mockMark = jest.fn()
 const mockRegister = jest.fn<(args: { placement: string }) => Promise<void>>()
-type Callbacks = { onPresent?: () => void; onSkip?: () => void; onError?: () => void }
+type Callbacks = {
+  onPresent?: () => void
+  onSkip?: (reason?: { type: string }) => void
+  onError?: () => void
+}
 let callbacks: Callbacks = {}
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }))
 jest.mock('../lib/purchases', () => ({ loadOffer: () => mockLoad() }))
@@ -61,6 +65,13 @@ describe('useShowPaywallAfterFirstReading', () => {
     mockRegister.mockImplementation(async () => callbacks.onError?.())
     await trigger()
     expect(mockPush).toHaveBeenCalledWith('/paywall')
+  })
+
+  it('does not fall back to our sheet for a Superwall holdout', async () => {
+    mockLoad.mockResolvedValue({ packages: [{ identifier: 'a' }], introEligible: [] })
+    mockRegister.mockImplementation(async () => callbacks.onSkip?.({ type: 'Holdout' }))
+    await trigger()
+    expect(mockPush).not.toHaveBeenCalled()
   })
 
   it('never throws into the reading flow if registering fails', async () => {
