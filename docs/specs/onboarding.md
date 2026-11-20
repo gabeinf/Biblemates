@@ -212,7 +212,7 @@ Copy in quotes is a draft. Tweak it freely, but keep the meaning.
 - **Layout:** headline, a 6-character code field (auto-uppercase, monospace), helper text, and
   a primary button. Pasting a full invite link pulls the code out of it.
 - **Inputs:** invite code (6 chars, required).
-- **Buttons:** "Join circle" → validate the code and save the circle id to the draft → 13.
+- **Buttons:** "Join circle" → check the code format (6 hex characters, as `circles.invite_code` makes them) and save the code to the draft → 13. The circle itself is looked up when `join_circle` runs in 19.
 - **Note:** the actual `join_circle` RPC runs after sign-up in 19. Before auth we only show a
   preview lookup if one exists. Otherwise we validate the format and defer.
 
@@ -463,9 +463,14 @@ write the draft during `signUp`, or skip email confirmation for this flow).
   trial, timeline and "No payment due now" only when the package has a free intro offer and the
   user is intro-eligible, and counts the dates from today. The reminder step appears only when a
   local reminder notification is actually scheduled.
-- **No key, no sheet:** without `EXPO_PUBLIC_REVENUECAT_API_KEY` and `EXPO_PUBLIC_PRIVACY_URL`, or
+- **No key, no sheet:** (applies to our fallback sheet; Superwall paywalls are gated by the dashboard campaign) without `EXPO_PUBLIC_REVENUECAT_API_KEY` and `EXPO_PUBLIC_PRIVACY_URL`, or
   when no offering loads, the paywall never shows and never blocks the app.
 - **Build:** tracked in issue #83.
+- **Superwall (#86):** Superwall decides when and which paywall shows, via the placement
+  `first_reading_completed`; RevenueCat stays the purchase backend and entitlement source. If
+  Superwall skips or errors, the sheet above is the fallback.
+- **Temporary:** while testing, step 19 also registers `onboarding_completed` right after sign-up.
+  This breaks "never between 01 and 19" on purpose. Remove it (and the dashboard placement) before release.
 
 **Acceptance**
 
@@ -473,7 +478,7 @@ write the draft during `signUp`, or skip email confirmation for this flow).
 - [x] Paywall dismissible (close button) unless the decision says otherwise.
 - [x] Plan rows are single select, with the selected row outlined. Savings badges are computed, not typed in.
 - [x] Terms, Privacy and Restore links work.
-- [x] Never interrupts the flow between 01 and 19.
+- [x] Never interrupts the flow between 01 and 19. (Temporarily broken by `onboarding_completed` at 19, see above.)
 - [x] Prices come from the store and are never hard-coded.
 
 ---

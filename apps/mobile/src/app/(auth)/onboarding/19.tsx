@@ -7,6 +7,7 @@ import { Pressable, StyleSheet, Text, View, type TextInputInstance } from 'react
 import { useRouter } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { supabase } from '../../../lib/supabase'
+import { usePlacement } from '../../../lib/superwall'
 import { clearDraft, getDraft } from '../../../lib/onboarding-draft'
 import { PROVIDERS, onboardingPayload, signUpErrorMessage } from '../../../lib/onboarding-signup'
 import { Button } from '../../../components/ui'
@@ -36,6 +37,8 @@ function validate(email: string, password: string, code: string | null): Errors 
 
 export default function SaveProgress() {
   const router = useRouter()
+  // shortcut: temporary, to test the paywall; the spec wants it after the first reading instead.
+  const { registerPlacement } = usePlacement()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [useEmail, setUseEmail] = useState(false)
@@ -80,6 +83,7 @@ export default function SaveProgress() {
     // Nothing was saved, so the draft stays and the user can fix it and retry here.
     if (error) return setErrors({ form: signUpErrorMessage(error.message, answers.path === 'join') })
     clearDraft()
+    registerPlacement({ placement: 'onboarding_completed' }).catch(() => {})
     // With email confirmation on there's no session yet. Otherwise the auth guard
     // takes over and opens the app on the user's new circle.
     if (!data.session) setConfirmSent(true)

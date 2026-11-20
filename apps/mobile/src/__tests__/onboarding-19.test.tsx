@@ -1,11 +1,16 @@
+// Screen test for 19 · Save progress. Lives outside app/ so expo-router does not bundle it as a route.
 import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native'
-import { getDraft, resetDraftCacheForTests, updateDraft } from '../../../lib/onboarding-draft'
-import SaveProgress from './19'
+import { getDraft, resetDraftCacheForTests, updateDraft } from '../lib/onboarding-draft'
+import SaveProgress from '../app/(auth)/onboarding/19'
 
 const mockSignUp = jest.fn<(args: any) => Promise<any>>()
-jest.mock('../../../lib/supabase', () => ({
+jest.mock('../lib/supabase', () => ({
   supabase: { auth: { signUp: (a: any) => mockSignUp(a), signInWithOAuth: jest.fn() } },
+}))
+const mockPlacement = jest.fn<(a: any) => Promise<void>>()
+jest.mock('../lib/superwall', () => ({
+  usePlacement: () => ({ registerPlacement: (a: any) => mockPlacement(a) }),
 }))
 jest.mock('expo-router', () => ({ useRouter: () => ({ replace: jest.fn() }) }))
 
@@ -18,6 +23,7 @@ const fillEmail = async (email = 'a@b.co', password = 'secret1') => {
 beforeEach(() => {
   resetDraftCacheForTests()
   mockSignUp.mockReset()
+  mockPlacement.mockReset().mockResolvedValue()
 })
 
 describe('19 · Save progress', () => {
@@ -40,6 +46,9 @@ describe('19 · Save progress', () => {
     await fireEvent.press(screen.getByText('Create account'))
 
     await waitFor(() => expect(mockSignUp).toHaveBeenCalledTimes(1))
+    await waitFor(() =>
+      expect(mockPlacement).toHaveBeenCalledWith({ placement: 'onboarding_completed' }),
+    )
     expect(mockSignUp.mock.calls[0][0]).toEqual({
       email: 'a@b.co',
       password: 'secret1',
