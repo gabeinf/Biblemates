@@ -6,6 +6,8 @@ allowBuilds:
   # Ships prebuilt binaries; its install script isn't needed.
   '@parcel/watcher': false
   esbuild: true
+  # Ships a prebuilt build/; its prepare script is for the package's own authors.
+  expo-superwall: false
 
 minimumReleaseAgeExclude:
   - expo-sqlite@57.0.5

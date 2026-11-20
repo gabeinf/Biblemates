@@ -48,6 +48,8 @@ PODS:
     - ExpoModulesCore
   - ExpoGlassEffect (58.0.5):
     - ExpoModulesCore
+  - ExpoHaptics (58.0.8):
+    - ExpoModulesCore
   - ExpoImagePicker (58.0.10):
     - ExpoModulesCore
   - ExpoKeepAwake (58.0.4):
@@ -122,6 +124,8 @@ PODS:
   - hermes-engine (260318099.0.5):
     - hermes-engine/Pre-built (= 260318099.0.5)
   - hermes-engine/Pre-built (260318099.0.5)
+  - PurchasesHybridCommon (20.10.0):
+    - RevenueCat (= 5.103.1)
   - RCT-Folly (2024.11.18.00):
     - RCT-Folly/Default (= 2024.11.18.00)
     - ReactNativeDependencies
@@ -1968,6 +1972,7 @@ PODS:
     - React-utils (= 0.88.1)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.88.1)
+  - RevenueCat (5.103.1)
   - RNCMaskedView (0.3.2):
     - hermes-engine
     - RCTRequired
@@ -2015,6 +2020,9 @@ PODS:
     - ReactNativeDependencies
     - RNWorklets (>= 0.8.0)
     - Yoga
+  - RNPurchases (11.0.4):
+    - PurchasesHybridCommon (= 20.10.0)
+    - React-Core
   - RNReanimated (4.7.1):
     - hermes-engine
     - RCTRequired
@@ -2243,6 +2251,12 @@ PODS:
     - Yoga
   - SocketRocket (0.7.1):
     - ReactNativeDependencies
+  - Superscript (1.0.15)
+  - SuperwallExpo (1.8.0):
+    - ExpoModulesCore
+    - SuperwallKit (= 4.18.3)
+  - SuperwallKit (4.18.3):
+    - Superscript (= 1.0.15)
   - Yoga (0.0.0):
     - React-Core-prebuilt
 
@@ -2259,6 +2273,7 @@ DEPENDENCIES:
   - "ExpoFileSystem (from `../../../node_modules/.pnpm/expo-file-system@58.0.13_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-c_8f8ae3b40c75121b1c843975eafaf1ba/node_modules/expo-file-system/ios/ExpoFileSystem.podspec`)"
   - "ExpoFont (from `../../../node_modules/.pnpm/expo-font@58.0.12_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-color@8._c4939a23701a81f91d4f0dbde57c4002/node_modules/expo-font/ios/ExpoFont.podspec`)"
   - "ExpoGlassEffect (from `../../../node_modules/.pnpm/expo-glass-effect@58.0.5_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-c_0b7beb5dc11f78cb76850c374a193bb2/node_modules/expo-glass-effect/ios`)"
+  - "ExpoHaptics (from `../../../node_modules/.pnpm/expo-haptics@58.0.8_expo@58.0.25/node_modules/expo-haptics/ios`)"
   - "ExpoImagePicker (from `../../../node_modules/.pnpm/expo-image-picker@58.0.10_expo@58.0.25/node_modules/expo-image-picker/ios`)"
   - "ExpoKeepAwake (from `../../../node_modules/.pnpm/expo-keep-awake@58.0.4_expo@58.0.25_react@19.3.0/node_modules/expo-keep-awake/ios`)"
   - "ExpoLinearGradient (from `../../../node_modules/.pnpm/expo-linear-gradient@58.0.4_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_support_7d912414263c55e2d445d0712cfd8874/node_modules/expo-linear-gradient/ios`)"
@@ -2363,11 +2378,20 @@ DEPENDENCIES:
   - "ReactNativeDependencies (from `../../../node_modules/.pnpm/react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1__@react-native+metro-config_9529ca47ba526b359c681ed0b6ccb3cf/node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)"
   - "RNCMaskedView (from `../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.3.2_react-native@0.88.1_@babel+core@7.29.7_supp_0bec3a37b963382987e4c8c407a7a772/node_modules/@react-native-masked-view/masked-view`)"
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@3.3.0_react-native@0.88.1_@babel+core@7.29.7_supports-colo_6a4eb024d79668782d310156f535307c/node_modules/react-native-gesture-handler`)"
+  - "RNPurchases (from `../../../node_modules/.pnpm/react-native-purchases@11.0.4_react-native-web@0.21.4_react-dom@19.3.0_react@19.3.0__re_07289d8db33519d5154d2a0cd0b0181f/node_modules/react-native-purchases`)"
   - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.7.1_react-native-worklets@0.13.0_@babel+core@7.29.7_supports-_39475d2c1bbefa7f3b849539cec6934f/node_modules/react-native-reanimated`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@4.30.1_react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1_8866868c94bbbedeae3a00806aba3749/node_modules/react-native-screens`)"
   - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.13.0_@babel+core@7.29.7_supports-color@8.1.1__@react-native+met_57823b09aed2b37c96222888f2f05354/node_modules/react-native-worklets`)"
   - SocketRocket (from `build/rndeps-facades/SocketRocket`)
+  - "SuperwallExpo (from `../../../node_modules/.pnpm/expo-superwall@1.8.0_@types+react@19.3.0_expo@58.0.25_react-native@0.88.1_@babel+core@7_51496c08c6d26cb64bc8013d64b22110/node_modules/expo-superwall/ios`)"
   - Yoga (from `build/rncore-facades/Yoga`)
+
+SPEC REPOS:
+  trunk:
+    - PurchasesHybridCommon
+    - RevenueCat
+    - Superscript
+    - SuperwallKit
 
 EXTERNAL SOURCES:
   boost:
@@ -2394,6 +2418,8 @@ EXTERNAL SOURCES:
     :podspec: "../../../node_modules/.pnpm/expo-font@58.0.12_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-color@8._c4939a23701a81f91d4f0dbde57c4002/node_modules/expo-font/ios/ExpoFont.podspec"
   ExpoGlassEffect:
     :path: "../../../node_modules/.pnpm/expo-glass-effect@58.0.5_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-c_0b7beb5dc11f78cb76850c374a193bb2/node_modules/expo-glass-effect/ios"
+  ExpoHaptics:
+    :path: "../../../node_modules/.pnpm/expo-haptics@58.0.8_expo@58.0.25/node_modules/expo-haptics/ios"
   ExpoImagePicker:
     :path: "../../../node_modules/.pnpm/expo-image-picker@58.0.10_expo@58.0.25/node_modules/expo-image-picker/ios"
   ExpoKeepAwake:
@@ -2601,6 +2627,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/@react-native-masked-view+masked-view@0.3.2_react-native@0.88.1_@babel+core@7.29.7_supp_0bec3a37b963382987e4c8c407a7a772/node_modules/@react-native-masked-view/masked-view"
   RNGestureHandler:
     :path: "../../../node_modules/.pnpm/react-native-gesture-handler@3.3.0_react-native@0.88.1_@babel+core@7.29.7_supports-colo_6a4eb024d79668782d310156f535307c/node_modules/react-native-gesture-handler"
+  RNPurchases:
+    :path: "../../../node_modules/.pnpm/react-native-purchases@11.0.4_react-native-web@0.21.4_react-dom@19.3.0_react@19.3.0__re_07289d8db33519d5154d2a0cd0b0181f/node_modules/react-native-purchases"
   RNReanimated:
     :path: "../../../node_modules/.pnpm/react-native-reanimated@4.7.1_react-native-worklets@0.13.0_@babel+core@7.29.7_supports-_39475d2c1bbefa7f3b849539cec6934f/node_modules/react-native-reanimated"
   RNScreens:
@@ -2609,6 +2637,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-worklets@0.13.0_@babel+core@7.29.7_supports-color@8.1.1__@react-native+met_57823b09aed2b37c96222888f2f05354/node_modules/react-native-worklets"
   SocketRocket:
     :path: build/rndeps-facades/SocketRocket
+  SuperwallExpo:
+    :path: "../../../node_modules/.pnpm/expo-superwall@1.8.0_@types+react@19.3.0_expo@58.0.25_react-native@0.88.1_@babel+core@7_51496c08c6d26cb64bc8013d64b22110/node_modules/expo-superwall/ios"
   Yoga:
     :path: build/rncore-facades/Yoga
 
@@ -2625,6 +2655,7 @@ SPEC CHECKSUMS:
   ExpoFileSystem: b619d80b490c53117a9a9c976021a4ce5a9da440
   ExpoFont: daea737a2e3742f9a946f2884518e70dd37011f3
   ExpoGlassEffect: 6594e055df1e0b88d34cc189ba0b21589adec6bf
+  ExpoHaptics: d3a61f836a88c0061644473761a6ca499a14b19a
   ExpoImagePicker: a466134ec92fed0b38bbf9062c7eb5f3c8c49d94
   ExpoKeepAwake: 3dc7cce59bdc13796f772ac54d3af1ca6b6954cd
   ExpoLinearGradient: e81cbb3fa10d99d8fd855bbe78a464ab395a8f44
@@ -2647,6 +2678,7 @@ SPEC CHECKSUMS:
   fmt: ba0886e864ebb21d14c98b2e12e164b8002f5b93
   glog: 3cf7cb46f743c4bc758ae3e6d9c15bd1b4cfd6d4
   hermes-engine: fad86e6621008f83fd32648fe95f7cf1a00421a4
+  PurchasesHybridCommon: 078b06728adb4edd8fbdd029c49dcb7e7a7ed5db
   RCT-Folly: 82921e585c0400eda46fac1068297aa9dfb035e4
   RCTDeprecation: c62b9b3fbf0d26b76755f3ebd1c913a4fb469dde
   RCTRequired: d0563e2484633b657976195f0543e180133afd3a
@@ -2726,12 +2758,17 @@ SPEC CHECKSUMS:
   ReactCodegen: 3c100c181d90a7680cbe4056eace2b0932443f63
   ReactCommon: b63ce798b898ed77c6cfdeb80b18080161f52ed5
   ReactNativeDependencies: a5164c3ebbe90d992022b5d9cbabbf770a6d7d05
+  RevenueCat: 8ba92be7c408dcfc3864742a82cd3a61514872b3
   RNCMaskedView: 89bb912716973f9715102cfe932f3ca6793b21f9
   RNGestureHandler: e19fcf39b0212e0eb8bc7ca1e645500eb492f6be
+  RNPurchases: 546483c9cc68d7e872308c3226663807206ebdc3
   RNReanimated: d7d42b282f9b4ae841372a78eaa0f3ece4ae39ef
   RNScreens: 9e5d11963f4616812cd86380d8b27b95cfd72153
   RNWorklets: 63880774a661c10c1acd4649dfbeebb12f7058b2
   SocketRocket: 37aec555668fb852ec12e3c0de59a86ca58f0871
+  Superscript: 55de63e7dc445d0f095c44f25d446889c7ba851d
+  SuperwallExpo: 159aa35d2a5ba05c7fa120a5bbab53738e3dae56
+  SuperwallKit: 2de05ac3a176f83ea705be0bec438832ad5e5e2a
   Yoga: d1c536142c5ff8ec8cd856ab2a7c227a1d875c8e
 
 PODFILE CHECKSUM: 40c91277d05980525ca4a2e8f8bc98badedf6ff3

@@ -11,6 +11,7 @@ import { useAuthContext } from "../hooks/use-auth-context";
 import AuthProvider from "../providers/auth-provider";
 import AnimatedSplash from "../components/AnimatedSplash";
 import { markAppReady } from "../lib/splash";
+import { SuperwallRoot } from "../lib/superwall";
 
 SplashScreen.preventAutoHideAsync();
 // <AnimatedSplash /> is an identical copy of the native splash, so swap instantly.
@@ -75,9 +76,11 @@ export default function RootLayout() {
       <KeyboardProvider>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
-            <StatusBar style="dark" />
-            <RootNavigator />
-            <AnimatedSplash />
+            <SuperwallRoot>
+              <StatusBar style="dark" />
+              <RootNavigator />
+              <AnimatedSplash />
+            </SuperwallRoot>
           </AuthProvider>
         </QueryClientProvider>
       </KeyboardProvider>

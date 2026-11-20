@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native'
 import { Linking } from 'react-native'
-import PaywallScreen from './paywall'
+import PaywallScreen from '../app/(main)/paywall'
 
 const mockBack = jest.fn()
 const mockOffer = jest.fn<() => unknown>()
@@ -12,12 +12,12 @@ const mockSchedule = jest.fn<(d: Date) => Promise<void>>()
 const mockPrivacy = jest.fn<() => string | null>()
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ back: mockBack }) }))
-jest.mock('../../hooks/use-paywall', () => ({ usePaywallOffer: () => mockOffer() }))
-jest.mock('../../lib/trial-reminder', () => ({
+jest.mock('../hooks/use-paywall', () => ({ usePaywallOffer: () => mockOffer() }))
+jest.mock('../lib/trial-reminder', () => ({
   canRemind: () => mockCanRemind(),
   scheduleTrialReminder: (d: Date) => mockSchedule(d),
 }))
-jest.mock('../../lib/purchases', () => ({
+jest.mock('../lib/purchases', () => ({
   privacyUrl: () => mockPrivacy(),
   termsUrl: () => 'https://t.example',
   purchase: (p: unknown) => mockPurchase(p),
