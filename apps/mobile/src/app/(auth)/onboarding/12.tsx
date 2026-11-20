@@ -100,11 +100,12 @@ export default function StakesPicker() {
   const tooLong = editing && draftLabel.trim().length > STAKES_MAX
   const shownError = tooLong || touched ? labelError : null
 
+  // While the editor is open nothing is selected; cancelling leaves `stakes` intact so it returns.
   const tiles: { label: string; icon: TileProps['icon']; selected: boolean; stakes: Stakes }[] = [
     ...STAKES_PRESETS.map((p) => ({
       label: p.label,
       icon: p.icon,
-      selected: stakes?.kind === 'preset' && stakes.label === p.label,
+      selected: !editing && stakes?.kind === 'preset' && stakes.label === p.label,
       stakes: { kind: 'preset' as const, label: p.label },
     })),
     ...(custom
@@ -112,7 +113,7 @@ export default function StakesPicker() {
           {
             label: custom,
             icon: 'sparkles-outline' as const,
-            selected: stakes?.kind === 'custom' && stakes.label === custom,
+            selected: !editing && stakes?.kind === 'custom' && stakes.label === custom,
             stakes: { kind: 'custom' as const, label: custom },
           },
         ]

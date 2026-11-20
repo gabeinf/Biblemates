@@ -33,4 +33,18 @@ describe('12 · Stakes picker', () => {
     const check = screen.getByTestId('stakes-check')
     expect(StyleSheet.flatten(check.props.style).position).toBe('absolute')
   })
+
+  it('clears the preset highlight while editing and restores it on cancel', async () => {
+    await render(<StakesPicker />)
+    const selected = () =>
+      screen.queryAllByRole('button').filter((b) => b.props.accessibilityState?.selected === true)
+    await fireEvent.press(
+      screen.getAllByRole('button').find((b) => b.props.accessibilityState?.selected === false)!,
+    )
+    expect(selected()).toHaveLength(1)
+    await fireEvent.press(screen.getByLabelText('Make your own stakes'))
+    expect(selected()).toHaveLength(0)
+    await fireEvent.press(screen.getByText('Cancel'))
+    expect(selected()).toHaveLength(1)
+  })
 })
