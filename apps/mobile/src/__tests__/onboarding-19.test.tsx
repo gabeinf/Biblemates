@@ -4,9 +4,23 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { getDraft, resetDraftCacheForTests, updateDraft } from '../lib/onboarding-draft'
 import SaveProgress from '../app/(auth)/onboarding/19'
 
+const mockIdToken = jest.fn<(a: any) => Promise<any>>()
+const mockRpc = jest.fn<(fn: string, a: any) => Promise<any>>()
+const mockApple = jest.fn<() => Promise<any>>()
 const mockSignUp = jest.fn<(args: any) => Promise<any>>()
 jest.mock('../lib/supabase', () => ({
-  supabase: { auth: { signUp: (a: any) => mockSignUp(a), signInWithOAuth: jest.fn() } },
+  supabase: {
+    auth: {
+      signUp: (a: any) => mockSignUp(a),
+      signInWithIdToken: (a: any) => mockIdToken(a),
+      signOut: jest.fn(),
+    },
+    rpc: (fn: string, a: any) => mockRpc(fn, a),
+  },
+}))
+jest.mock('expo-apple-authentication', () => ({
+  AppleAuthenticationScope: { EMAIL: 1 },
+  signInAsync: () => mockApple(),
 }))
 const mockPlacement = jest.fn<(a: any) => Promise<void>>()
 jest.mock('../lib/superwall', () => ({
@@ -23,14 +37,36 @@ const fillEmail = async (email = 'a@b.co', password = 'secret1') => {
 beforeEach(() => {
   resetDraftCacheForTests()
   mockSignUp.mockReset()
+  mockIdToken.mockReset().mockResolvedValue({ error: null })
+  mockRpc.mockReset().mockResolvedValue({ error: null })
+  mockApple.mockReset().mockResolvedValue({ identityToken: 'tok' })
   mockPlacement.mockReset().mockResolvedValue()
 })
 
 describe('19 · Save progress', () => {
-  it('hides Apple and Google until they are configured', async () => {
+  it('shows Apple and keeps Google hidden until it is configured', async () => {
     await render(<SaveProgress />)
-    expect(screen.queryByText('Continue with Apple')).toBeNull()
+    expect(screen.getByText('Continue with Apple')).toBeTruthy()
     expect(screen.queryByText('Continue with Google')).toBeNull()
+  })
+
+  it('Apple: signs in, then applies and clears the draft', async () => {
+    updateDraft({ path: 'create', daysPerWeek: 4 })
+    await render(<SaveProgress />)
+    await fireEvent.press(screen.getByText('Continue with Apple'))
+    await waitFor(() => expect(mockRpc).toHaveBeenCalledTimes(1))
+    expect(mockIdToken).toHaveBeenCalledWith({ provider: 'apple', token: 'tok' })
+    expect(mockRpc.mock.calls[0][0]).toBe('complete_onboarding')
+    await waitFor(() => expect(getDraft().daysPerWeek).not.toBe(4))
+  })
+
+  it('Apple: a failed write keeps the draft and shows the error', async () => {
+    updateDraft({ path: 'create', daysPerWeek: 4 })
+    mockRpc.mockResolvedValue({ error: { message: 'boom' } })
+    await render(<SaveProgress />)
+    await fireEvent.press(screen.getByText('Continue with Apple'))
+    expect(await screen.findByText('boom')).toBeTruthy()
+    expect(getDraft().daysPerWeek).toBe(4)
   })
 
   it('signs up with the draft in one call, then clears the draft', async () => {

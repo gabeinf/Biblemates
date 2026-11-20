@@ -11,6 +11,7 @@
       "supportsTablet": false,
       "appleTeamId": "YTL4NC2WW9",
       "bundleIdentifier": "com.gabeinf.Biblemates",
+      "usesAppleSignIn": true,
       "buildNumber": "1",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
@@ -57,7 +58,8 @@
           "microphonePermission": false
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-apple-authentication"
     ],
     "extra": {
       "router": {},

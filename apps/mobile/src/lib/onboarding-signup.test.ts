@@ -1,6 +1,6 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it, jest } from '@jest/globals'
 import { OnboardingDraftSchema } from '@biblemates/shared'
-import { onboardingPayload, signUpErrorMessage } from './onboarding-signup'
+import { onboardingPayload, signInWithAppleToken, signUpErrorMessage } from './onboarding-signup'
 
 const draft = OnboardingDraftSchema.parse({
   path: 'create',
@@ -42,5 +42,32 @@ describe('signUpErrorMessage', () => {
       'Database error saving new user',
     )
     expect(signUpErrorMessage('User already registered', true)).toBe('User already registered')
+  })
+})
+
+describe('signInWithAppleToken', () => {
+  const make = (rpcError: { message: string } | null) => ({
+    auth: {
+      signInWithIdToken: jest.fn(async () => ({ error: null })),
+      signOut: jest.fn(async () => ({})),
+    },
+    rpc: jest.fn(async (_fn: string, _args: unknown) => ({ error: rpcError })),
+  })
+
+  it('applies the draft in one write after the session exists', async () => {
+    const c = make(null)
+    expect(await signInWithAppleToken(c, 'tok', draft)).toBeNull()
+    expect(c.rpc).toHaveBeenCalledTimes(1)
+    expect(c.rpc).toHaveBeenCalledWith('complete_onboarding', {
+      answers: onboardingPayload(draft),
+      display: null,
+    })
+    expect(c.auth.signOut).not.toHaveBeenCalled()
+  })
+
+  it('signs out and reports the error when the write fails', async () => {
+    const c = make({ message: 'Database error' })
+    expect(await signInWithAppleToken(c, 'tok', { ...draft, path: 'join' })).toMatch(/invite code/)
+    expect(c.auth.signOut).toHaveBeenCalled()
   })
 })
