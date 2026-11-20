@@ -4,7 +4,7 @@
  */
 import { useRouter } from 'expo-router'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { Avatar, Button } from '../../../components/ui'
 import { FadeIn, SwitchLink } from '../../../components/onboarding'
 import { useOnboardingNav } from '../../../hooks/use-onboarding'
@@ -49,11 +49,10 @@ function WeekPanel({ week }: { week: HookWeek }) {
 
 export default function Hook() {
   const router = useRouter()
-  const insets = useSafeAreaInsets()
   const { goNext } = useOnboardingNav()
 
   return (
-    <View style={[styles.screen, { paddingTop: insets.top + spacing.lg }]}>
+    <SafeAreaView style={styles.screen} edges={['top', 'bottom']}>
       <ScrollView
         style={styles.flex}
         contentContainerStyle={styles.content}
@@ -82,7 +81,7 @@ export default function Hook() {
         </FadeIn>
       </ScrollView>
 
-      <FadeIn delay={240} style={[styles.footer, { paddingBottom: insets.bottom + spacing.sm }]}>
+      <FadeIn delay={240} style={styles.footer}>
         <Button label="That’s us" size="lg" onPress={() => goNext()} />
         <SwitchLink
           prompt="Already have an account?"
@@ -90,7 +89,7 @@ export default function Hook() {
           onPress={() => router.push('/sign-in')}
         />
       </FadeIn>
-    </View>
+    </SafeAreaView>
   )
 }
 
@@ -101,7 +100,9 @@ const DRIFT = [0, spacing.xs, spacing.xxs]
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  screen: { flex: 1, backgroundColor: colors.paper },
+  // Insets come from the native SafeAreaView (measured at first layout), not the JS hook,
+  // which reads 0 on the first frame and left the content pinned to the top (#93).
+  screen: { flex: 1, backgroundColor: colors.paper, paddingTop: spacing.lg },
   content: { paddingHorizontal: spacing.lg, paddingBottom: spacing.lg, gap: spacing.xl },
   card: {
     flexDirection: 'row',
@@ -145,5 +146,10 @@ const styles = StyleSheet.create({
     lineHeight: Math.round(typography.fontSize.bodySmall * 1.5),
     color: colors.muted,
   },
-  footer: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm, gap: spacing.sm },
+  footer: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
+    gap: spacing.sm,
+  },
 })

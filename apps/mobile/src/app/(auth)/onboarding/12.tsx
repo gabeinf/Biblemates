@@ -44,7 +44,7 @@ function Tile({ label, icon, selected, onPress, onEdit }: TileProps) {
         <Ionicons name={icon} size={28} color={selected ? colors.Gold : colors.Ink} />
         <Text style={styles.tileLabel}>{label}</Text>
         {selected ? (
-          <View style={styles.check}>
+          <View testID="stakes-check" style={styles.check}>
             <Ionicons name="checkmark" size={16} color={colors.surface} />
           </View>
         ) : null}
@@ -236,11 +236,12 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     justifyContent: 'space-between',
     borderRadius: radii.lg,
-    borderWidth: StyleSheet.hairlineWidth,
+    // Same width selected or not, so picking a tile never resizes it.
+    borderWidth: 2,
     borderColor: colors.border,
     backgroundColor: colors.surface,
   },
-  tileSelected: { borderWidth: 2, borderColor: colors.Gold, backgroundColor: colors.goldSoft },
+  tileSelected: { borderColor: colors.Gold, backgroundColor: colors.goldSoft },
   pressed: { opacity: 0.7 },
   tileLabel: {
     fontFamily: typography.fontFamily.body,
@@ -248,6 +249,9 @@ const styles = StyleSheet.create({
     color: colors.Ink,
   },
   check: {
+    position: 'absolute',
+    right: spacing.sm,
+    bottom: spacing.sm,
     width: spacing.lg,
     height: spacing.lg,
     borderRadius: radii.full,
