@@ -7,7 +7,7 @@ import { Pressable, StyleSheet, Text, View, type TextInputInstance } from 'react
 import { useRouter } from 'expo-router'
 import * as AppleAuthentication from 'expo-apple-authentication'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { supabase } from '../../../lib/supabase'
+import { createScratchClient, supabase } from '../../../lib/supabase'
 import { usePlacement } from '../../../lib/superwall'
 import { clearDraft, getDraft } from '../../../lib/onboarding-draft'
 import {
@@ -105,7 +105,7 @@ export default function SaveProgress() {
       if (!identityToken) throw new Error('Apple did not return a sign-in token.')
       const draft = getDraft()
       const message = await signInWithAppleToken(
-        supabase,
+        { scratch: createScratchClient(), main: supabase },
         identityToken,
         enteredCode ? { ...draft, path: 'join', inviteCode: enteredCode } : draft,
       )

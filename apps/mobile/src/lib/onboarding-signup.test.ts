@@ -46,28 +46,32 @@ describe('signUpErrorMessage', () => {
 })
 
 describe('signInWithAppleToken', () => {
+  const session = { access_token: 'a', refresh_token: 'r' }
   const make = (rpcError: { message: string } | null) => ({
-    auth: {
-      signInWithIdToken: jest.fn(async () => ({ error: null })),
-      signOut: jest.fn(async () => ({})),
+    scratch: {
+      auth: {
+        signInWithIdToken: jest.fn(async () => ({ data: { session }, error: null })),
+        signOut: jest.fn(async () => ({})),
+      },
+      rpc: jest.fn(async (_fn: string, _args: unknown) => ({ error: rpcError })),
     },
-    rpc: jest.fn(async (_fn: string, _args: unknown) => ({ error: rpcError })),
+    main: { auth: { setSession: jest.fn(async (_s: unknown) => ({ error: null })) } },
   })
 
-  it('applies the draft in one write after the session exists', async () => {
+  it('applies the draft in one write, then hands the session to the app', async () => {
     const c = make(null)
     expect(await signInWithAppleToken(c, 'tok', draft)).toBeNull()
-    expect(c.rpc).toHaveBeenCalledTimes(1)
-    expect(c.rpc).toHaveBeenCalledWith('complete_onboarding', {
+    expect(c.scratch.rpc).toHaveBeenCalledTimes(1)
+    expect(c.scratch.rpc).toHaveBeenCalledWith('complete_onboarding', {
       answers: onboardingPayload(draft),
       display: null,
     })
-    expect(c.auth.signOut).not.toHaveBeenCalled()
+    expect(c.main.auth.setSession).toHaveBeenCalledWith(session)
   })
 
-  it('signs out and reports the error when the write fails', async () => {
+  it('never signs the app in when the write fails', async () => {
     const c = make({ message: 'Database error' })
     expect(await signInWithAppleToken(c, 'tok', { ...draft, path: 'join' })).toMatch(/invite code/)
-    expect(c.auth.signOut).toHaveBeenCalled()
+    expect(c.main.auth.setSession).not.toHaveBeenCalled()
   })
 })

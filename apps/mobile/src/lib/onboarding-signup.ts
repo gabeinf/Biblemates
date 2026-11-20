@@ -27,36 +27,43 @@ export function signUpErrorMessage(message: string, joining: boolean): string {
     : message
 }
 
-type Rpc = {
+type Err = { message: string } | null
+type Session = { access_token: string; refresh_token: string }
+type Scratch = {
   auth: {
     signInWithIdToken(a: {
       provider: 'apple'
       token: string
-    }): Promise<{ error: { message: string } | null }>
+    }): Promise<{ data: { session: Session | null }; error: Err }>
     signOut(): Promise<unknown>
   }
   rpc(
     fn: 'complete_onboarding',
     args: { answers: unknown; display: string | null },
-  ): PromiseLike<{ error: { message: string } | null }>
+  ): PromiseLike<{ error: Err }>
 }
+type Main = { auth: { setSession(s: Session): Promise<{ error: Err }> } }
 
 /**
- * Provider sign-in: the session comes first, then the draft is applied in one RPC.
- * If the write fails we sign out again so the user stays on step 19 and can retry.
+ * Provider sign-in. The session is created on a scratch client first, so the app's auth guard
+ * doesn't move the user off step 19 mid-write: the draft is applied in one RPC, and only then
+ * is the session handed to the real client. A failed write leaves the user here to retry.
  */
 export async function signInWithAppleToken(
-  client: Rpc,
+  { scratch, main }: { scratch: Scratch; main: Main },
   token: string,
   draft: OnboardingDraft,
 ): Promise<string | null> {
-  const { error } = await client.auth.signInWithIdToken({ provider: 'apple', token })
-  if (error) return error.message
-  const { error: writeError } = await client.rpc('complete_onboarding', {
+  const { data, error } = await scratch.auth.signInWithIdToken({ provider: 'apple', token })
+  if (error || !data.session) return error?.message ?? 'Apple sign-in failed.'
+  const { error: writeError } = await scratch.rpc('complete_onboarding', {
     answers: onboardingPayload(draft),
     display: draft.displayName || null,
   })
-  if (!writeError) return null
-  await client.auth.signOut()
-  return signUpErrorMessage(writeError.message, draft.path === 'join')
+  if (writeError) {
+    await scratch.auth.signOut()
+    return signUpErrorMessage(writeError.message, draft.path === 'join')
+  }
+  const { error: sessionError } = await main.auth.setSession(data.session)
+  return sessionError?.message ?? null
 }

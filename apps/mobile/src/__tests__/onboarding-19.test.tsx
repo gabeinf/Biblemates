@@ -10,13 +10,12 @@ const mockApple = jest.fn<() => Promise<any>>()
 const mockSignUp = jest.fn<(args: any) => Promise<any>>()
 jest.mock('../lib/supabase', () => ({
   supabase: {
-    auth: {
-      signUp: (a: any) => mockSignUp(a),
-      signInWithIdToken: (a: any) => mockIdToken(a),
-      signOut: jest.fn(),
-    },
-    rpc: (fn: string, a: any) => mockRpc(fn, a),
+    auth: { signUp: (a: any) => mockSignUp(a), setSession: jest.fn(async () => ({ error: null })) },
   },
+  createScratchClient: () => ({
+    auth: { signInWithIdToken: (a: any) => mockIdToken(a), signOut: jest.fn() },
+    rpc: (fn: string, a: any) => mockRpc(fn, a),
+  }),
 }))
 jest.mock('expo-apple-authentication', () => ({
   AppleAuthenticationScope: { EMAIL: 1 },
@@ -37,7 +36,12 @@ const fillEmail = async (email = 'a@b.co', password = 'secret1') => {
 beforeEach(() => {
   resetDraftCacheForTests()
   mockSignUp.mockReset()
-  mockIdToken.mockReset().mockResolvedValue({ error: null })
+  mockIdToken
+    .mockReset()
+    .mockResolvedValue({
+      data: { session: { access_token: 'a', refresh_token: 'r' } },
+      error: null,
+    })
   mockRpc.mockReset().mockResolvedValue({ error: null })
   mockApple.mockReset().mockResolvedValue({ identityToken: 'tok' })
   mockPlacement.mockReset().mockResolvedValue()
