@@ -1,0 +1,19 @@
+{
+  "//": "Commit this file: it binds each paywall to its dashboard entry, per app, so every machine and CI push to the same place, and the source commit each app was last synced to. Managed by the Superwall CLI.",
+  "version": 1,
+  "apps": {
+    "ios": "60534"
+  },
+  "paywalls": {
+    "pro": {
+      "ios": {
+        "paywallId": "294951",
+        "snapshot": "0aea32c1a0b58b34352331a36866ee295296f5201641557ab5a4d64f01a0dc14"
+      }
+    }
+  },
+  "funnels": {},
+  "sources": {
+    "org29452-app60534": "63287b402146d98fe312c00a84dabbda2576867c"
+  }
+}

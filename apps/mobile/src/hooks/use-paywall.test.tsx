@@ -8,8 +8,17 @@ const mockPush = jest.fn()
 const mockLoad = jest.fn<() => Promise<unknown>>()
 const mockSeen = jest.fn<() => boolean>()
 const mockMark = jest.fn()
+const mockRegister = jest.fn<(args: { placement: string }) => Promise<void>>()
+type Callbacks = { onPresent?: () => void; onSkip?: () => void; onError?: () => void }
+let callbacks: Callbacks = {}
 jest.mock('expo-router', () => ({ useRouter: () => ({ push: mockPush }) }))
 jest.mock('../lib/purchases', () => ({ loadOffer: () => mockLoad() }))
+jest.mock('../lib/superwall', () => ({
+  usePlacement: (cb: Callbacks) => {
+    callbacks = cb
+    return { registerPlacement: mockRegister }
+  },
+}))
 jest.mock('../lib/paywall', () => ({
   hasSeenPaywall: () => mockSeen(),
   markPaywallSeen: () => mockMark(),
@@ -22,14 +31,43 @@ async function trigger() {
   )
   const { result } = await renderHook(() => useShowPaywallAfterFirstReading(), { wrapper })
   await result.current()
+  // The fallback sheet opens from a Superwall callback, fire-and-forget: let it settle.
+  await new Promise((resolve) => setTimeout(resolve, 0))
 }
 
 beforeEach(() => {
   jest.clearAllMocks()
   mockSeen.mockReturnValue(false)
+  // Default: Superwall has nothing to show for this placement.
+  mockRegister.mockImplementation(async () => callbacks.onSkip?.())
 })
 
 describe('useShowPaywallAfterFirstReading', () => {
+  it('registers the first_reading_completed placement', async () => {
+    await trigger()
+    expect(mockRegister).toHaveBeenCalledWith({ placement: 'first_reading_completed' })
+  })
+
+  it('leaves it to Superwall, and records it, when a Superwall paywall is presented', async () => {
+    mockRegister.mockImplementation(async () => callbacks.onPresent?.())
+    await trigger()
+    expect(mockMark).toHaveBeenCalled()
+    expect(mockLoad).not.toHaveBeenCalled()
+    expect(mockPush).not.toHaveBeenCalled()
+  })
+
+  it('falls back to our own sheet when Superwall errors', async () => {
+    mockLoad.mockResolvedValue({ packages: [{ identifier: 'a' }], introEligible: [] })
+    mockRegister.mockImplementation(async () => callbacks.onError?.())
+    await trigger()
+    expect(mockPush).toHaveBeenCalledWith('/paywall')
+  })
+
+  it('never throws into the reading flow if registering fails', async () => {
+    mockRegister.mockRejectedValue(new Error('boom'))
+    await expect(trigger()).resolves.toBeUndefined()
+  })
+
   it('opens the paywall once and records it when an offering loads', async () => {
     mockLoad.mockResolvedValue({ packages: [{ identifier: 'a' }], introEligible: [] })
     await trigger()
@@ -40,7 +78,7 @@ describe('useShowPaywallAfterFirstReading', () => {
   it('does nothing when it was already shown', async () => {
     mockSeen.mockReturnValue(true)
     await trigger()
-    expect(mockLoad).not.toHaveBeenCalled()
+    expect(mockRegister).not.toHaveBeenCalled()
     expect(mockPush).not.toHaveBeenCalled()
   })
 
