@@ -5,11 +5,17 @@
 import { useRef, useState } from 'react'
 import { Pressable, StyleSheet, Text, View, type TextInputInstance } from 'react-native'
 import { useRouter } from 'expo-router'
+import * as AppleAuthentication from 'expo-apple-authentication'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import { supabase } from '../../../lib/supabase'
+import { createScratchClient, supabase } from '../../../lib/supabase'
 import { usePlacement } from '../../../lib/superwall'
 import { clearDraft, getDraft } from '../../../lib/onboarding-draft'
-import { PROVIDERS, onboardingPayload, signUpErrorMessage } from '../../../lib/onboarding-signup'
+import {
+  PROVIDERS,
+  onboardingPayload,
+  signInWithAppleToken,
+  signUpErrorMessage,
+} from '../../../lib/onboarding-signup'
 import { Button } from '../../../components/ui'
 import {
   FadeIn,
@@ -81,7 +87,8 @@ export default function SaveProgress() {
     setLoading(false)
 
     // Nothing was saved, so the draft stays and the user can fix it and retry here.
-    if (error) return setErrors({ form: signUpErrorMessage(error.message, answers.path === 'join') })
+    if (error)
+      return setErrors({ form: signUpErrorMessage(error.message, answers.path === 'join') })
     clearDraft()
     registerPlacement({ placement: 'onboarding_completed' }).catch(() => {})
     // With email confirmation on there's no session yet. Otherwise the auth guard
@@ -89,19 +96,37 @@ export default function SaveProgress() {
     if (!data.session) setConfirmSent(true)
   }
 
-  // shortcut: provider sign-in doesn't carry the draft yet, so these stay off until the
-  // native auth packages are approved and the draft is applied after the session exists.
-  async function withProvider(provider: 'apple' | 'google') {
+  async function withApple() {
     setLoading(true)
-    const { error } = await supabase.auth.signInWithOAuth({ provider })
-    setLoading(false)
-    if (error) setErrors({ form: error.message })
+    try {
+      const { identityToken } = await AppleAuthentication.signInAsync({
+        requestedScopes: [AppleAuthentication.AppleAuthenticationScope.EMAIL],
+      })
+      if (!identityToken) throw new Error('Apple did not return a sign-in token.')
+      const draft = getDraft()
+      const message = await signInWithAppleToken(
+        { scratch: createScratchClient(), main: supabase },
+        identityToken,
+        enteredCode ? { ...draft, path: 'join', inviteCode: enteredCode } : draft,
+      )
+      if (message) return setErrors({ form: message })
+      clearDraft()
+      registerPlacement({ placement: 'onboarding_completed' }).catch(() => {})
+    } catch (e) {
+      // The user closing Apple's sheet is not an error.
+      if ((e as { code?: string }).code !== 'ERR_REQUEST_CANCELED')
+        setErrors({ form: (e as Error).message })
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (confirmSent) {
     return (
       <KeyboardScreen
-        footer={<Button label="Go to sign in" size="lg" onPress={() => router.replace('/sign-in')} />}
+        footer={
+          <Button label="Go to sign in" size="lg" onPress={() => router.replace('/sign-in')} />
+        }
       >
         <FadeIn style={styles.confirm}>
           <View style={styles.confirmIcon}>
@@ -169,16 +194,7 @@ export default function SaveProgress() {
             variant="outline"
             size="lg"
             loading={loading}
-            onPress={() => withProvider('apple')}
-          />
-        ) : null}
-        {PROVIDERS.google ? (
-          <Button
-            label="Continue with Google"
-            variant="outline"
-            size="lg"
-            loading={loading}
-            onPress={() => withProvider('google')}
+            onPress={withApple}
           />
         ) : null}
         {useEmail ? (
