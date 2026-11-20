@@ -15,6 +15,12 @@ export const supabase = createClient(supabaseUrl, supabasePublishableKey, {
   },
 });
 
+/** A client that never stores a session, for work that must finish before the app sees the user as signed in. */
+export const createScratchClient = () =>
+  createClient(supabaseUrl, supabasePublishableKey, {
+    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+  });
+
 AppState.addEventListener('change', state => {
   if (state === 'active') {
     supabase.auth.startAutoRefresh();
