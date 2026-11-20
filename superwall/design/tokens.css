@@ -1,0 +1,86 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500..700;1,500..700&family=Lora:wght@400..600&display=swap");
+
+/*
+ * The design system's values (DESIGN.md says what they are for). Every
+ * paywall's theme.css imports this file, so a change here reaches every
+ * paywall on its next build. Values only: no selectors but :root and
+ * :root.dark (the SDK stamps `dark` on <html>), and dark overrides colours only.
+ */
+:root {
+  --color-paper: #f3f2f2;
+  --color-ink: #201f1d;
+
+  --color-bg: var(--color-paper);
+  --color-fg: var(--color-ink);
+  --color-surface: color-mix(in oklab, var(--color-fg) 3%, var(--color-bg));
+  --color-raised: color-mix(in oklab, var(--color-fg) 7%, var(--color-bg));
+  --color-muted: color-mix(in oklab, var(--color-fg) 6%, var(--color-bg));
+  --color-secondary: color-mix(in oklab, var(--color-fg) 10%, var(--color-bg));
+  --color-wash: color-mix(in oklab, var(--color-fg) 5%, transparent);
+
+  --color-fg-secondary: color-mix(in oklab, var(--color-fg) 70%, transparent);
+  --color-fg-tertiary: color-mix(in oklab, var(--color-fg) 55%, transparent);
+  --color-fg-muted: color-mix(in oklab, var(--color-fg) 45%, transparent);
+  --color-border: color-mix(in oklab, var(--color-fg) 10%, transparent);
+  --color-border-strong: color-mix(in oklab, var(--color-fg) 20%, transparent);
+
+  /* The one accent (Biblemates gold): the primary fill, the selected edge, the focused edge. */
+  --color-accent: #8c6911;
+  --color-accent-hover: color-mix(in oklab, var(--color-accent) 90%, transparent);
+  --color-accent-ink: #ffffff;
+  --color-destructive: #ee6d2e;
+  --color-destructive-ink: #712f1a;
+  --color-success: #9fd947;
+  --color-success-ink: #5f822b;
+
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: Lora, Georgia, serif;
+
+  --text-xs: 0.8125rem;
+  --text-sm: 0.9375rem;
+  --text-base: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: clamp(2.5rem, 9vw, 3.25rem);
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.25;
+  --leading-normal: 1.5;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-strong: 600;
+
+  --tracking-tight: -0.03em;
+  --tracking-snug: -0.02em;
+  --tracking-normal: -0.01em;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  --radius-md: 10px;
+  --radius-full: 999px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-hover: 150ms;
+  --duration-press: 80ms;
+
+  color-scheme: light;
+}
+
+:root.dark {
+  --color-bg: #1b1a18;
+  --color-fg: var(--color-paper);
+  --color-accent: #e0b04a;
+  --color-accent-ink: var(--color-ink);
+  --color-destructive-ink: #f3996d;
+  --color-success-ink: #b7e375;
+  color-scheme: dark;
+}

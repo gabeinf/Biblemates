@@ -1,0 +1,151 @@
+@import "@/design/tokens.css";
+@import "@/design/base.css";
+
+/*
+ * This paywall's own layout. Colours, type, spacing and the shared controls
+ * (.button, .link, .close, .notice) come from design/; use their tokens here
+ * rather than a literal colour or size.
+ */
+:root {
+  --sw-background: var(--color-bg);
+  --sw-page-inset-bottom: 0px;
+}
+
+.shell {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.page {
+  display: flex;
+  min-height: 100%;
+  flex-direction: column;
+  gap: var(--space-6);
+  width: 100%;
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: var(--space-4) var(--space-5) 0;
+}
+
+.lede {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* The primary action is pinned: the page scrolls under it, the content fades out behind it. */
+.actions {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: auto;
+  padding: var(--space-5) 0 var(--space-4);
+  background: linear-gradient(to bottom, transparent, var(--color-bg) var(--space-5));
+}
+
+.page {
+  padding-top: var(--space-8);
+}
+
+.benefits {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.benefits li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  color: var(--color-fg-secondary);
+}
+
+/* A small gold dot, not an emoji or icon font. */
+.benefits li::before {
+  content: "";
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  transform: translateY(-2px);
+}
+
+.plans {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.plan {
+  display: flex;
+  width: 100%;
+  min-height: 64px;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  border: 1px solid var(--color-border);
+  background: transparent;
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-fg);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 200ms var(--ease-out),
+    border-color var(--duration-hover) var(--ease-out),
+    background-color var(--duration-hover) var(--ease-out);
+}
+
+.plan:active {
+  transform: scale(0.98);
+  transition-duration: var(--duration-press);
+}
+
+.plan[aria-checked="true"] {
+  border-color: var(--color-accent);
+  background: var(--color-surface);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.plan-name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+}
+
+.plan-sub {
+  margin-top: 2px;
+  color: var(--color-fg-tertiary);
+  font-size: var(--text-xs);
+}
+
+.plan-price {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+.badge {
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
+  padding: 2px var(--space-2);
+  color: var(--color-accent-ink);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  white-space: nowrap;
+}
+
+.fine {
+  text-align: center;
+  font-size: var(--text-xs);
+  color: var(--color-fg-tertiary);
+}

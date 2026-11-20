@@ -93,6 +93,21 @@ pnpm --filter @biblemates/server db:pull        # regenerate Drizzle types after
    Then paste `supabase/setup-notifications.sql` into the SQL editor with your project ref + secret filled in.
 3. **App env** — copy `apps/mobile/.env.example` to `.env.local` for local dev.
 
+## Paywall source (`superwall/`)
+
+The Superwall paywall (`superwall/paywalls/pro`) is a standalone project with its own
+`package.json` (not part of the root workspace). It is pushed from a developer machine, not CI:
+
+```sh
+cd superwall && pnpm install
+pnpm typecheck   # tsc
+pnpm dev         # superwall dev: live studio preview
+pnpm push        # superwall push: new version in Superwall, production untouched
+pnpm ship        # superwall publish: push and promote to production
+```
+
+Needs `superwall login` first. `superwall.lock` binds the paywall to its dashboard entry; commit it.
+
 ## Shipping to TestFlight
 
 ```sh
