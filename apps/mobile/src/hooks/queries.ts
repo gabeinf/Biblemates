@@ -100,7 +100,7 @@ export function useLeaveCircle() {
  * activity row (via DB triggers), so one channel is enough to keep Home and
  * Study fresh while the app is open.
  */
-export function useCircleRealtime(circleId: string | undefined) {
+export function useCircleRealtime(circleId: string | undefined, onMilestone?: () => void) {
   const qc = useQueryClient()
   useEffect(() => {
     if (!circleId) return
@@ -114,7 +114,8 @@ export function useCircleRealtime(circleId: string | undefined) {
           table: 'activity',
           filter: `circle_id=eq.${circleId}`,
         },
-        () => {
+        (payload) => {
+          if ((payload.new as { kind?: string }).kind === 'milestone') onMilestone?.()
           qc.invalidateQueries({ queryKey: qk.activity(circleId) })
           qc.invalidateQueries({ queryKey: ['completions'] })
           qc.invalidateQueries({ queryKey: ['reflections'] })
@@ -127,7 +128,7 @@ export function useCircleRealtime(circleId: string | undefined) {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [circleId, qc])
+  }, [circleId, qc, onMilestone])
 }
 
 // ---------------------------------------------------------------- study

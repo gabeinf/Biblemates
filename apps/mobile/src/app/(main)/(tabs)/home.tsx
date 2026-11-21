@@ -1,5 +1,6 @@
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useState } from 'react'
 import { useRouter } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import {
@@ -19,6 +20,7 @@ import { currentStreak } from '../../../lib/streak'
 import { firstName, longDate, timeAgo } from '../../../lib/format'
 import { formatRef } from '../../../constants/books'
 import ActivityRow from '../../../components/ActivityRow'
+import { NudgeSheet } from '../../../components/NudgeSheet'
 import { CardSkeleton, HomeSkeleton, RowSkeleton } from '../../../components/Skeleton'
 import {
   AppText,
@@ -55,6 +57,7 @@ export default function Home() {
   const completions = useCompletions(cs.data?.id)
   const prayers = usePrayerRequests(circle.id)
   const encourage = useEncourage()
+  const [nudged, setNudged] = useState<string | null>(null)
   const answered = useMarkPrayerAnswered(circle.id)
 
   const day = cs.data ? currentDay(cs.data) : undefined
@@ -227,14 +230,18 @@ export default function Home() {
                   <Pressable
                     key={m.user_id}
                     style={styles.encourageChip}
-                    onPress={() => encourage.mutate({ circleId: circle.id, toUser: m.user_id, kind: 'praying' })}
+                    onPress={() =>
+                      encourage.mutate(
+                        { circleId: circle.id, toUser: m.user_id, kind: 'praying' },
+                        { onSuccess: () => setNudged(firstName(m.profile?.display_name)) },
+                      )
+                    }
                   >
                     <Avatar name={m.profile?.display_name} uri={m.profile?.avatar_url} size={28} />
                     <Text style={styles.chipText}>🙏 Pray for {firstName(m.profile?.display_name)}</Text>
                   </Pressable>
                 ))}
             </ScrollView>
-            {encourage.isSuccess && <Muted>Sent — they'll know you're praying for them.</Muted>}
           </View>
         )}
 
@@ -268,7 +275,10 @@ export default function Home() {
                     <Pressable
                       disabled={iPrayed}
                       onPress={() =>
-                        encourage.mutate({ circleId: circle.id, toUser: p.user_id, kind: 'praying', prayerRequestId: p.id })
+                        encourage.mutate(
+                          { circleId: circle.id, toUser: p.user_id, kind: 'praying', prayerRequestId: p.id },
+                          { onSuccess: () => setNudged(firstName(author)) },
+                        )
                       }
                     >
                       <Text style={styles.link}>{iPrayed ? 'You prayed ✓' : 'I prayed for you'}</Text>
@@ -282,6 +292,7 @@ export default function Home() {
         </View>
         </Sheet>
       </ScrollView>
+      <NudgeSheet name={nudged} onClose={() => setNudged(null)} />
     </View>
   )
 }

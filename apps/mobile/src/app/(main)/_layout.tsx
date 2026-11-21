@@ -1,6 +1,6 @@
 import { Stack, useRouter } from 'expo-router'
 import { markAppReady } from '../../lib/splash'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import * as Notifications from 'expo-notifications'
 import { useAuthContext } from '../../hooks/use-auth-context'
@@ -29,7 +29,10 @@ export default function MainLayout() {
   const circle = useMyCircle()
   const hasCircle = !!circle.data
 
-  useCircleRealtime(circle.data?.id)
+  const router = useRouter()
+  // Everyone finished the study: celebrate once, wherever they are in the app.
+  const onMilestone = useCallback(() => router.push({ pathname: '/celebrate', params: { kind: 'study' } }), [router])
+  useCircleRealtime(circle.data?.id, onMilestone)
   useNotificationRouting()
 
   // Ask for push permission once the user is in a circle (so the prompt has context).
@@ -85,6 +88,7 @@ export default function MainLayout() {
         <Stack.Screen name="prayer" options={{ presentation: 'modal', headerShown: true, title: 'Prayer request' }} />
         <Stack.Screen name="verse-reflections" options={{ presentation: 'modal', headerShown: true, title: 'Circle reflections' }} />
         <Stack.Screen name="paywall" options={{ presentation: 'fullScreenModal' }} />
+        <Stack.Screen name="celebrate" options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }} />
         <Stack.Screen name="profile" options={{ headerShown: true, title: 'Profile', headerBackTitle: 'Home' }} />
         <Stack.Screen name="chat" options={{ headerShown: true, title: 'Scripture', headerBackTitle: 'Home' }} />
         <Stack.Screen name="chat-history" options={{ presentation: 'modal', headerShown: true, title: 'Chats' }} />
