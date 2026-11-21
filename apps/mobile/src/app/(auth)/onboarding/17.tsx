@@ -82,6 +82,7 @@ export default function NotificationsStep() {
 
   return (
     <StepScreen
+      mascot
       footer={
         showContinue ? (
           <Button

@@ -65,7 +65,7 @@ export default function InviteCircle() {
   }
 
   return (
-    <StepScreen footer={<Button label="Continue" size="lg" onPress={() => goNext()} />}>
+    <StepScreen mascot footer={<Button label="Continue" size="lg" onPress={() => goNext()} />}>
       <FadeIn>
         <StepHeading
           title="Biblemates is better together"

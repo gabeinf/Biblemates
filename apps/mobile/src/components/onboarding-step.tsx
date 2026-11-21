@@ -7,17 +7,21 @@ import type { ReactNode } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { FadeIn } from './onboarding'
+import { LambView } from './ui'
 import { colors, spacing, typography } from '../theme/tokens'
 
 export function StepScreen({
   children,
   footer,
   fade = false,
+  mascot = false,
 }: {
   children: ReactNode
   footer: ReactNode
   /** Fades the scrolling content out just above the footer (long lists, like 05). */
   fade?: boolean
+  /** Character slot: the front lamb on top of the step. Only on steps the rework plan marks Y. */
+  mascot?: boolean
 }) {
   return (
     <View style={styles.screen}>
@@ -26,6 +30,7 @@ export function StepScreen({
         contentContainerStyle={[styles.content, fade && styles.contentFaded]}
         showsVerticalScrollIndicator={false}
       >
+        {mascot ? <LambView view="front" size={MASCOT} style={styles.mascot} /> : null}
         {children}
       </ScrollView>
       <FadeIn delay={240} style={styles.footer}>
@@ -69,9 +74,11 @@ export function StepHeading({
 }
 
 const FADE_HEIGHT = spacing.xxl
+const MASCOT = 104
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
+  mascot: { alignSelf: 'center' },
   screen: { flex: 1, backgroundColor: colors.paper },
   // flexGrow lets a step give spare height to one child (08's card stack); others ignore it.
   content: {

@@ -13,7 +13,7 @@ export default function StakesTeaser() {
   const { goNext } = useOnboardingNav()
 
   return (
-    <StepScreen footer={<Button label="Continue" size="lg" onPress={() => goNext()} />}>
+    <StepScreen mascot footer={<Button label="Continue" size="lg" onPress={() => goNext()} />}>
       <FadeIn>
         <StakesCarousel presets={STAKES_PRESETS} />
       </FadeIn>
