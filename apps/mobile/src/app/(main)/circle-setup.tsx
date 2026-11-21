@@ -3,7 +3,7 @@ import { KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, View } fro
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useCreateCircle, useJoinCircle } from '../../hooks/queries'
 import { useAuthContext } from '../../hooks/use-auth-context'
-import { Button, Card, Eyebrow, Muted } from '../../components/ui'
+import { Button, Card, Eyebrow, LambView, Muted } from '../../components/ui'
 import { colors, radii, spacing, typography } from '../../theme/tokens'
 import { firstName } from '../../lib/format'
 
@@ -19,6 +19,7 @@ export default function CircleSetup() {
   return (
     <SafeAreaView style={styles.screen}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.body}>
+        {mode === 'choose' && <LambView view="front" size={120} style={{ alignSelf: 'center' }} />}
         <Eyebrow>Welcome, {firstName(profile?.display_name)}</Eyebrow>
         <Text style={styles.title}>{'Grow together,\nevery day.'}</Text>
         <Muted>Biblemates works best with a small circle — a partner, your family, or a few friends reading the same passage each day.</Muted>

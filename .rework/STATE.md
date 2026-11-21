@@ -1,51 +1,45 @@
 # STATE (rewrite at the end of every session; ≤80 lines)
 
-## Phase
+## Phase (2026-11-20)
+S0 done. S1 merged (#103). S2 shipped as PRs, S3 partly (automated checks only). **S4 (Rive) NOT started**: no `biblemates.riv` exists yet (`~/Documents/BibleMates-Rive` has only `.rml` sources, no build output) and the session is gated on verified animations.
 
-S0 done. **S1 built on `feat/theme-kit` (PR pending).** Gabe said "work through everything": Q1-Q5 taken at the recommended defaults (see Decisions). Next = S2 batch 1 after S1 merges.
+## PRs (each = 1 issue = 1 branch, auto-merged by CI once verify + guidelines pass)
+| PR | what | state when written |
+|---|---|---|
+| #103 | S1 theme kit | merged |
+| #105 | batch 1: Intro (step 1), chunky Button, Today | open (verify running) |
+| next | batch 2: front lamb slot on onboarding 6, 7, 9, 15, 16, 17 | local branch `feat/onboarding-lamb-slots` |
+| next | batch 3: check-in / study-complete celebrations, nudge sheet | local branch `feat/celebrations` |
+| next | batch 4: lamb on Study empty + circle setup, Dynamic Type cap on pills, QA notes | local branch `feat/empty-states-a11y` |
+Rebase each onto master after its parent merges, push under a NEW branch name if already pushed (never force-push).
 
 ## Stack facts
+Expo SDK 58 (CNG), RN 0.88, expo-router 58, native tabs, Reanimated 4, expo-haptics present. Theme in `apps/mobile/src/theme/` (`active.ts` = the palette switch). Legacy `colors.*` derive from the active palette; new code uses `useTheme()` + `components/ui`.
 
-- **Expo SDK 58 (managed + CNG)**, not bare RN. RN 0.88.1, React 19.3, expo-router 58, native tabs (system bar), pnpm monorepo.
-- Install with `pnpm --filter @biblemates/mobile add …` / `npx expo install …` + `npx expo prebuild`/dev build (never `yarn`/`pod install` by hand). Rive and any native lib need a dev build.
-- No Nunito, expo-haptics, react-native-svg or Rive installed. Fonts today: Cormorant + Lora. Theme in `apps/mobile/src/theme/tokens.ts` (hex in one file already).
-- Definition of done in this repo = `pnpm verify` (typecheck, lint, test, screenshots on web export). One issue = one branch = one PR, never commit to master, ask before adding deps (CLAUDE.md).
-- Files: `.rework/APP_BRIEF.md` (facts), `REWORK_PLAN.md` (screens/batches), `ASSET_REQUEST.md` (send to design agent now).
+## Decisions (defaults taken because Q1-Q5 were not answered individually; Gabe said "work through everything")
+1. Streak is derived client-side (current study only); no seeds, no Shop, no seed pill/tile.
+2. Flock = one lamb per circle member (PastureView `lambCount`). Intro line re-written to "Read with friends and your flock grows." (placeholder only; the Rive Intro bakes its copy, so the design agent must re-bake it).
+3. Tab bar untouched (native, "Home" label kept). Renaming to "Today" NOT done (Q3 open).
+4. No new dependencies (expo-haptics was already on master). Rive runtime still needs approval.
+5. Home CTA label stays "Continue reading": check-in actually happens in the Bible tab.
+6. Unbuilt `[step]` placeholder was removed on master; all onboarding steps now exist.
 
-## Decisions made (log)
+## Known gaps / not done
+- No iOS simulator screenshots (web-export screenshots + `/_design` only). Device checks pending: VoiceOver, Dynamic Type 200%, Reduce Motion, iPhone SE layout, haptics.
+- Palette-swap QA: contrast + role tests only; a visual ACTIVE_PALETTE swap on device is not done.
+- Onboarding 13 (Name) has no lamb (keyboard layout); chat empty state, prayer empty state, missed-day "kind" state and the separate "streak extended" screen are not built.
+- Raw spacing numbers are not linted.
+- Handoff lamb/seed PNGs are opaque; keyed out locally (see ASSET_REQUEST P0).
+- Native splash is navy but the old yellow `splash-icon.png` is still the splash image (Rive Intro replaces it in S4).
+- Time of day: golden hour only (night/morning palettes not designed).
 
-1. Keep native tab bar, tint meadow. No custom pill tab bar.
-2. Keep 3 tabs (Home→Today?, Bible, Study); no Shop/Friends/Flock tab.
-3. Nunito 600 + 800 only (700 not supplied). Nunito also for Bible reader text.
-4. Onboarding step ids/flow unchanged; "Meet your first lamb" lives inside the Rive `Intro` at step 1.
-5. Old `colors.*` keys get codemodded to semantic names in S1 (mapping in REWORK_PLAN).
-6. Flock = one lamb per circle member (proposal, see Q2). Whole-group banner and new-lamb come from real activity events.
-7. Seeds pill, streak pill, Seeds tile, Shop hidden until Q1 answered.
-8. Web (Playwright) gets a static lamb/pasture fallback, since Rive RN is native-only.
-9. Unbuilt onboarding screens (8, 14, 16, join) not built here.
+## Open questions for Gabe
+- Q1 seeds/streak mechanic (default applied above), Q2 flock meaning (default applied), Q3 rename Home to Today, Q4 approve the Rive runtime dependency for S4.
 
-## Open questions for Gabe (all are new mechanics or renames)
+## Next
+1. Merge PRs in order (#105, then the three local branches as they are pushed).
+2. Send ASSET_REQUEST.md to the design agent; when `biblemates.riv` exists, run S4.
 
-- **Q1 Seeds/streaks**: neither exists. Options: (a) **recommended** show a client-derived streak (from `day_completions`), no seeds/shop; (b) build seeds + streak tables (schema + server); (c) neither. Default if no answer = (a).
-- **Q2 Flock meaning**: (a) **recommended** each circle member is a lamb, new lamb when a friend joins; (b) earned lambs per N check-ins (new mechanic). Intro copy needs a re-bake under (a).
-- **Q3** Rename tab "Home" → "Today"?
-- **Q4 Dependencies** to approve (CLAUDE.md): `expo-haptics` (S2), Rive RN runtime (S4), `react-native-svg` only if needed.
-- **Q5 Queue**: pause the `/clear-issues` builders and land the uncommitted edits (onboarding 2, 12, _layout) before S1?
-
-## Blockers / risks
-
-See REWORK_PLAN.md "Risks". Top 3: queue collision, Rive on web verify, deps/native rebuild.
-
-## Next (superseded by S1 result)
-
-Gabe: approve plan + answer Q1–Q5, send `ASSET_REQUEST.md` to the design agent. Then new chat: `Read ~/Documents/BibleMates-Rive/handoff/t3/S1-theme-kit.md and do exactly that session. Repo root = current directory.`
-
-## S1 result (2026-11-20)
-- `theme/`: `palettes/{goldenHour,testInverted,types}.ts` (identical keys enforced by `Palette`), `semantic.ts` (`makeTheme`), `active.ts` (ACTIVE_PALETTE = the switch), `system.ts` (type/space/radius/control/motion/pasture), `index.tsx` (`ThemeProvider`, `useTheme`). Legacy `colors.*` in `tokens.ts` now derives from the active palette, so every existing screen already re-themed (Gold→meadow primary). Screens migrate to `useTheme()` per S2 batch.
-- Kit in `components/ui/` (barrel `index.ts`); old `ui.tsx` moved to `ui/legacy.tsx`, re-exported. Placeholders: LambView, PastureView, SeedIcon, IntroView.
-- Guards: `pnpm contrast` + Jest contrast test, `pnpm style` (hex/rgba/fontFamily outside theme/), both inside `pnpm verify`.
-- Fonts: Nunito 600/800 bundled, Cormorant/Lora removed. Italic call sites render upright.
-- Dev gallery: `/_design` (dev only, `__DEV__`).
-- Jest: reanimated stub in `jest.setup.ts` (its own mock needs the worklets native module).
-- **Asset issue**: handoff character/seed PNGs are NOT transparent (opaque #1D1D1D bg). Keyed out locally with a flood fill for placeholders. Ask design agent for true alpha PNGs.
-- Not done: raw-spacing-number lint (no reliable grep), iOS simulator screenshots (web screenshot of `/_design` checked instead), haptic lib already present (`expo-haptics`).
+## Batch 4 (#108) shipping notes
+- Rebased onto origin/master after #109/#110 merged; verify green (typecheck, lint, style, contrast, test, screenshots).
+- Reviewer: PASS. Non-blocking: no Jest test for the Study lamb (covered by circle-setup + Pill tests); ASSET_REQUEST.md unchanged (nothing new needed).
