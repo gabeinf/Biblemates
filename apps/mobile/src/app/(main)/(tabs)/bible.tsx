@@ -25,6 +25,7 @@ import BookPicker from '../../../components/bible/BookPicker'
 import VerseActionSheet from '../../../components/bible/VerseActionSheet'
 import { ErrorState } from '../../../components/ui'
 import { BibleSkeleton, VersesSkeleton } from '../../../components/Skeleton'
+import { showCelebration } from '../../../lib/celebrations'
 import { getLastPosition, getLastTranslation, setLastTranslation } from '../../../lib/reader-prefs'
 import type { BibleVerse, PassageRef, TranslationId } from '../../../types/bible'
 import { colors, highlightColors, radii, spacing, typography, type HighlightColor } from '../../../theme/tokens'
@@ -223,7 +224,7 @@ export default function Bible() {
               {isTodaysReading && !doneToday && (
                 <Pressable style={styles.doneBanner} onPress={() =>
                     markDone.mutate(today!.day_number, {
-                      onSuccess: () => router.push({ pathname: '/celebrate', params: { kind: 'checkin' } }),
+                      onSuccess: () => showCelebration(router, 'checkin'),
                     })
                   }
                 >
