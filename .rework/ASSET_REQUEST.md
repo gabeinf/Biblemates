@@ -87,7 +87,6 @@ SF Symbols for chrome (rendered natively); custom only for brand moments.
 
 Accessibility note for the design agent: the lamb is exposed as one image labelled "A lamb"; the Rive swap must keep that single label and not add focusable children. Pills cap Dynamic Type at 1.3x, so no asset change is needed for large text.
 
-
 ## Time of day
 
 | screen                                                                                                                                | morning                      | golden hour (built, default)                   | night                                   |

@@ -2,6 +2,7 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { render, screen } from '@testing-library/react-native'
 import Study from '../app/(main)/(tabs)/study'
+import { todayIso } from '../lib/study-day'
 
 jest.mock('expo-router', () => ({ useRouter: () => ({ navigate: jest.fn(), push: jest.fn() }) }))
 jest.mock('../hooks/use-auth-context', () => ({ useUserId: () => 'u1' }))
@@ -41,7 +42,7 @@ describe('Study empty states', () => {
     mockCircleStudy = {
       id: 'cs1',
       status: 'active',
-      started_on: require('../lib/study-day').todayIso(),
+      started_on: todayIso(),
       study: {
         title: 'Gospel of John',
         description: 'Seven days',
