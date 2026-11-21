@@ -32,6 +32,8 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - ExpoAppleAuthentication (58.0.3):
+    - ExpoModulesCore
   - ExpoApplication (58.1.2):
     - ExpoModulesCore
   - ExpoAsset (58.0.21):
@@ -2265,6 +2267,7 @@ DEPENDENCIES:
   - DoubleConversion (from `build/rndeps-facades/DoubleConversion`)
   - "EXConstants (from `../../../node_modules/.pnpm/expo-constants@58.0.16_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-col_7b734cd8c7d74270975b64fee9857a10/node_modules/expo-constants/ios`)"
   - "Expo (from `../../../node_modules/.pnpm/expo@58.0.25_@babel+core@7.29.7_supports-color@8.1.1__@expo+dom-webview@58.0.2_@expo+me_282e7e2004414f22a066226368fe01f1/node_modules/expo`)"
+  - "ExpoAppleAuthentication (from `../../../node_modules/.pnpm/expo-apple-authentication@58.0.3_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_su_486b330706adb2caf2f7478437b58c51/node_modules/expo-apple-authentication/ios`)"
   - "ExpoApplication (from `../../../node_modules/.pnpm/expo-application@58.1.2_expo@58.0.25/node_modules/expo-application/ios`)"
   - "ExpoAsset (from `../../../node_modules/.pnpm/expo-asset@58.0.21_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-color@8_cab4b7e539a94ce47030f065ae74d3fa/node_modules/expo-asset/ios`)"
   - "ExpoClipboard (from `../../../node_modules/.pnpm/expo-clipboard@58.0.4_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-colo_a3d418d1bf82476ad818048b0939bd50/node_modules/expo-clipboard/ios`)"
@@ -2402,6 +2405,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/expo-constants@58.0.16_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_supports-col_7b734cd8c7d74270975b64fee9857a10/node_modules/expo-constants/ios"
   Expo:
     :path: "../../../node_modules/.pnpm/expo@58.0.25_@babel+core@7.29.7_supports-color@8.1.1__@expo+dom-webview@58.0.2_@expo+me_282e7e2004414f22a066226368fe01f1/node_modules/expo"
+  ExpoAppleAuthentication:
+    :path: "../../../node_modules/.pnpm/expo-apple-authentication@58.0.3_expo@58.0.25_react-native@0.88.1_@babel+core@7.29.7_su_486b330706adb2caf2f7478437b58c51/node_modules/expo-apple-authentication/ios"
   ExpoApplication:
     :path: "../../../node_modules/.pnpm/expo-application@58.1.2_expo@58.0.25/node_modules/expo-application/ios"
   ExpoAsset:
@@ -2647,6 +2652,7 @@ SPEC CHECKSUMS:
   DoubleConversion: 501a575c40c0b50c89685762dd3e415e6bb26fb0
   EXConstants: aeda76f4be923fc719522ae162dd0b8c6483f9cc
   Expo: c11bb32bebda9fafb2e1b8482ddeae4eaf69594d
+  ExpoAppleAuthentication: 54c1576b431d3b3f8646ecf08a49ed33fee43b73
   ExpoApplication: c83355b2f69f996b5d26b64fef39228e7f1e1208
   ExpoAsset: eda9e4844b55b78d4e71a0e2de767a038f3a0806
   ExpoClipboard: 244adf0a38b60ec7105e217042dd266a722f5a5e
