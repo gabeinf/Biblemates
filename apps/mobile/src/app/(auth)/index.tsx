@@ -41,7 +41,7 @@ export default function Welcome() {
   if (launch) return <Redirect href={stepHref(1)} />
 
   return (
-    <LinearGradient style={styles.flex} colors={['#fbefcf', colors.paper]} locations={[0, 0.55]}>
+    <LinearGradient style={styles.flex} colors={[colors.wash, colors.paper]} locations={[0, 0.55]}>
       <SafeAreaView style={styles.screen}>
         <FadeIn>
           <Text style={styles.wordmark}>Biblemates</Text>
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     gap: spacing.md,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.border,
-    shadowColor: '#5b4310',
+    shadowColor: colors.shadow,
     shadowOpacity: 0.12,
     shadowRadius: 24,
     shadowOffset: { width: 0, height: 12 },

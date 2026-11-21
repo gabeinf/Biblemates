@@ -287,7 +287,7 @@ const styles = StyleSheet.create({
     height: SWATCH,
     borderRadius: SWATCH / 2,
     borderWidth: 1,
-    borderColor: '#0000001a',
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },

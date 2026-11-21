@@ -30,10 +30,8 @@ function RootNavigator() {
   const { isLoggedIn, isLoading } = useAuthContext();
 
   const [fontsLoaded, fontError] = useFonts({
-    'Lora': require('../../assets/fonts/Lora-VariableFont_wght.ttf'),
-    'Lora-Italic': require('../../assets/fonts/Lora-Italic-VariableFont_wght.ttf'),
-    'CormorantGaramond': require('../../assets/fonts/CormorantGaramond-VariableFont_wght.ttf'),
-    'CormorantGaramond-Italic': require('../../assets/fonts/CormorantGaramond-Italic-VariableFont_wght.ttf')
+    Nunito_600SemiBold: require('../../assets/fonts/Nunito_600SemiBold.ttf'),
+    Nunito_800ExtraBold: require('../../assets/fonts/Nunito_800ExtraBold.ttf'),
   })
 
   // Signed-out users go straight to onboarding. Signed-in users keep the splash

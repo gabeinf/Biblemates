@@ -2,13 +2,9 @@
  * Small shared building blocks so screens stay focused on layout + data.
  */
 import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import type { PropsWithChildren, ReactNode } from 'react';
-import { colors, radii, spacing, typography } from '../theme/tokens';
-import { initials } from '../lib/format';
-
-export function Card({ children, style }: PropsWithChildren<{ style?: StyleProp<ViewStyle> }>) {
-  return <View style={[styles.card, style]}>{children}</View>;
-}
+import type { ReactNode } from 'react';
+import { colors, radii, spacing, typography } from '../../theme/tokens';
+import { initials } from '../../lib/format';
 
 export function Eyebrow({ children, right }: { children: ReactNode; right?: ReactNode }) {
   return (
@@ -124,14 +120,6 @@ export function ErrorState({ message, onRetry }: { message: string; onRetry?: ()
 }
 
 export const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: radii.lg,
-    padding: spacing.lg,
-    gap: spacing.sm,
-  },
   eyebrowRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   eyebrow: {
     fontFamily: typography.fontFamily.body,
