@@ -12,6 +12,7 @@ jest.mock('../hooks/use-auth-context', () => ({
 
 const mockQuery = <T,>(data: T) => ({ data, isPending: false, isRefetching: false, isSuccess: true, refetch: jest.fn() })
 let mockCompleted: string[] = []
+let mockStartedDaysAgo = 0
 let mockPrayers: unknown[] = []
 jest.mock('../hooks/queries', () => ({
   useCircle: () => ({ id: 'c1', name: 'Grace Group', invite_code: 'ABC123' }),
@@ -24,7 +25,7 @@ jest.mock('../hooks/queries', () => ({
   useCircleStudy: () =>
     mockQuery({
       id: 'cs1',
-      started_on: require('../lib/study-day').todayIso(),
+      started_on: require('../lib/study-day').todayIso(new Date(Date.now() - mockStartedDaysAgo * 86_400_000)),
       study: {
         total_days: 7,
         days: Array.from({ length: 7 }, (_, i) => ({
@@ -40,7 +41,7 @@ jest.mock('../hooks/queries', () => ({
       },
     }),
   useCompletions: () =>
-    mockQuery(mockCompleted.map((u) => ({ user_id: u, day_number: 1, completed_at: new Date().toISOString() }))),
+    mockQuery(mockCompleted.map((u) => ({ user_id: u, day_number: mockStartedDaysAgo + 1, completed_at: new Date().toISOString() }))),
   usePrayerRequests: () => mockQuery(mockPrayers),
   useDayReflections: () => mockQuery([]),
   useEncourage: () => ({
@@ -53,6 +54,7 @@ jest.mock('../hooks/queries', () => ({
 describe('Today', () => {
   beforeEach(() => {
     mockCompleted = []
+    mockStartedDaysAgo = 0
     mockPrayers = []
     mockNavigate.mockClear()
   })
@@ -74,6 +76,26 @@ describe('Today', () => {
     expect(screen.getByLabelText('1 day streak')).toBeTruthy()
     expect(screen.getByLabelText('2/2 friends')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Continue reading' })).toBeNull()
+  })
+
+  it('greets kindly and offers "Read now" when yesterday slipped by', async () => {
+    mockStartedDaysAgo = 2
+    await render(<Home />)
+    expect(within(screen.getByTestId('slipped-banner')).getByText('Welcome back')).toBeTruthy()
+    await fireEvent.press(screen.getByRole('button', { name: 'Read now' }))
+    expect(mockNavigate).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/bible' }))
+  })
+
+  it('shows no kind banner on the first day', async () => {
+    await render(<Home />)
+    expect(screen.queryByTestId('slipped-banner')).toBeNull()
+  })
+
+  it('hides the kind banner once today is read', async () => {
+    mockStartedDaysAgo = 2
+    mockCompleted = ['u1']
+    await render(<Home />)
+    expect(screen.queryByTestId('slipped-banner')).toBeNull()
   })
 
   it('shows the Hooray sheet with the friend\'s first name after a nudge', async () => {

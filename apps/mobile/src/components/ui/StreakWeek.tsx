@@ -4,10 +4,10 @@ import { space, useTheme } from '../../theme'
 import { WEEKDAY_INITIALS_FALLBACK } from '../../lib/weekdays'
 import { AppText } from './AppText'
 
-export type DayState = 'done' | 'today' | 'future'
+export type DayState = 'done' | 'today' | 'future' | 'missed'
 const SIZE = 36
 
-/** 7 day circles: done = ember fill + white check, today = ember ring, future = line ring. */
+/** Day circles: done = ember fill + white check, today = ember ring, future = line ring, missed = soft sunken dot (no alarm colour). */
 export function StreakWeek({ days, labels = WEEKDAY_INITIALS_FALLBACK }: { days: readonly DayState[]; labels?: readonly string[] }) {
   const theme = useTheme()
   const done = days.filter((d) => d === 'done').length
@@ -21,6 +21,7 @@ export function StreakWeek({ days, labels = WEEKDAY_INITIALS_FALLBACK }: { days:
               d === 'done' && { backgroundColor: theme.streak, borderColor: theme.streak },
               d === 'today' && { borderColor: theme.streak },
               d === 'future' && { borderColor: theme.border },
+              d === 'missed' && { backgroundColor: theme.surfaceSunken, borderColor: theme.surfaceSunken },
             ]}
           >
             {d === 'done' && <Ionicons name="checkmark" size={20} color={theme.onPrimary} />}

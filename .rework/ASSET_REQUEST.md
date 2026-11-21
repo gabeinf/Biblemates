@@ -93,6 +93,8 @@ SF Symbols for chrome (rendered natively); custom only for brand moments.
 | Chat history (`(main)/chat-history.tsx`, `EmptyState`, 140pt)       | no chats                                | `sleep`     |
 | Today prayer list (`(tabs)/home.tsx`, 96pt)                         | no open requests (not the prayer form)  | `idle`      |
 
+**Placeholder slot (missed-day, kind).** Static side lamb (`LambView view="side"`, 48pt) in the "Welcome back" banner on Today (`(tabs)/home.tsx`, shown when yesterday's reading is unread and today's is not). Needs the `sit` pose; please keep it calm (no sad face).
+
 Accessibility note for the design agent: the lamb is exposed as one image labelled "A lamb"; the Rive swap must keep that single label and not add focusable children. Pills cap Dynamic Type at 1.3x, so no asset change is needed for large text.
 
 ## Time of day
