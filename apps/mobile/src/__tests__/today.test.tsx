@@ -42,7 +42,10 @@ jest.mock('../hooks/queries', () => ({
     mockQuery(mockCompleted.map((u) => ({ user_id: u, day_number: 1, completed_at: new Date().toISOString() }))),
   usePrayerRequests: () => mockQuery([]),
   useDayReflections: () => mockQuery([]),
-  useEncourage: () => ({ mutate: jest.fn(), isSuccess: false }),
+  useEncourage: () => ({
+    mutate: (_vars: unknown, opts?: { onSuccess?: () => void }) => opts?.onSuccess?.(),
+    isSuccess: false,
+  }),
   useMarkPrayerAnswered: () => ({ mutate: jest.fn() }),
 }))
 
@@ -69,5 +72,11 @@ describe('Today', () => {
     expect(screen.getByLabelText('1 day streak')).toBeTruthy()
     expect(screen.getByLabelText('2/2 friends')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Continue reading' })).toBeNull()
+  })
+
+  it('shows the Hooray sheet with the friend\'s first name after a nudge', async () => {
+    await render(<Home />)
+    await fireEvent.press(screen.getByText('🙏 Pray for Ann'))
+    expect(screen.getByText("Ann will know you're praying for them.")).toBeTruthy()
   })
 })
