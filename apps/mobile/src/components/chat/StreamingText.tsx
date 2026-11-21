@@ -8,6 +8,7 @@
 import { useEffect, useReducer, useRef } from 'react'
 import { StyleSheet, Text, type TextStyle } from 'react-native'
 import { formatPassage, splitCitations } from '@biblemates/shared'
+import { alpha } from '../../theme/color'
 import { colors } from '../../theme/tokens'
 
 const FADE_MS = 420
@@ -19,7 +20,7 @@ const CATCH_UP_FRAMES = 20
 const BUCKETS = 8
 const START_ALPHA = 0.08
 
-const ink = (a: number) => `rgba(32,31,29,${a.toFixed(2)})`
+const ink = (a: number) => alpha(colors.Ink, Number(a.toFixed(2)))
 
 type Target = { bookId: string; chapter: number; verseStart: number }
 

@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.goldSoft,
   },
   pillText: { fontFamily: typography.fontFamily.body, fontSize: 13, color: colors.Ink },
-  crisis: { gap: spacing.xs, padding: spacing.sm, borderRadius: radii.md, backgroundColor: '#A3402E14' },
+  crisis: { gap: spacing.xs, padding: spacing.sm, borderRadius: radii.md, backgroundColor: colors.dangerSoft },
   crisisTitle: { fontFamily: typography.fontFamily.body, fontSize: 14, color: colors.danger },
   crisisButtons: { flexDirection: 'row', gap: spacing.xs },
   crisisButton: {

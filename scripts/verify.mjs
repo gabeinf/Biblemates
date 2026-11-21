@@ -12,6 +12,8 @@ const mobile = ['--dir', 'apps/mobile', 'exec']
 const steps = [
   { name: 'typecheck', cmd: 'pnpm', args: [...mobile, 'tsc', '--noEmit'] },
   { name: 'lint', cmd: 'pnpm', args: [...mobile, 'eslint', '.'] },
+  { name: 'style', cmd: 'node', args: ['scripts/check-style.mjs'] },
+  { name: 'contrast', cmd: 'pnpm', args: ['exec', 'tsx', 'scripts/check-contrast.ts'] },
   { name: 'test', cmd: 'pnpm', args: [...mobile, 'jest', '--ci'] },
   { name: 'screenshots', cmd: 'node', args: ['scripts/screenshots.mjs'] },
 ]

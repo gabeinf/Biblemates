@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     padding: spacing.sm,
     borderRadius: radii.md,
-    backgroundColor: '#A3402E14',
+    backgroundColor: colors.dangerSoft,
   },
   switch: { alignSelf: 'center', paddingVertical: spacing.xs },
   switchText: { fontFamily: typography.fontFamily.body, fontSize: 14, color: colors.muted },

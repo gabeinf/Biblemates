@@ -11,6 +11,8 @@
     "verify": "node scripts/verify.mjs",
     "typecheck": "node scripts/verify.mjs typecheck",
     "lint": "node scripts/verify.mjs lint",
+    "style": "node scripts/check-style.mjs",
+    "contrast": "tsx scripts/check-contrast.ts",
     "test": "node scripts/verify.mjs test",
     "screenshots": "node scripts/verify.mjs screenshots",
     "format": "prettier --write ."

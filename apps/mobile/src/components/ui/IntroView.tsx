@@ -1,0 +1,51 @@
+import { useEffect, useRef } from 'react'
+import { Image, StyleSheet, View } from 'react-native'
+import { space, useTheme } from '../../theme'
+import { AppText } from './AppText'
+import { ChunkyButton } from './ChunkyButton'
+import { Sheet } from './Sheet'
+
+const landed = require('../../../assets/scenes/intro-landed.png')
+
+type Props = {
+  /** Lamb touched down (Rive: `landed`). Fire the light haptic here. */
+  onLanded?: () => void
+  /** Sheet is up and Continue is tappable (Rive: `onboardingReady`). */
+  onReady?: () => void
+  /** Continue tapped (Rive: `continueTapped`): go to the first onboarding step. */
+  onContinue: () => void
+}
+
+/** Placeholder intro: static "landed" frame + the sheet. The Rive `Intro` bakes the sheet copy in, so S4 drops it. */
+export function IntroView({ onLanded, onReady, onContinue }: Props) {
+  const theme = useTheme()
+  const fired = useRef(false)
+  useEffect(() => {
+    if (fired.current) return
+    fired.current = true
+    onLanded?.()
+    onReady?.()
+  }, [onLanded, onReady])
+  return (
+    <View style={[styles.fill, { backgroundColor: theme.brand }]}>
+      <Image source={landed} style={styles.fill} resizeMode="cover" />
+      <View style={styles.bottom}>
+        <Sheet>
+          <AppText variant="title" style={styles.center}>
+            Meet your first lamb
+          </AppText>
+          <AppText variant="body" color="textSecondary" style={styles.center}>
+            Read with friends and your flock grows.
+          </AppText>
+          <ChunkyButton label="Continue" onPress={onContinue} />
+        </Sheet>
+      </View>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  fill: { flex: 1 },
+  bottom: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: space.lg },
+  center: { textAlign: 'center' },
+})
