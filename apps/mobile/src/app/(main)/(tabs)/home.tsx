@@ -288,7 +288,15 @@ export default function Home() {
               </Card>
             )
           })}
-          {prayers.isSuccess && !prayers.data.length && <Muted>No open requests. Share what's on your heart.</Muted>}
+          {prayers.isSuccess && !prayers.data.length && (
+            <View testID="prayer-empty">
+              <EmptyState
+                lamb={<LambView view="front" size={96} />}
+                headline="No open requests"
+                body="Share what's on your heart."
+              />
+            </View>
+          )}
         </View>
         </Sheet>
       </ScrollView>

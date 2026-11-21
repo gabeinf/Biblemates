@@ -5,7 +5,7 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import { MOODS } from '@biblemates/shared'
 import { useConversations, useDeleteConversation } from '../../hooks/queries'
 import { RowSkeleton } from '../../components/Skeleton'
-import { ErrorState, Muted } from '../../components/ui'
+import { EmptyState, ErrorState } from '../../components/ui'
 import { timeAgo } from '../../lib/format'
 import { colors, spacing, typography } from '../../theme/tokens'
 
@@ -48,7 +48,7 @@ export default function ChatHistory() {
             <Text style={styles.newText}>New chat</Text>
           </Pressable>
         }
-        ListEmptyComponent={<Muted style={{ padding: spacing.lg }}>No chats yet. Your conversations will show up here.</Muted>}
+        ListEmptyComponent={<EmptyState headline="No chats yet" body="Your conversations will show up here." />}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         renderItem={({ item }) => {
           const mood = MOODS.find((m) => m.id === item.mood)
