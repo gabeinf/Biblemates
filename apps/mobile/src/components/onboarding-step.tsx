@@ -74,7 +74,8 @@ export function StepHeading({
 }
 
 const FADE_HEIGHT = spacing.xxl
-const MASCOT = 104
+/** Front-lamb height (pt) for onboarding slots. */
+export const MASCOT = 104
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },

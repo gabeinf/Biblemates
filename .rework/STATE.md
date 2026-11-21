@@ -53,3 +53,6 @@ Expo SDK 58 (CNG), RN 0.88, expo-router 58, native tabs, Reanimated 4, expo-hapt
 ## fix/empty-states-gaps (follow-up to #111)
 - Added `__tests__/study.test.tsx`: lamb + copy for no-study and completed states, no lamb while a study is active.
 - ASSET_REQUEST.md: added the "Placeholder slots shipped in #111" swap list (Study idle/happy, circle-setup wave) and the single "A lamb" a11y label rule. `.rework/` is tracked in git, so it ships in the PR.
+
+## 13 lamb (feat/onboarding-13-lamb)
+- Lamb = LambView front (MASCOT size) in the head block. Collapses (height + opacity) via useReanimatedKeyboardAnimation().progress on the UI thread. Autofocus means it is mostly hidden while typing; it returns when the keyboard is dismissed. No new assets.

@@ -2,6 +2,7 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { fireEvent, render, screen } from '@testing-library/react-native'
 import type { OnboardingDraft } from '@biblemates/shared'
+import { useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller'
 import Name from '../app/(auth)/onboarding/13'
 import { clearDraft, getDraft, updateDraft } from '../lib/onboarding-draft'
 
@@ -68,5 +69,12 @@ describe('13 · Name', () => {
     })
     // 80 (32 gap + 48 button) + 16 spacing
     expect(scroll().props.bottomOffset).toBe(96)
+  })
+
+  it('shows the lamb above the title and follows the keyboard animation', async () => {
+    await render(<Name />)
+    expect(screen.getByLabelText('A lamb')).toBeTruthy()
+    // Driven by the keyboard's own progress on the UI thread, not Keyboard listeners + state.
+    expect(useReanimatedKeyboardAnimation).toHaveBeenCalled()
   })
 })
