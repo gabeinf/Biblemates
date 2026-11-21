@@ -49,3 +49,7 @@ Expo SDK 58 (CNG), RN 0.88, expo-router 58, native tabs, Reanimated 4, expo-hapt
 - Gap 2: NudgeSheet keeps the last non-null name in state (set during render), no ref.
 - Tests: lib/celebrations.test.ts, celebrate.test.tsx (NudgeSheet slide-out name; Modal mocked to stay mounted).
 - Limit: a study milestone arriving after the check-in screen was already dismissed still shows (sequential, not stacked).
+
+## fix/empty-states-gaps (follow-up to #111)
+- Added `__tests__/study.test.tsx`: lamb + copy for no-study and completed states, no lamb while a study is active.
+- ASSET_REQUEST.md: added the "Placeholder slots shipped in #111" swap list (Study idle/happy, circle-setup wave) and the single "A lamb" a11y label rule. `.rework/` is tracked in git, so it ships in the PR.

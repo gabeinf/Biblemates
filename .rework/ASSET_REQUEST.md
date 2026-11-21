@@ -77,6 +77,16 @@ SF Symbols for chrome (rendered natively); custom only for brand moments.
 | Error (network)                                                                                             | non-form screens only                       | `Loading-Lamb` with `sad`                                                                                  |
 | Never: while reading Scripture, settings, forms, form errors, or more than one animated lamb in a list row. |
 
+**Placeholder slots shipped in #111 (swap list for S4).** Both slots render the static front lamb (`LambView view="front"`) with no pose, because `Lamb.pose` does not exist yet. When the `pose` input lands, pass it by state:
+
+| screen / code                                                          | state                                                  | pose needed        |
+| ---------------------------------------------------------------------- | ------------------------------------------------------ | ------------------ |
+| Study (`(tabs)/study.tsx`, 120pt front lamb above "Choose a journey")   | no study chosen                                        | `idle`             |
+| Study (same slot, "You finished ...!")                                 | study completed                                        | `happy`            |
+| Circle setup (`circle-setup.tsx`, choose mode only; hidden in forms)    | create/join header (keyboard layout must stay intact)  | `wave`             |
+
+Accessibility note for the design agent: the lamb is exposed as one image labelled "A lamb"; the Rive swap must keep that single label and not add focusable children. Pills cap Dynamic Type at 1.3x, so no asset change is needed for large text.
+
 ## Time of day
 
 | screen                                                                                                                                | morning                      | golden hour (built, default)                   | night                                   |
