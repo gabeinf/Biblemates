@@ -221,7 +221,12 @@ export default function Bible() {
           ListFooterComponent={
             <View style={{ gap: spacing.lg, marginTop: spacing.lg }}>
               {isTodaysReading && !doneToday && (
-                <Pressable style={styles.doneBanner} onPress={() => markDone.mutate(today!.day_number)}>
+                <Pressable style={styles.doneBanner} onPress={() =>
+                    markDone.mutate(today!.day_number, {
+                      onSuccess: () => router.push({ pathname: '/celebrate', params: { kind: 'checkin' } }),
+                    })
+                  }
+                >
                   <Ionicons name="checkmark-circle-outline" size={20} color={colors.surface} />
                   <Text style={styles.doneBannerText}>Mark Day {today!.day_number} as read</Text>
                 </Pressable>
