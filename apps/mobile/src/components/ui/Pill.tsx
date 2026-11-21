@@ -6,6 +6,8 @@ import { AppText } from './AppText'
 import { SeedIcon } from './SeedIcon'
 
 export type PillKind = 'seed' | 'streak' | 'friends'
+/** Pills sit in a header row: cap Dynamic Type so they never push the title off screen. */
+const DT_CAP = 1.3
 const LABEL: Record<PillKind, string> = { seed: 'seeds', streak: 'day streak', friends: 'friends' }
 
 /** 38h white pill, tinted 2px border, icon + ExtraBold number. */
@@ -26,7 +28,7 @@ export function Pill({ kind, value, icon }: { kind: PillKind; value: number | st
       style={[styles.pill, { backgroundColor: theme.surface, borderColor: tone.border }]}
     >
       {glyph}
-      <AppText variant="button" color={tone.ink}>
+      <AppText variant="button" color={tone.ink} maxFontSizeMultiplier={DT_CAP}>
         {value}
       </AppText>
     </View>

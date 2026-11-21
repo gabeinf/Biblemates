@@ -37,6 +37,11 @@ describe('ui kit', () => {
     expect(screen.getByLabelText('2 of 7 days done this week')).toBeTruthy()
   })
 
+  it('Pill caps Dynamic Type so header rows never overflow', async () => {
+    await render(<Pill kind="friends" value="3/4" />)
+    expect(screen.getByText('3/4').props.maxFontSizeMultiplier).toBe(1.3)
+  })
+
   it('ProgressBar clamps its value', async () => {
     await render(<ProgressBar value={1.7} label="Reading" />)
     expect(screen.getByRole('progressbar').props.accessibilityValue.now).toBe(100)

@@ -16,7 +16,7 @@ import { useUserId } from '../../../hooks/use-auth-context'
 import { currentDayNumber, isDayDone, percentComplete } from '../../../lib/study-day'
 import { formatRef } from '../../../constants/books'
 import ReflectionCard from '../../../components/ReflectionCard'
-import { Button, Card, ErrorState, Eyebrow, Muted, ProgressTrack, SectionTitle } from '../../../components/ui'
+import { Button, Card, ErrorState, Eyebrow, LambView, Muted, ProgressTrack, SectionTitle } from '../../../components/ui'
 import { RowSkeleton, StudySkeleton } from '../../../components/Skeleton'
 import { colors, radii, spacing, typography } from '../../../theme/tokens'
 
@@ -60,6 +60,7 @@ export default function Study() {
     return (
       <SafeAreaView style={styles.screen} edges={['top']}>
         <ScrollView contentContainerStyle={styles.content}>
+          <LambView view="front" size={120} style={{ alignSelf: 'center' }} />
           <Eyebrow>Your study</Eyebrow>
           <Text style={styles.hero}>{cs.data ? `You finished ${cs.data.study.title}!` : 'Choose a journey'}</Text>
           <Muted>{isOwner ? 'Pick the next 7-day journey for your circle.' : 'Your circle owner will pick the next journey.'}</Muted>
