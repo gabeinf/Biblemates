@@ -39,3 +39,7 @@ Expo SDK 58 (CNG), RN 0.88, expo-router 58, native tabs, Reanimated 4, expo-hapt
 ## Next
 1. Merge PRs in order (#105, then the three local branches as they are pushed).
 2. Send ASSET_REQUEST.md to the design agent; when `biblemates.riv` exists, run S4.
+
+## Batch 4 (#108) shipping notes
+- Rebased onto origin/master after #109/#110 merged; verify green (typecheck, lint, style, contrast, test, screenshots).
+- Reviewer: PASS. Non-blocking: no Jest test for the Study lamb (covered by circle-setup + Pill tests); ASSET_REQUEST.md unchanged (nothing new needed).
