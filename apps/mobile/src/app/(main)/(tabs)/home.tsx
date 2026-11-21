@@ -1,5 +1,5 @@
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import {
@@ -14,16 +14,38 @@ import {
   usePrayerRequests,
 } from '../../../hooks/queries'
 import { useAuthContext, useUserId } from '../../../hooks/use-auth-context'
-import { currentDay, currentDayNumber, isDayDone, progressByDay } from '../../../lib/study-day'
+import { currentDay, currentDayNumber, isDayDone } from '../../../lib/study-day'
+import { currentStreak } from '../../../lib/streak'
 import { firstName, longDate, timeAgo } from '../../../lib/format'
 import { formatRef } from '../../../constants/books'
 import ActivityRow from '../../../components/ActivityRow'
 import { CardSkeleton, HomeSkeleton, RowSkeleton } from '../../../components/Skeleton'
-import { Avatar, AvatarStack, Button, Card, Eyebrow, Muted, SectionTitle } from '../../../components/ui'
+import {
+  AppText,
+  Avatar,
+  AvatarStack,
+  Button,
+  Card,
+  ChunkyButton,
+  EmptyState,
+  Eyebrow,
+  LambView,
+  Muted,
+  PastureView,
+  Pill,
+  ProgressBar,
+  SectionTitle,
+  Sheet,
+  StreakWeek,
+  type DayState,
+} from '../../../components/ui'
 import { colors, radii, spacing, typography } from '../../../theme/tokens'
+import { useTheme } from '../../../theme'
 
 export default function Home() {
   const router = useRouter()
+  const insets = useSafeAreaInsets()
+  const theme = useTheme()
   const userId = useUserId()
   const { profile } = useAuthContext()
   const circle = useCircle()
@@ -47,6 +69,12 @@ export default function Home() {
     (dayReflections.data ?? []).filter((r) => r.visibility === 'circle').map((r) => r.user_id),
   ).size
   const iAnswered = (dayReflections.data ?? []).some((r) => r.user_id === userId)
+  // shortcut: streak counts this study's completions only; a cross-study streak needs its own query.
+  const streak = currentStreak(done.filter((c) => c.user_id === userId).map((c) => c.completed_at))
+  const wholeFlockRead = memberList.length > 1 && activeToday.length === memberList.length
+  const journey: DayState[] = (cs.data?.study.days ?? []).map((d) =>
+    isDayDone(done, userId, d.day_number) ? 'done' : d.day_number === dayNumber ? 'today' : 'future',
+  )
 
   const refreshing = members.isRefetching || activity.isRefetching || cs.isRefetching
   const onRefresh = () => {
@@ -64,81 +92,101 @@ export default function Home() {
   }
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <View style={[styles.screen, { backgroundColor: theme.bg }]}>
       <ScrollView
         contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.Gold} />}
       >
-        {/* Header */}
-        <View style={styles.topBar}>
-          <Pressable hitSlop={8} onPress={() => router.push('/profile')} accessibilityLabel="Profile">
-            <Avatar name={profile?.display_name} uri={profile?.avatar_url} size={40} />
-          </Pressable>
-          <View style={{ flex: 1 }}>
-            <Eyebrow>{longDate()}</Eyebrow>
+        {/* Pasture header: one lamb per circle member, the header floats over the sky */}
+        <PastureView lambCount={memberList.length} style={styles.pasture}>
+          <View style={[styles.topBar, { paddingTop: insets.top + spacing.xs }]}>
+            <Pressable hitSlop={8} onPress={() => router.push('/profile')} accessibilityLabel="Profile">
+              <Avatar name={profile?.display_name} uri={profile?.avatar_url} size={40} />
+            </Pressable>
+            <View style={{ flex: 1 }}>
+              <AppText variant="title" accessibilityRole="header">
+                Today
+              </AppText>
+              <AppText variant="caption" color="textSecondary">
+                {longDate()}
+              </AppText>
+            </View>
+            {streak > 0 && <Pill kind="streak" value={streak} />}
+            <Pill kind="friends" value={`${activeToday.length}/${memberList.length}`} />
+            <Pressable hitSlop={8} onPress={() => router.push('/chat')} accessibilityLabel="Scripture chat" style={styles.chat}>
+              <Ionicons name="chatbubbles-outline" size={26} color={colors.Ink} />
+            </Pressable>
           </View>
-          <Pressable hitSlop={8} onPress={() => router.push('/chat')} accessibilityLabel="Scripture chat">
-            <Ionicons name="chatbubbles-outline" size={26} color={colors.Ink} />
-          </Pressable>
-        </View>
-        <Text style={styles.hero}>Grow together, every day.</Text>
+        </PastureView>
 
-        {/* Circle */}
-        <Card>
-          <Eyebrow right={`${memberList.length} member${memberList.length === 1 ? '' : 's'}`}>{circle.name}</Eyebrow>
-          <View style={styles.circleRow}>
-            <AvatarStack
-              people={memberList.map((m) => ({
-                id: m.user_id,
-                name: m.profile?.display_name,
-                uri: m.profile?.avatar_url,
-                active: activeToday.some((a) => a.user_id === m.user_id),
-              }))}
-            />
-            <Muted>
-              {activeToday.length} of {memberList.length} active today
-            </Muted>
-          </View>
-          {cs.data && (
-            <View style={styles.dots}>
-              {progressByDay(cs.data, done).map((p) => (
-                <View key={p.day} style={{ alignItems: 'center', gap: 4, flex: 1 }}>
-                  <View
-                    style={[
-                      styles.dot,
-                      { opacity: memberList.length ? 0.25 + 0.75 * (p.count / memberList.length) : 0.25 },
-                      p.day === dayNumber && styles.dotToday,
-                    ]}
-                  />
-                  <Text style={styles.dotLabel}>{p.day}</Text>
-                </View>
-              ))}
+        <Sheet style={styles.sheet}>
+          {wholeFlockRead && (
+            <View style={[styles.banner, { backgroundColor: theme.primaryTint }]}>
+              <LambView view="side" size={48} />
+              <AppText variant="callout" color="primaryLip" style={{ flex: 1 }}>
+                Your whole flock read today.
+              </AppText>
             </View>
           )}
-          {memberList.length < 2 && (
-            <Muted>Invite someone with code {circle.invite_code} — tap your photo to share it.</Muted>
-          )}
-        </Card>
 
-        {/* Today's shared reading */}
-        {cs.data && day ? (
+          {/* Today's shared reading */}
+          {cs.data && day ? (
+            <View style={{ gap: spacing.xs }}>
+              <Eyebrow right={`Day ${day.day_number} of ${cs.data.study.total_days}`}>Today's reading</Eyebrow>
+              <AppText variant="title">
+                {formatRef({ bookId: day.book_id, chapter: day.chapter, verseStart: day.verse_start, verseEnd: day.verse_end })}
+              </AppText>
+              <Muted>
+                {day.title} · {day.read_minutes} min read
+              </Muted>
+              <Muted>
+                {activeToday.length} of {memberList.length} {memberList.length === 1 ? 'member has' : 'members have'} read today
+              </Muted>
+              <ProgressBar
+                value={memberList.length ? activeToday.length / memberList.length : 0}
+                label={`${activeToday.length} of ${memberList.length} read today`}
+              />
+              {iAmDone ? (
+                <View style={styles.doneRow}>
+                  <Ionicons name="checkmark-circle" size={18} color={colors.success} />
+                  <Text style={styles.doneText}>You've read today</Text>
+                </View>
+              ) : (
+                <ChunkyButton label="Continue reading" onPress={openReading} style={{ marginTop: spacing.xs }} />
+              )}
+            </View>
+          ) : (
+            <EmptyState
+              headline="No study yet"
+              body="Pick a journey for your circle to read together."
+              cta={{ label: 'Choose a study', onPress: () => router.navigate('/study') }}
+            />
+          )}
+
+          {/* Circle */}
           <Card>
-            <Eyebrow right={`Day ${day.day_number} of ${cs.data.study.total_days}`}>Today's shared reading</Eyebrow>
-            <SectionTitle>{day.title}</SectionTitle>
-            <Muted>
-              {formatRef({ bookId: day.book_id, chapter: day.chapter, verseStart: day.verse_start, verseEnd: day.verse_end })} ·{' '}
-              {day.read_minutes} min read
-            </Muted>
-            {iAmDone ? (
-              <View style={styles.doneRow}>
-                <Ionicons name="checkmark-circle" size={18} color={colors.success} />
-                <Text style={styles.doneText}>You've read today</Text>
-              </View>
-            ) : (
-              <Button label="Continue reading" onPress={openReading} />
+            <Eyebrow right={`${memberList.length} member${memberList.length === 1 ? '' : 's'}`}>{circle.name}</Eyebrow>
+            <View style={styles.circleRow}>
+              <AvatarStack
+                people={memberList.map((m) => ({
+                  id: m.user_id,
+                  name: m.profile?.display_name,
+                  uri: m.profile?.avatar_url,
+                  active: activeToday.some((a) => a.user_id === m.user_id),
+                }))}
+              />
+              <Muted>
+                {activeToday.length} of {memberList.length} active today
+              </Muted>
+            </View>
+            {journey.length > 0 && (
+              <StreakWeek days={journey} labels={journey.map((_, i) => String(i + 1))} />
+            )}
+            {memberList.length < 2 && (
+              <Muted>Invite someone with code {circle.invite_code} — tap your photo to share it.</Muted>
             )}
           </Card>
-        ) : null}
 
         {/* Activity */}
         <View style={{ gap: spacing.xs }}>
@@ -232,22 +280,22 @@ export default function Home() {
           })}
           {prayers.isSuccess && !prayers.data.length && <Muted>No open requests. Share what's on your heart.</Muted>}
         </View>
+        </Sheet>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.paper },
-  content: { padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xxl },
-  topBar: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  content: { paddingBottom: spacing.xxl },
+  pasture: { aspectRatio: undefined, height: 380 },
+  sheet: { marginTop: -spacing.xl, gap: spacing.lg },
+  banner: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, borderRadius: radii.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
+  chat: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
+  topBar: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.md },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  hero: { fontFamily: typography.fontFamily.display, fontSize: typography.fontSize.title, color: colors.Ink, marginTop: -spacing.sm },
   circleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  dots: { flexDirection: 'row', marginTop: spacing.xs },
-  dot: { width: 14, height: 14, borderRadius: 7, backgroundColor: colors.Gold },
-  dotToday: { borderWidth: 2, borderColor: colors.Ink },
-  dotLabel: { fontSize: 10, color: colors.muted, fontFamily: typography.fontFamily.body },
   doneRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
   doneText: { fontFamily: typography.fontFamily.body, color: colors.success },
   question: { fontFamily: typography.fontFamily.display, fontSize: 22, lineHeight: 28, color: colors.Ink },

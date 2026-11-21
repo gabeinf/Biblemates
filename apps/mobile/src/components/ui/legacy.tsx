@@ -5,6 +5,7 @@ import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View, type Style
 import type { ReactNode } from 'react';
 import { colors, radii, spacing, typography } from '../../theme/tokens';
 import { initials } from '../../lib/format';
+import { ChunkyButton } from './ChunkyButton';
 
 export function Eyebrow({ children, right }: { children: ReactNode; right?: ReactNode }) {
   return (
@@ -34,7 +35,20 @@ type ButtonProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-export function Button({ label, onPress, variant = 'solid', size = 'md', loading, disabled, style }: ButtonProps) {
+export function Button({ label, onPress, variant = 'solid', loading, disabled, style }: ButtonProps) {
+  // Solid and outline are the chunky kit button; ghost stays a quiet text button.
+  if (variant !== 'ghost') {
+    return (
+      <ChunkyButton
+        label={label}
+        onPress={onPress}
+        variant={variant === 'solid' ? 'primary' : 'secondary'}
+        loading={loading}
+        disabled={disabled}
+        style={style}
+      />
+    );
+  }
   const isDisabled = disabled || loading;
   return (
     <Pressable
@@ -42,21 +56,9 @@ export function Button({ label, onPress, variant = 'solid', size = 'md', loading
       disabled={isDisabled}
       accessibilityRole="button"
       accessibilityState={{ disabled: !!isDisabled, busy: !!loading }}
-      style={({ pressed }) => [
-        styles.button,
-        size === 'lg' && styles.buttonLarge,
-        variant === 'solid' && styles.buttonSolid,
-        variant === 'outline' && styles.buttonOutline,
-        variant === 'ghost' && styles.buttonGhost,
-        (pressed || isDisabled) && { opacity: 0.6 },
-        style,
-      ]}
+      style={({ pressed }) => [styles.button, styles.buttonGhost, (pressed || isDisabled) && { opacity: 0.6 }, style]}
     >
-      {loading ? (
-        <ActivityIndicator color={variant === 'solid' ? colors.surface : colors.Gold} />
-      ) : (
-        <Text style={[styles.buttonText, variant === 'solid' && { color: colors.surface }]}>{label}</Text>
-      )}
+      {loading ? <ActivityIndicator color={colors.Gold} /> : <Text style={styles.buttonText}>{label}</Text>}
     </Pressable>
   );
 }

@@ -32,11 +32,10 @@ const NAMED_ROUTES = [{ path: '/onboarding/join?code=f3a9c1', name: 'onboarding-
 
 const routes = [{ path: '/', name: 'smoke-root' }, ...onboardingRoutes(), ...NAMED_ROUTES]
 
-// Steps that move on by themselves after a moment. The page clock is frozen once they
-// render so the screenshot shows the step itself, not wherever it went next.
-const AUTO_ADVANCE = new Set(['/onboarding/1'])
-// Long enough for the native-splash overlay to fade out (the verse is static: the config
-// sets reducedMotion), and shorter than the step's own timer.
+// Steps that move on by themselves after a moment (none today: the intro waits for Continue).
+// The page clock is frozen once they render so the screenshot shows the step itself.
+const AUTO_ADVANCE = new Set<string>()
+// Long enough for the native-splash overlay to fade out, and shorter than the step's own timer.
 const AUTO_ADVANCE_SETTLE_MS = 1000
 
 for (const route of routes) {
@@ -58,10 +57,11 @@ for (const route of routes) {
     await page.goto(route.path, { waitUntil: 'networkidle' })
 
     if (route.path === '/') {
-      // A cold launch shows the splash first, which then sends a new user to the hook (02).
-      await expect.poll(() => visited, { message: 'launch never showed the splash' }).toContain('/onboarding/1')
+      // A cold launch shows the intro first; Continue sends a new user to the hook (02).
+      await expect.poll(() => visited, { message: 'launch never showed the intro' }).toContain('/onboarding/1')
+      await page.getByRole('button', { name: 'Continue' }).click()
       await expect
-        .poll(() => new URL(page.url()).pathname, { message: 'splash never moved on', timeout: 10_000 })
+        .poll(() => new URL(page.url()).pathname, { message: 'Continue never moved on', timeout: 10_000 })
         .toBe('/onboarding/2')
     }
 

@@ -19,10 +19,9 @@ jest.mock('expo-haptics', () => ({
 // Reanimated needs a native worklets runtime. The overlay only uses Animated.View and
 // entering builders, so plain Views and chainable no-op builders are enough here.
 jest.mock('react-native-reanimated', () => {
-  const { View } = jest.requireActual<typeof import('react-native')>('react-native')
   const builder: Record<string, unknown> = {}
   for (const k of ['duration', 'springify', 'damping']) builder[k] = () => builder
-  return { __esModule: true, default: { View }, FadeIn: builder, ZoomIn: builder }
+  return { ...require('../../jest.reanimated').reanimatedStub(), FadeIn: builder, ZoomIn: builder }
 })
 
 // Stand in for the pad: a button that "draws" a long or short stroke.
