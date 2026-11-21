@@ -18,6 +18,8 @@ import {
   View,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useReanimatedKeyboardAnimation } from 'react-native-keyboard-controller'
+import Animated, { interpolate, useAnimatedStyle } from 'react-native-reanimated'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useQueryClient } from '@tanstack/react-query'
@@ -26,17 +28,24 @@ import ChatBubble, { type UiMessage } from '../../components/chat/ChatBubble'
 import { qk, useConversationMessages } from '../../hooks/queries'
 import { sendAsk } from '../../services/chat'
 import { Lines } from '../../components/Skeleton'
-import { Eyebrow, Muted } from '../../components/ui'
+import { Eyebrow, LambView, Muted } from '../../components/ui'
 import { colors, radii, spacing, typography } from '../../theme/tokens'
 
 const newId = () => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`
 const FLUSH_MS = 40
+const WELCOME_LAMB = 120
 
 export default function Chat() {
   const router = useRouter()
   const qc = useQueryClient()
   const insets = useSafeAreaInsets()
   const params = useLocalSearchParams<{ id?: string }>()
+  // Keyboard progress 0 (closed) to 1 (open): the welcome lamb shrinks away so it never crowds the input.
+  const { progress } = useReanimatedKeyboardAnimation()
+  const lambSlot = useAnimatedStyle(() => ({
+    height: interpolate(progress.value, [0, 1], [WELCOME_LAMB, 0]),
+    opacity: interpolate(progress.value, [0, 0.6], [1, 0]),
+  }))
 
   const [conversationId, setConversationId] = useState<string | undefined>(params.id || undefined)
   const [messages, setMessages] = useState<UiMessage[]>([])
@@ -239,6 +248,9 @@ export default function Chat() {
           </View>
         ) : empty ? (
           <View style={styles.welcome}>
+            <Animated.View style={[styles.lamb, lambSlot]}>
+              <LambView view="front" size={WELCOME_LAMB} />
+            </Animated.View>
             <Eyebrow>Scripture for today</Eyebrow>
             <Text style={styles.hero}>How are you feeling?</Text>
             <Muted>Tap a feeling or write what's on your heart. Every answer comes from the Bible.</Muted>
@@ -320,6 +332,7 @@ const styles = StyleSheet.create({
   list: { paddingVertical: spacing.md, gap: spacing.sm },
   historySkeleton: { flex: 1, padding: spacing.lg, gap: spacing.xl },
   welcome: { flex: 1, justifyContent: 'flex-end', padding: spacing.lg, gap: spacing.xs },
+  lamb: { overflow: 'hidden', alignItems: 'center' },
   hero: { fontFamily: typography.fontFamily.display, fontSize: typography.fontSize.title, color: colors.Ink },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs, paddingHorizontal: spacing.lg, paddingBottom: spacing.md },
   chip: {

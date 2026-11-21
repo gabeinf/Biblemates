@@ -1,6 +1,6 @@
 // Screen test for the Today (home) tab. Lives outside app/ so expo-router doesn't treat it as a route.
 import { beforeEach, describe, expect, it, jest } from '@jest/globals'
-import { fireEvent, render, screen } from '@testing-library/react-native'
+import { fireEvent, render, screen, within } from '@testing-library/react-native'
 import Home from '../app/(main)/(tabs)/home'
 
 const mockNavigate = jest.fn()
@@ -12,6 +12,7 @@ jest.mock('../hooks/use-auth-context', () => ({
 
 const mockQuery = <T,>(data: T) => ({ data, isPending: false, isRefetching: false, isSuccess: true, refetch: jest.fn() })
 let mockCompleted: string[] = []
+let mockPrayers: unknown[] = []
 jest.mock('../hooks/queries', () => ({
   useCircle: () => ({ id: 'c1', name: 'Grace Group', invite_code: 'ABC123' }),
   useMembers: () =>
@@ -40,7 +41,7 @@ jest.mock('../hooks/queries', () => ({
     }),
   useCompletions: () =>
     mockQuery(mockCompleted.map((u) => ({ user_id: u, day_number: 1, completed_at: new Date().toISOString() }))),
-  usePrayerRequests: () => mockQuery([]),
+  usePrayerRequests: () => mockQuery(mockPrayers),
   useDayReflections: () => mockQuery([]),
   useEncourage: () => ({
     mutate: (_vars: unknown, opts?: { onSuccess?: () => void }) => opts?.onSuccess?.(),
@@ -52,6 +53,7 @@ jest.mock('../hooks/queries', () => ({
 describe('Today', () => {
   beforeEach(() => {
     mockCompleted = []
+    mockPrayers = []
     mockNavigate.mockClear()
   })
 
@@ -78,5 +80,19 @@ describe('Today', () => {
     await render(<Home />)
     await fireEvent.press(screen.getByText('🙏 Pray for Ann'))
     expect(screen.getByText("Ann will know you're praying for them.")).toBeTruthy()
+  })
+
+  it('shows one lamb in the empty prayer list, and none once a request exists', async () => {
+    await render(<Home />)
+    const empty = within(screen.getByTestId('prayer-empty'))
+    expect(empty.getAllByLabelText('A lamb')).toHaveLength(1)
+    expect(empty.getByText('No open requests')).toBeTruthy()
+  })
+
+  it('hides the prayer lamb when there are open requests', async () => {
+    mockPrayers = [{ id: 'p1', user_id: 'u2', body: 'Pray for my exam', created_at: new Date().toISOString(), encouragements: [] }]
+    await render(<Home />)
+    expect(screen.getByText('Pray for my exam')).toBeTruthy()
+    expect(screen.queryByTestId('prayer-empty')).toBeNull()
   })
 })

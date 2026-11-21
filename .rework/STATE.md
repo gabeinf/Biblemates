@@ -56,3 +56,9 @@ Expo SDK 58 (CNG), RN 0.88, expo-router 58, native tabs, Reanimated 4, expo-hapt
 
 ## 13 lamb (feat/onboarding-13-lamb)
 - Lamb = LambView front (MASCOT size) in the head block. Collapses (height + opacity) via useReanimatedKeyboardAnimation().progress on the UI thread. Autofocus means it is mostly hidden while typing; it returns when the keyboard is dismissed. No new assets.
+
+## feat/chat-prayer-empty-states
+- Chat: lamb (120pt) above the welcome, collapses with the keyboard via `useReanimatedKeyboardAnimation` (same as onboarding 13). Chat's existing KeyboardAvoidingView layout left alone (out of scope).
+- Chat history: `EmptyState` replaces the muted line.
+- Prayer: `(main)/prayer.tsx` is a composer form, and lambs never go in forms, so no lamb there. The "no open requests" empty state lives in the Today prayer list (`(tabs)/home.tsx`), which got the 96pt lamb.
+- All slots are static front lamb; poses listed in ASSET_REQUEST.md. Tests: `__tests__/chat-empty.test.tsx`, `today.test.tsx`.

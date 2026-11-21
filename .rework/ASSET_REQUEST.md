@@ -85,6 +85,14 @@ SF Symbols for chrome (rendered natively); custom only for brand moments.
 | Study (same slot, "You finished ...!")                                 | study completed                                        | `happy`            |
 | Circle setup (`circle-setup.tsx`, choose mode only; hidden in forms)    | create/join header (keyboard layout must stay intact)  | `wave`             |
 
+**Placeholder slots (chat and prayer empty states).** Static front lamb (`LambView view="front"`), no pose yet:
+
+| screen / code                                                       | state                                   | pose needed |
+| ------------------------------------------------------------------- | --------------------------------------- | ----------- |
+| Chat (`(main)/chat.tsx`, 120pt, collapses with the keyboard)        | empty conversation (above the welcome)  | `idle`      |
+| Chat history (`(main)/chat-history.tsx`, `EmptyState`, 140pt)       | no chats                                | `sleep`     |
+| Today prayer list (`(tabs)/home.tsx`, 96pt)                         | no open requests (not the prayer form)  | `idle`      |
+
 Accessibility note for the design agent: the lamb is exposed as one image labelled "A lamb"; the Rive swap must keep that single label and not add focusable children. Pills cap Dynamic Type at 1.3x, so no asset change is needed for large text.
 
 ## Time of day

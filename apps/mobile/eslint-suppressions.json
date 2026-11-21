@@ -6,7 +6,7 @@
   },
   "src/app/(main)/(tabs)/home.tsx": {
     "react/no-unescaped-entities": {
-      "count": 4
+      "count": 3
     }
   },
   "src/app/(main)/(tabs)/study.tsx": {
