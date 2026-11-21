@@ -106,3 +106,6 @@ Accessibility note for the design agent: the lamb is exposed as one image labell
 | Onboarding / Intro                                                                                                                    | no change: fixed golden hour | default                                        | no change                               |
 | Everything else                                                                                                                       | n/a                          | light mode only until the night palette exists | n/a                                     |
 | Selection rule: local hour 5–10 morning, 10–18 golden hour (visual default), 18–5 night. Until the P2 sets exist, golden hour always. |
+
+## Intro scene is blurry on device (P0, from the 2026-11-21 phone test)
+`apps/mobile/assets/scenes/intro-landed.png` is 390x844 (1x). A 440x956 phone at 3x needs 1320x2868, so the scene is upscaled ~3.4x and looks soft. Needed: `intro-landed@2x.png` (780x1688) and `intro-landed@3x.png` (1170x2532), same art, keep the cream sheet baked into the bottom and the lamb in the same place. Drop them next to the 1x file; `require('...intro-landed.png')` picks the right one with no code change. Better: export the scene without the baked sheet (the app draws its own `Sheet`).
