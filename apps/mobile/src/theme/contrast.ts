@@ -23,6 +23,7 @@ export const PAIRS: Pair[] = [
   { fg: 'text', bg: 'surfaceSunken', min: 4.5, note: 'body on inputs' },
   { fg: 'textSecondary', bg: 'bg', min: 4.5, note: 'secondary on canvas' },
   { fg: 'textSecondary', bg: 'surface', min: 4.5, note: 'secondary on card' },
+  { fg: 'textSecondary', bg: 'surfaceSunken', min: 4.5, note: 'secondary on the kind (slipped-day) banner' },
   { fg: 'textTertiary', bg: 'surface', min: 4.5, note: 'tertiary on card' },
   { fg: 'onPrimary', bg: 'primary', min: 4.5, note: 'primary button label' },
   { fg: 'primary', bg: 'surface', min: 4.5, note: 'links on card' },

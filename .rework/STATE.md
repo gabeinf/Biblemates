@@ -62,3 +62,9 @@ Expo SDK 58 (CNG), RN 0.88, expo-router 58, native tabs, Reanimated 4, expo-hapt
 - Chat history: `EmptyState` replaces the muted line.
 - Prayer: `(main)/prayer.tsx` is a composer form, and lambs never go in forms, so no lamb there. The "no open requests" empty state lives in the Today prayer list (`(tabs)/home.tsx`), which got the 96pt lamb.
 - All slots are static front lamb; poses listed in ASSET_REQUEST.md. Tests: `__tests__/chat-empty.test.tsx`, `today.test.tsx`.
+
+## feat/missed-day-state (presentation only)
+- Derived from existing `day_completions`: `lib/missed-day.ts` `slippedYesterday` (yesterday unread and today unread, day > 1). No schema, service, streak rule or grace-day change.
+- Today: "Welcome back" banner (sitting-lamb slot = static side lamb, see ASSET_REQUEST), CTA label "Read now". StreakWeek gets a soft `missed` dot (sunken fill, no alarm colour). Copy has no shame words, no Scripture.
+- Contrast guard gained textSecondary on surfaceSunken.
+- Not done: per-member "missed" styling in the circle row (would imply showing others' lapses; product call).

@@ -17,6 +17,7 @@ import {
 import { useAuthContext, useUserId } from '../../../hooks/use-auth-context'
 import { currentDay, currentDayNumber, isDayDone } from '../../../lib/study-day'
 import { currentStreak } from '../../../lib/streak'
+import { slippedYesterday } from '../../../lib/missed-day'
 import { firstName, longDate, timeAgo } from '../../../lib/format'
 import { formatRef } from '../../../constants/books'
 import ActivityRow from '../../../components/ActivityRow'
@@ -75,8 +76,15 @@ export default function Home() {
   // shortcut: streak counts this study's completions only; a cross-study streak needs its own query.
   const streak = currentStreak(done.filter((c) => c.user_id === userId).map((c) => c.completed_at))
   const wholeFlockRead = memberList.length > 1 && activeToday.length === memberList.length
+  const slipped = !!dayNumber && slippedYesterday(done, userId, dayNumber)
   const journey: DayState[] = (cs.data?.study.days ?? []).map((d) =>
-    isDayDone(done, userId, d.day_number) ? 'done' : d.day_number === dayNumber ? 'today' : 'future',
+    isDayDone(done, userId, d.day_number)
+      ? 'done'
+      : d.day_number === dayNumber
+        ? 'today'
+        : dayNumber && d.day_number < dayNumber
+          ? 'missed'
+          : 'future',
   )
 
   const refreshing = members.isRefetching || activity.isRefetching || cs.isRefetching
@@ -133,6 +141,19 @@ export default function Home() {
             </View>
           )}
 
+          {slipped && (
+            <View testID="slipped-banner" style={[styles.banner, { backgroundColor: theme.surfaceSunken }]}>
+              {/* Lamb slot: sitting/idle pose swaps in with Rive (see ASSET_REQUEST.md) */}
+              <LambView view="side" size={48} />
+              <View style={{ flex: 1 }}>
+                <AppText variant="callout">Welcome back</AppText>
+                <AppText variant="caption" color="textSecondary">
+                  Life gets busy. Today is a good day to pick back up.
+                </AppText>
+              </View>
+            </View>
+          )}
+
           {/* Today's shared reading */}
           {cs.data && day ? (
             <View style={{ gap: spacing.xs }}>
@@ -156,7 +177,7 @@ export default function Home() {
                   <Text style={styles.doneText}>You've read today</Text>
                 </View>
               ) : (
-                <ChunkyButton label="Continue reading" onPress={openReading} style={{ marginTop: spacing.xs }} />
+                <ChunkyButton label={slipped ? 'Read now' : 'Continue reading'} onPress={openReading} style={{ marginTop: spacing.xs }} />
               )}
             </View>
           ) : (
