@@ -1,5 +1,6 @@
 import { Stack, useRouter } from 'expo-router'
 import { markAppReady } from '../../lib/splash'
+import { showCelebration } from '../../lib/celebrations'
 import { useCallback, useEffect, useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import * as Notifications from 'expo-notifications'
@@ -31,7 +32,7 @@ export default function MainLayout() {
 
   const router = useRouter()
   // Everyone finished the study: celebrate once, wherever they are in the app.
-  const onMilestone = useCallback(() => router.push({ pathname: '/celebrate', params: { kind: 'study' } }), [router])
+  const onMilestone = useCallback(() => showCelebration(router, 'study'), [router])
   useCircleRealtime(circle.data?.id, onMilestone)
   useNotificationRouting()
 

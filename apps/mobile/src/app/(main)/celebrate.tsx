@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { CelebrationScaffold, LambView, type Tile } from '../../components/ui'
 import { useCircle, useCircleStudy, useCompletions, useMembers } from '../../hooks/queries'
@@ -5,6 +6,7 @@ import { useUserId } from '../../hooks/use-auth-context'
 import { formatRef } from '../../constants/books'
 import { currentDay, currentDayNumber, isDayDone } from '../../lib/study-day'
 import { currentStreak } from '../../lib/streak'
+import { celebrationClosed } from '../../lib/celebrations'
 
 /**
  * Full-screen success moment. `kind=checkin`: I just marked today's reading read (after
@@ -25,6 +27,8 @@ export default function Celebrate() {
   const dayNumber = cs.data ? currentDayNumber(cs.data) : undefined
   const readToday = memberList.filter((m) => !!dayNumber && isDayDone(done, m.user_id, dayNumber)).length
   const streak = currentStreak(done.filter((c) => c.user_id === userId).map((c) => c.completed_at))
+  const shown = kind === 'study' ? 'study' : 'checkin'
+  useEffect(() => () => celebrationClosed(shown), [shown])
   const onContinue = () => router.dismissTo('/home')
 
   const tiles: Tile[] = []

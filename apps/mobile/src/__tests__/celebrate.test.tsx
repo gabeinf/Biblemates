@@ -10,6 +10,11 @@ jest.mock('expo-router', () => ({
   useRouter: () => ({ dismissTo: mockDismissTo }),
   useLocalSearchParams: () => ({ kind: mockKind }),
 }))
+// RN's Modal mock renders nothing when hidden; keep the content so the slide-out is observable.
+jest.mock('react-native/Libraries/Modal/Modal', () => {
+  const { View } = require('react-native')
+  return { __esModule: true, default: ({ children }: { children: unknown }) => <View>{children as never}</View> }
+})
 jest.mock('../hooks/use-auth-context', () => ({ useUserId: () => 'u1' }))
 
 const mockQuery = <T,>(data: T) => ({ data, isPending: false })
@@ -63,5 +68,12 @@ describe('NudgeSheet', () => {
     expect(screen.getByText("Ann will know you're praying for them.")).toBeTruthy()
     await fireEvent.press(screen.getByRole('button', { name: 'Done' }))
     expect(onClose).toHaveBeenCalled()
+  })
+
+  it('keeps the name while the sheet slides out after name goes null', async () => {
+    const { rerender } = await render(<NudgeSheet name="Ann" onClose={jest.fn()} />)
+    await rerender(<NudgeSheet name={null} onClose={jest.fn()} />)
+    expect(screen.getByText("Ann will know you're praying for them.")).toBeTruthy()
+    expect(screen.queryByText(/^They will know/)).toBeNull()
   })
 })

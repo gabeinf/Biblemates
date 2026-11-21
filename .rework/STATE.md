@@ -43,3 +43,9 @@ Expo SDK 58 (CNG), RN 0.88, expo-router 58, native tabs, Reanimated 4, expo-hapt
 ## Batch 4 (#108) shipping notes
 - Rebased onto origin/master after #109/#110 merged; verify green (typecheck, lint, style, contrast, test, screenshots).
 - Reviewer: PASS. Non-blocking: no Jest test for the Study lamb (covered by circle-setup + Pill tests); ASSET_REQUEST.md unchanged (nothing new needed).
+
+## fix/celebrations-gaps (follow-up to #110)
+- Gap 1+3: `lib/celebrations.ts` `showCelebration(router, kind)` is the only way to open /celebrate (Bible check-in, layout milestone). One screen max; study replaces an open check-in (router.replace); a check-in arriving after study is dropped; duplicates ignored. Celebrate screen calls `celebrationClosed(kind)` on unmount (only clears if it is still the current kind).
+- Gap 2: NudgeSheet keeps the last non-null name in state (set during render), no ref.
+- Tests: lib/celebrations.test.ts, celebrate.test.tsx (NudgeSheet slide-out name; Modal mocked to stay mounted).
+- Limit: a study milestone arriving after the check-in screen was already dismissed still shows (sequential, not stacked).
