@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals'
 import { render, screen } from '@testing-library/react-native'
-import Hook from './2'
+import Hook from '../app/(auth)/onboarding/2'
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),

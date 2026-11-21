@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { fireEvent, render, screen } from '@testing-library/react-native'
 import { StyleSheet } from 'react-native'
-import { resetDraftCacheForTests } from '../../../lib/onboarding-draft'
-import StakesPicker from './12'
+import { resetDraftCacheForTests } from '../lib/onboarding-draft'
+import StakesPicker from '../app/(auth)/onboarding/12'
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: jest.fn() }),
