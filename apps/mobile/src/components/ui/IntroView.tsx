@@ -28,7 +28,8 @@ export function IntroView({ onLanded, onReady, onContinue }: Props) {
   }, [onLanded, onReady])
   return (
     <View style={[styles.fill, { backgroundColor: theme.brand }]}>
-      <Image source={landed} style={styles.fill} resizeMode="cover" />
+      {/* Pinned to all four edges: with flex alone the PNG keeps its intrinsic 390pt width on wider phones. */}
+      <Image testID="intro-scene" source={landed} style={StyleSheet.absoluteFill} resizeMode="cover" />
       <View style={styles.bottom}>
         <Sheet>
           <AppText variant="title" style={styles.center}>

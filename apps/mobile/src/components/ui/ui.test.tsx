@@ -1,10 +1,11 @@
 import { describe, expect, it, jest } from '@jest/globals'
 import { fireEvent, render, screen } from '@testing-library/react-native'
-import { Text } from 'react-native'
+import { StyleSheet, Text } from 'react-native'
 import { ThemeProvider, makeTheme, palettes, useTheme } from '../../theme'
 import {
   CelebrationScaffold,
   ChunkyButton,
+  IntroView,
   LambView,
   PastureView,
   Pill,
@@ -79,5 +80,20 @@ describe('ui kit', () => {
       </ThemeProvider>,
     )
     expect(screen.getByTestId('p').props.children).toBe(makeTheme(palettes.testInverted).primary)
+  })
+
+  it('IntroView pins the scene to every edge so it never keeps its intrinsic width', async () => {
+    await render(
+      <ThemeProvider>
+        <IntroView onContinue={() => undefined} />
+      </ThemeProvider>,
+    )
+    expect(StyleSheet.flatten(screen.getByTestId('intro-scene').props.style)).toMatchObject({
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0,
+    })
   })
 })
