@@ -38,24 +38,23 @@ Copy in quotes is a draft. Tweak it freely, but keep the meaning.
 
 ---
 
-## 01 · Splash
+## 01 · Intro
 
-- **Purpose:** brand moment while fonts and session load.
-- **Layout:** full-bleed background artwork (our own). Centred mark above a one-line verse in
-  serif type that fades in word by word.
+- **Purpose:** brand moment, then "Meet your first lamb". Replaces the verse splash (rework S2).
+- **Layout:** full-bleed golden-hour pasture, the lamb landed on the hill, a bottom sheet with a
+  title, one line of body and a primary Continue. Today this is a static placeholder
+  (`IntroView`); the Rive `Intro` artboard replaces its internals later with the same props.
 - **Inputs:** none.
-- **Buttons:** none. Auto-advances.
-- **Leads to:** a signed-in user with a finished onboarding goes to `(main)/(tabs)`. Everyone
-  else goes to 02. Onboarding never resumes: closing the app starts it over.
+- **Buttons:** primary "Continue" → 02. No auto-advance.
+- **Leads to:** a signed-in user goes straight to `(main)/(tabs)` (root guard). Everyone else
+  sees this, then 02. Onboarding never resumes: closing the app starts it over.
 
 **Acceptance**
 
-- [ ] Shows for at least 1.2s and no more than 2.5s (min only applies once loading is done).
-- [ ] Verse text animates in, and honors Reduce Motion (static text instead).
-- [ ] Routes correctly for both cases: done, and everyone else (always 02, even mid-flow before the app closed).
+- [ ] Shows a brand-colored backdrop until fonts and session have loaded.
+- [ ] Continue goes to `/onboarding/2` and nothing advances without a tap.
 - [ ] No back button or progress bar.
 - [ ] Artwork is original and themed through tokens. No reference imagery.
-- [ ] Reuses or replaces `AnimatedSplash` rather than duplicating it.
 
 ## 02 · Hook
 
