@@ -4,7 +4,7 @@ import { radius, shadow, space, useTheme } from '../../theme'
 
 export function Card({ children, style }: PropsWithChildren<{ style?: StyleProp<ViewStyle> }>) {
   const theme = useTheme()
-  return <View style={[styles.card, shadow.card, { backgroundColor: theme.surface, borderColor: theme.border }, style]}>{children}</View>
+  return <View style={[styles.card, shadow.card, { shadowColor: theme.outline, backgroundColor: theme.surface, borderColor: theme.border }, style]}>{children}</View>
 }
 
 const styles = StyleSheet.create({

@@ -1,6 +1,4 @@
 /** Non-color design tokens: type, space, radius, control, shadow, motion, pasture. Per DESIGN_SYSTEM §2-§4. */
-import { goldenHour } from './palettes'
-
 /** Nunito, bundled 600 + 800 only (no 700 file shipped). */
 export const font = {
   semibold: 'Nunito_600SemiBold',
@@ -26,9 +24,9 @@ export const space = { xxs: 4, xs: 8, sm: 12, md: 16, lg: 24, xl: 32, xxl: 48 } 
 export const radius = { sm: 8, md: 12, lg: 16, xl: 20, sheet: 28, pill: 999 } as const
 export const control = { height: 56, lip: 4, radius: radius.lg, hitSlop: 8, minTouch: 44, pill: 38 } as const
 
+/** Geometry only: the color comes from `theme.outline` so shadows follow the palette. */
 export const shadow = {
   card: {
-    shadowColor: goldenHour.outline,
     shadowOpacity: 0.06,
     shadowRadius: 16,
     shadowOffset: { width: 0, height: 6 },
