@@ -6,12 +6,20 @@
  * bottom-anchored. The KeyboardAwareScrollView keeps the field *and* the button below it
  * above the keyboard (bottomOffset = measured button block + spacing), and follows every
  * keyboard height change (suggestion bar, keyboard switch).
+ *
+ * Lamb: sits above the title and collapses with the keyboard's own progress (UI thread,
+ * frame by frame), so it never crowds the field. It is back once the keyboard is dismissed.
  */
 import { useState } from 'react'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller'
-import { Button } from '../../../components/ui'
+import {
+  KeyboardAwareScrollView,
+  useReanimatedKeyboardAnimation,
+} from 'react-native-keyboard-controller'
+import Animated, { interpolate, useAnimatedStyle } from 'react-native-reanimated'
+import { Button, LambView } from '../../../components/ui'
 import { FadeIn } from '../../../components/onboarding'
+import { MASCOT } from '../../../components/onboarding-step'
 import { useOnboardingNav } from '../../../hooks/use-onboarding'
 import { getDraft, updateDraft } from '../../../lib/onboarding-draft'
 import { DISPLAY_NAME_MAX, cleanDisplayName } from '../../../lib/display-name'
@@ -21,6 +29,12 @@ import { colors, radii, spacing, typography } from '../../../theme/tokens'
 const BELOW_SEED = spacing.xl + spacing.xxl
 
 export default function Name() {
+  const { progress } = useReanimatedKeyboardAnimation()
+  // Keyboard progress 0 (closed) to 1 (open): the lamb shrinks to nothing as it opens.
+  const lambSlot = useAnimatedStyle(() => ({
+    height: interpolate(progress.value, [0, 1], [MASCOT, 0]),
+    opacity: interpolate(progress.value, [0, 0.6], [1, 0]),
+  }))
   const { goNext } = useOnboardingNav()
   const [name, setName] = useState(() => getDraft().displayName ?? '')
   const [focused, setFocused] = useState(false)
@@ -51,6 +65,9 @@ export default function Name() {
       showsVerticalScrollIndicator={false}
     >
       <FadeIn style={styles.head}>
+        <Animated.View style={[styles.lamb, lambSlot]}>
+          <LambView view="front" size={MASCOT} />
+        </Animated.View>
         <Text style={styles.title} accessibilityRole="header">
           What should your circle call you?
         </Text>
@@ -101,6 +118,7 @@ const styles = StyleSheet.create({
     color: colors.Ink,
     textAlign: 'center',
   },
+  lamb: { overflow: 'hidden', alignItems: 'center' },
   hint: {
     fontFamily: typography.fontFamily.body,
     fontSize: typography.fontSize.bodySmall,

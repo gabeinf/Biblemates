@@ -296,6 +296,7 @@ Copy in quotes is a draft. Tweak it freely, but keep the meaning.
 - [ ] `autoCapitalize="words"` and `textContentType="givenName"`.
 - [ ] Saved to the draft as `displayName`, and later written to `profiles` in 19.
 - [ ] Return key submits.
+- [ ] Front lamb (placeholder slot) above the title; it collapses with the keyboard's own animation so it never crowds the field or button.
 
 ## 14 · Commitment
 
