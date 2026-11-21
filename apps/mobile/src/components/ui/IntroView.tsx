@@ -28,8 +28,8 @@ export function IntroView({ onLanded, onReady, onContinue }: Props) {
   }, [onLanded, onReady])
   return (
     <View style={[styles.fill, { backgroundColor: theme.brand }]}>
-      {/* Pinned to all four edges: with flex alone the PNG keeps its intrinsic 390pt width on wider phones. */}
-      <Image testID="intro-scene" source={landed} style={StyleSheet.absoluteFill} resizeMode="cover" />
+      {/* RN gives an Image its asset's own width/height (390x844), which beat left/right/top/bottom: set the size outright. */}
+      <Image testID="intro-scene" source={landed} style={styles.scene} resizeMode="cover" />
       <View style={styles.bottom}>
         <Sheet>
           <AppText variant="title" style={styles.center}>
@@ -47,6 +47,7 @@ export function IntroView({ onLanded, onReady, onContinue }: Props) {
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
+  scene: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, width: '100%', height: '100%' },
   bottom: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: space.lg },
   center: { textAlign: 'center' },
 })

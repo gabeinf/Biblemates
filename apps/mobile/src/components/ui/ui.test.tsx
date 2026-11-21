@@ -82,7 +82,7 @@ describe('ui kit', () => {
     expect(screen.getByTestId('p').props.children).toBe(makeTheme(palettes.testInverted).primary)
   })
 
-  it('IntroView pins the scene to every edge so it never keeps its intrinsic width', async () => {
+  it('IntroView sizes the scene to the screen, not to the intrinsic size of the asset', async () => {
     await render(
       <ThemeProvider>
         <IntroView onContinue={() => undefined} />
@@ -94,6 +94,8 @@ describe('ui kit', () => {
       right: 0,
       top: 0,
       bottom: 0,
+      width: '100%',
+      height: '100%',
     })
   })
 })
