@@ -66,7 +66,7 @@ export default function RatingAsk() {
   }
 
   return (
-    <StepScreen footer={<Button label="Continue" size="lg" onPress={onContinue} />}>
+    <StepScreen mascot footer={<Button label="Continue" size="lg" onPress={onContinue} />}>
       <FadeIn>
         <StepHeading title="Before you go on, a thank-you" align="center" />
       </FadeIn>

@@ -44,6 +44,7 @@ export default function PayoffFork() {
 
   return (
     <StepScreen
+      mascot
       footer={
         <>
           <Text style={styles.headline} accessibilityRole="header">

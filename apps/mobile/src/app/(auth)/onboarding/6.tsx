@@ -20,7 +20,7 @@ export default function RhythmExplainer() {
   const { goNext } = useOnboardingNav()
 
   return (
-    <StepScreen footer={<Button label="Continue" size="lg" onPress={() => goNext()} />}>
+    <StepScreen mascot footer={<Button label="Continue" size="lg" onPress={() => goNext()} />}>
       <FadeIn>
         <StepHeading
           title="Pick a weekly rhythm together"
