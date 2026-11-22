@@ -5,13 +5,16 @@ import { ThemeProvider, makeTheme, palettes, useTheme } from '../../theme'
 import {
   CelebrationScaffold,
   ChunkyButton,
-  IntroView,
   LambView,
   PastureView,
   Pill,
   ProgressBar,
   StreakWeek,
 } from '.'
+
+// Jest resolves `IntroView` to the native Rive file; the web fallback is the plain .tsx.
+const WebIntroView = (jest.requireActual('./IntroView.tsx') as typeof import('./IntroView'))
+  .IntroView
 
 describe('ui kit', () => {
   it('ChunkyButton fires onPress, and not when disabled or loading', async () => {
@@ -82,10 +85,10 @@ describe('ui kit', () => {
     expect(screen.getByTestId('p').props.children).toBe(makeTheme(palettes.testInverted).primary)
   })
 
-  it('IntroView sizes the scene to the screen, not to the intrinsic size of the asset', async () => {
+  it('web IntroView sizes the scene to the screen, not to the intrinsic size of the asset', async () => {
     await render(
       <ThemeProvider>
-        <IntroView onContinue={() => undefined} />
+        <WebIntroView onContinue={() => undefined} />
       </ThemeProvider>,
     )
     expect(StyleSheet.flatten(screen.getByTestId('intro-scene').props.style)).toMatchObject({

@@ -42,8 +42,9 @@ Copy in quotes is a draft. Tweak it freely, but keep the meaning.
 
 - **Purpose:** brand moment, then "Meet your first lamb". Replaces the verse splash (rework S2).
 - **Layout:** full-bleed golden-hour pasture, the lamb landed on the hill, a bottom sheet with a
-  title, one line of body and a primary Continue. Today this is a static placeholder
-  (`IntroView`); the Rive `Intro` artboard replaces its internals later with the same props.
+  title, one line of body and a primary Continue. Native plays the Rive `Intro` artboard
+  (`IntroView.native.tsx`); web, and native if the Rive file fails to load, show the static
+  `IntroStatic` with the same props.
 - **Inputs:** none.
 - **Buttons:** primary "Continue" → 02. No auto-advance.
 - **Leads to:** a signed-in user goes straight to `(main)/(tabs)` (root guard). Everyone else
@@ -432,8 +433,8 @@ write the draft during `signUp`, or skip email confirmation for this flow).
 
 - [ ] Draft type comes from the schema in `packages/shared`.
 - [ ] Killing the app mid-flow and reopening starts over at 01 → 02 with an empty draft.
-  ("Starts over" is about app launch. Opening a step URL directly, by deep link or web reload,
-  shows that step with an empty draft.)
+      ("Starts over" is about app launch. Opening a step URL directly, by deep link or web reload,
+      shows that step with an empty draft.)
 - [ ] Progress bar is computed from the active path, so the join path's progress stays monotonic.
 - [ ] Back navigation works from every step, and Android hardware back matches.
 - [ ] Old `step-1`/`step-2` routes are removed, with no dead links (`index.tsx`, sign-in links).
