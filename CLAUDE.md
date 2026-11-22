@@ -59,11 +59,12 @@ or run `graphify explain "<symbol>"` before grepping or opening whole files.
 
 ## Parallel agents
 
-Full process: `.claude/skills/clear-issues/SKILL.md`.
+Hand over a pile of tasks with `/clear-issues <tasks>`: it files the issues, then keeps builders running until every PR is merged.
+Full process: `.claude/skills/clear-issues/SKILL.md`; the launch decisions come from `node scripts/queue.mjs`.
 
 - At most 3 builders at once, one worktree each, from `origin/master`.
 - Issues touching the shared surface (listed in that skill) run one at a time.
-- Start a wave only when master is verified green (latest verify run is on the `origin/master` SHA).
+- Launch a builder only when master is verified green (latest verify run is on the `origin/master` SHA).
 - GitHub (issues, PRs, `git worktree list`) is the source of truth, not chat memory.
 
 ## Lint baseline
