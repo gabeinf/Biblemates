@@ -1,6 +1,7 @@
 // Screen test for 01 · Intro. Lives outside app/ so expo-router doesn't treat it as a route.
 import { describe, expect, it, jest } from '@jest/globals'
-import { fireEvent, render, screen } from '@testing-library/react-native'
+import { act, render, screen } from '@testing-library/react-native'
+import { triggers } from '../../jest.rive'
 import Intro from '../app/(auth)/onboarding/1'
 
 const mockReplace = jest.fn()
@@ -9,18 +10,18 @@ jest.mock('expo-router', () => ({ useRouter: () => ({ replace: mockReplace }) })
 jest.mock('../lib/splash', () => ({ useAppReady: () => mockReady }))
 
 describe('01 · Intro', () => {
-  it('shows the first-lamb sheet and waits for Continue (no auto-advance)', async () => {
+  it('plays the Rive intro and waits for its Continue (no auto-advance)', async () => {
     mockReady = true
     await render(<Intro />)
-    expect(screen.getByText('Meet your first lamb')).toBeTruthy()
+    await screen.findByTestId('rive-view')
     expect(mockReplace).not.toHaveBeenCalled()
-    await fireEvent.press(screen.getByRole('button', { name: 'Continue' }))
+    await act(async () => triggers.continueTapped())
     expect(mockReplace).toHaveBeenCalledWith('/onboarding/2')
   })
 
   it('renders nothing but the brand backdrop while the app is still loading', async () => {
     mockReady = false
     await render(<Intro />)
-    expect(screen.queryByText('Meet your first lamb')).toBeNull()
+    expect(screen.queryByTestId('intro-scene')).toBeNull()
   })
 })
