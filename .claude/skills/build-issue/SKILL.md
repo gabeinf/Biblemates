@@ -61,8 +61,10 @@ Print one line per round so the loop is auditable: `Round N: <agent(s)> on <diff
 
 ```bash
 git push -u origin HEAD
-gh pr create --base master --title "<type>(onboarding): <summary>" --body-file <filled template>
+gh pr create --base master --title "<type>(<area>): <summary>" --body-file <filled template>
 ```
+
+An issue that isn't an onboarding screen has no spec section, reference image or design-check: skip those parts in steps 1 and 5, and delete the spec checklist, screenshots table and design-check line from the PR body (an unticked box fails the gate).
 
 Fill every section of `.github/pull_request_template.md`:
 
@@ -73,4 +75,12 @@ Fill every section of `.github/pull_request_template.md`:
 
 ## 7. Watch it
 
-Right after opening the PR, call `watch_pull_request` on it. If a check goes red, run `/fix-ci` yourself; don't wait for the user to ask. Never merge: CI's auto-merge does it. Give the PR URL and the final verify summary.
+Right after opening the PR, call `watch_pull_request` on it. If a check goes red, run `/fix-ci` yourself; don't wait for the user to ask. Never merge: CI's auto-merge does it.
+
+## 8. Reply (one line)
+
+Your final message goes to the coordinator, so keep it out of its context: no diffs, logs, screenshots or per-round notes (the PR body and CI artifacts hold those). Exactly one line:
+
+`PR <full URL>, head <SHA>, verify <pass|fail>, blocked: <none|reason>`
+
+If you stopped before a PR (3-attempt limit, ambiguity, a shared-surface file you may not touch), reply `PR none, head <SHA>, verify <pass|fail>, blocked: <reason>`.

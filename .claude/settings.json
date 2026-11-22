@@ -36,7 +36,10 @@
       "Bash(gh pr comment *)",
       "Bash(gh run list*)",
       "Bash(gh run view *)",
-      "Bash(gh issue *)"
+      "Bash(gh issue *)",
+      "Bash(gh label create *)",
+      "Bash(gh workflow run verify.yml*)",
+      "Bash(node scripts/queue.mjs*)"
     ],
     "deny": [
       "Bash(git push)",

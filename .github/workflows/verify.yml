@@ -11,6 +11,7 @@ on:
     branches: [master]
   schedule:
     - cron: '17 * * * *' # runs on the default branch (master)
+  workflow_dispatch: # scripts/queue.mjs dispatches this when master has merges no run has verified
 
 concurrency:
   group: verify-${{ github.ref }}
