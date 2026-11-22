@@ -9,6 +9,7 @@ import {
   useViewModelInstance,
 } from '@rive-app/react-native'
 import { useTheme } from '../../theme'
+import { IntroStatic } from './IntroStatic'
 
 const file = require('../../../assets/rive/biblemates.riv')
 
@@ -37,8 +38,8 @@ export function IntroView(props: Props) {
 }
 
 function Scene({ onLanded, onReady, onContinue, reduceMotion }: Props & { reduceMotion: boolean }) {
-  const { riveFile } = useRiveFile(file)
-  const { instance } = useViewModelInstance(riveFile, {
+  const { riveFile, error: fileError } = useRiveFile(file)
+  const { instance, error: instanceError } = useViewModelInstance(riveFile, {
     async: true,
     artboardName: 'Intro',
     onInit: (vmi) => vmi.booleanProperty('reduceMotion')?.set(reduceMotion),
@@ -60,6 +61,10 @@ function Scene({ onLanded, onReady, onContinue, reduceMotion }: Props & { reduce
   })
   useRiveTrigger('continueTapped', instance, { onTrigger: next })
 
+  // A broken .riv must not strand a first-run user without Continue.
+  if (fileError || instanceError) {
+    return <IntroStatic onLanded={onLanded} onReady={onReady} onContinue={onContinue} />
+  }
   if (!riveFile || !instance) return null
   return (
     <View

@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals'
 import { act, fireEvent, render, screen } from '@testing-library/react-native'
-import { triggers } from '../../../jest.rive'
+import { failure, triggers } from '../../../jest.rive'
 import { ThemeProvider } from '../../theme'
 import { IntroView } from './IntroView.native'
 
@@ -27,6 +27,18 @@ describe('native IntroView', () => {
       triggers.continueTapped()
     })
     expect(fns.onContinue).toHaveBeenCalledTimes(1)
+  })
+
+  it('falls back to the static sheet with a working Continue when the Rive file fails to load', async () => {
+    failure.error = new Error('bad riv')
+    try {
+      const fns = await setup()
+      await fireEvent.press(await screen.findByRole('button', { name: 'Continue' }))
+      expect(fns.onContinue).toHaveBeenCalledTimes(1)
+      expect(screen.queryByTestId('rive-view')).toBeNull()
+    } finally {
+      failure.error = null
+    }
   })
 
   it('exposes Continue to VoiceOver only once the sheet is ready', async () => {
