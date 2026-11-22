@@ -126,6 +126,30 @@ PODS:
   - hermes-engine (260318099.0.5):
     - hermes-engine/Pre-built (= 260318099.0.5)
   - hermes-engine/Pre-built (260318099.0.5)
+  - NitroModules (0.37.2):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-callinvoker
+    - React-Core
+    - React-Core-prebuilt
+    - React-cxxstableapi
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - PurchasesHybridCommon (20.10.0):
     - RevenueCat (= 5.103.1)
   - RCT-Folly (2024.11.18.00):
@@ -2128,6 +2152,30 @@ PODS:
     - ReactNativeDependencies
     - RNWorklets
     - Yoga
+  - RNRive (0.5.18):
+    - hermes-engine
+    - NitroModules
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-cxxstableapi
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - RNScreens (4.30.1):
     - hermes-engine
     - RCTRequired
@@ -2299,6 +2347,7 @@ DEPENDENCIES:
   - fmt (from `build/rndeps-facades/fmt`)
   - glog (from `build/rndeps-facades/glog`)
   - "hermes-engine (from `../../../node_modules/.pnpm/react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1__@react-native+metro-config_9529ca47ba526b359c681ed0b6ccb3cf/node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec`)"
+  - "NitroModules (from `../../../node_modules/.pnpm/react-native-nitro-modules@0.37.2_react-native@0.88.1_@babel+core@7.29.7_supports-color_0d216ec62fd76e226c981770c43ae0b3/node_modules/react-native-nitro-modules`)"
   - RCT-Folly (from `build/rndeps-facades/RCT-Folly`)
   - RCTDeprecation (from `build/rncore-facades/RCTDeprecation`)
   - RCTRequired (from `build/rncore-facades/RCTRequired`)
@@ -2383,6 +2432,7 @@ DEPENDENCIES:
   - "RNGestureHandler (from `../../../node_modules/.pnpm/react-native-gesture-handler@3.3.0_react-native@0.88.1_@babel+core@7.29.7_supports-colo_6a4eb024d79668782d310156f535307c/node_modules/react-native-gesture-handler`)"
   - "RNPurchases (from `../../../node_modules/.pnpm/react-native-purchases@11.0.4_react-native-web@0.21.4_react-dom@19.3.0_react@19.3.0__re_07289d8db33519d5154d2a0cd0b0181f/node_modules/react-native-purchases`)"
   - "RNReanimated (from `../../../node_modules/.pnpm/react-native-reanimated@4.7.1_react-native-worklets@0.13.0_@babel+core@7.29.7_supports-_39475d2c1bbefa7f3b849539cec6934f/node_modules/react-native-reanimated`)"
+  - "RNRive (from `../../../node_modules/.pnpm/@rive-app+react-native@0.5.18_react-native-nitro-modules@0.37.2_react-native@0.88.1_@ba_991e2f3da0de5c8e69d4e0868cdc486e/node_modules/@rive-app/react-native`)"
   - "RNScreens (from `../../../node_modules/.pnpm/react-native-screens@4.30.1_react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1_8866868c94bbbedeae3a00806aba3749/node_modules/react-native-screens`)"
   - "RNWorklets (from `../../../node_modules/.pnpm/react-native-worklets@0.13.0_@babel+core@7.29.7_supports-color@8.1.1__@react-native+met_57823b09aed2b37c96222888f2f05354/node_modules/react-native-worklets`)"
   - SocketRocket (from `build/rndeps-facades/SocketRocket`)
@@ -2470,6 +2520,8 @@ EXTERNAL SOURCES:
   hermes-engine:
     :podspec: "../../../node_modules/.pnpm/react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1__@react-native+metro-config_9529ca47ba526b359c681ed0b6ccb3cf/node_modules/react-native/sdks/hermes-engine/hermes-engine.podspec"
     :tag: hermes-v260318099.0.5
+  NitroModules:
+    :path: "../../../node_modules/.pnpm/react-native-nitro-modules@0.37.2_react-native@0.88.1_@babel+core@7.29.7_supports-color_0d216ec62fd76e226c981770c43ae0b3/node_modules/react-native-nitro-modules"
   RCT-Folly:
     :path: build/rndeps-facades/RCT-Folly
   RCTDeprecation:
@@ -2636,6 +2688,8 @@ EXTERNAL SOURCES:
     :path: "../../../node_modules/.pnpm/react-native-purchases@11.0.4_react-native-web@0.21.4_react-dom@19.3.0_react@19.3.0__re_07289d8db33519d5154d2a0cd0b0181f/node_modules/react-native-purchases"
   RNReanimated:
     :path: "../../../node_modules/.pnpm/react-native-reanimated@4.7.1_react-native-worklets@0.13.0_@babel+core@7.29.7_supports-_39475d2c1bbefa7f3b849539cec6934f/node_modules/react-native-reanimated"
+  RNRive:
+    :path: "../../../node_modules/.pnpm/@rive-app+react-native@0.5.18_react-native-nitro-modules@0.37.2_react-native@0.88.1_@ba_991e2f3da0de5c8e69d4e0868cdc486e/node_modules/@rive-app/react-native"
   RNScreens:
     :path: "../../../node_modules/.pnpm/react-native-screens@4.30.1_react-native@0.88.1_@babel+core@7.29.7_supports-color@8.1.1_8866868c94bbbedeae3a00806aba3749/node_modules/react-native-screens"
   RNWorklets:
@@ -2684,6 +2738,7 @@ SPEC CHECKSUMS:
   fmt: ba0886e864ebb21d14c98b2e12e164b8002f5b93
   glog: 3cf7cb46f743c4bc758ae3e6d9c15bd1b4cfd6d4
   hermes-engine: fad86e6621008f83fd32648fe95f7cf1a00421a4
+  NitroModules: f1a11047ebbb0202a7d0033d6e99ad0527d34b00
   PurchasesHybridCommon: 078b06728adb4edd8fbdd029c49dcb7e7a7ed5db
   RCT-Folly: 82921e585c0400eda46fac1068297aa9dfb035e4
   RCTDeprecation: c62b9b3fbf0d26b76755f3ebd1c913a4fb469dde
@@ -2769,6 +2824,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: e19fcf39b0212e0eb8bc7ca1e645500eb492f6be
   RNPurchases: 546483c9cc68d7e872308c3226663807206ebdc3
   RNReanimated: d7d42b282f9b4ae841372a78eaa0f3ece4ae39ef
+  RNRive: 83e5d35adc38327995cde6b287a8f7d40b491ddf
   RNScreens: 9e5d11963f4616812cd86380d8b27b95cfd72153
   RNWorklets: 63880774a661c10c1acd4649dfbeebb12f7058b2
   SocketRocket: 37aec555668fb852ec12e3c0de59a86ca58f0871
