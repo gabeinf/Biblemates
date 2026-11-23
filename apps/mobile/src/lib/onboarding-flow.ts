@@ -101,7 +101,7 @@ export function progress(step: OnboardingStepId, path: Path | undefined) {
 /**
  * Where the splash (01) sends a signed-out user: always the hook (02). Onboarding isn't
  * saved across launches, so closing the app starts over. Signed-in users never reach the
- * splash: the root layout's guard sends them to /home.
+ * splash: the root layout's guard sends them to /today.
  */
 export const SPLASH_DESTINATION = stepHref(2)
 
