@@ -68,3 +68,8 @@ Expo SDK 58 (CNG), RN 0.88, expo-router 58, native tabs, Reanimated 4, expo-hapt
 - Today: "Welcome back" banner (sitting-lamb slot = static side lamb, see ASSET_REQUEST), CTA label "Read now". StreakWeek gets a soft `missed` dot (sunken fill, no alarm colour). Copy has no shame words, no Scripture.
 - Contrast guard gained textSecondary on surfaceSunken.
 - Not done: per-member "missed" styling in the circle row (would imply showing others' lapses; product call).
+
+## feat/mvp-tab-shell (S7a)
+- Native tabs replaced by expo-router/js-tabs `Tabs` + `components/ui/AppTabBar` (opaque, 5 fixed items bible/pasture/today/study/circle, raised Today with `todayProgress` ring in quarters, honors `useTabBarHidden`).
+- `home` route renamed `today`; `home.tsx` is a Redirect stub. Stubs: `pasture.tsx`, `circle.tsx`. Not wired: `todayProgress` is never passed (default 0); no simulator screenshot taken.
+- Next: S7b+ (real Pasture/Circle screens, seed pill, feed `todayProgress` from today's tasks).

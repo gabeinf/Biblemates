@@ -53,10 +53,10 @@ function RootNavigator() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {/* Once signed in, leave onboarding for /home. Without redirectTo, expo-router
+      {/* Once signed in, leave onboarding for /today. Without redirectTo, expo-router
           falls back to "/", which only (auth)/index serves, so it's unmatched.
-          With no circle yet, (main)'s own guard sends /home on to /circle-setup. */}
-      <Stack.Protected guard={!isLoggedIn} redirectTo="/home">
+          With no circle yet, (main)'s own guard sends /today on to /circle-setup. */}
+      <Stack.Protected guard={!isLoggedIn} redirectTo="/today">
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
 

@@ -29,7 +29,7 @@ export default function Celebrate() {
   const streak = currentStreak(done.filter((c) => c.user_id === userId).map((c) => c.completed_at))
   const shown = kind === 'study' ? 'study' : 'checkin'
   useEffect(() => () => celebrationClosed(shown), [shown])
-  const onContinue = () => router.dismissTo('/home')
+  const onContinue = () => router.dismissTo('/today')
 
   const tiles: Tile[] = []
   if (kind !== 'study' && streak > 0) tiles.push({ kind: 'streak', label: 'Streak', value: streak })

@@ -49,7 +49,7 @@ describe('Celebrate', () => {
     expect(screen.getByLabelText('Streak 1')).toBeTruthy()
     expect(screen.getByLabelText('Friends read 1/2')).toBeTruthy()
     await fireEvent.press(screen.getByRole('button', { name: 'Continue' }))
-    expect(mockDismissTo).toHaveBeenCalledWith('/home')
+    expect(mockDismissTo).toHaveBeenCalledWith('/today')
   })
 
   it('study complete: celebrates the circle and the study title', async () => {
