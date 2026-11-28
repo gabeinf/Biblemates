@@ -22,7 +22,11 @@ export function ReadStep({ day, onReady }: StepProps) {
   const start = day.verse_start ?? 1
   const end = day.verse_end ?? day.verse_start ?? Infinity
   const verses = (chapter.data?.verses ?? []).filter((v) => v.verse >= start && v.verse <= end)
-  const fits = verses.length > 0 && box > 0 && content <= box + END_SLACK
+  // An error or an empty range must not strand the user: Bible tab link remains.
+  const fits =
+    chapter.isError ||
+    (chapter.isSuccess && verses.length === 0) ||
+    (verses.length > 0 && box > 0 && content <= box + END_SLACK)
 
   useEffect(() => {
     onReady(fits)

@@ -5,7 +5,7 @@ import type { CircleStudy, StudyDay } from '../../../types/db'
 
 const mockNavigate = jest.fn()
 jest.mock('expo-router', () => ({ useRouter: () => ({ navigate: mockNavigate }) }))
-let mockChapter: { data?: unknown; isError?: boolean } = {}
+let mockChapter: { data?: unknown; isError?: boolean; isSuccess?: boolean } = {}
 jest.mock('../../../hooks/queries', () => ({ useChapter: () => mockChapter }))
 jest.mock('../../ui/Chibi', () => ({
   Chibi: ({ mood }: { mood: string }) => {
@@ -35,7 +35,7 @@ const measure = async (box: number, content: number) => {
 describe('ReadStep', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockChapter = { data: { verses } }
+    mockChapter = { data: { verses }, isSuccess: true }
   })
 
   it('renders only the day’s verse range with the reading chibi', async () => {
@@ -73,6 +73,12 @@ describe('ReadStep', () => {
         contentSize: { height: 900 },
       },
     })
+    expect(onReady).toHaveBeenLastCalledWith(true)
+  })
+
+  it('does not strand the user when the chapter fails to load', async () => {
+    mockChapter = { isError: true }
+    await show()
     expect(onReady).toHaveBeenLastCalledWith(true)
   })
 
