@@ -7,11 +7,6 @@
       "count": 1
     }
   },
-  "src/app/(main)/(tabs)/today.tsx": {
-    "react/no-unescaped-entities": {
-      "count": 1
-    }
-  },
   "src/app/(main)/_layout.tsx": {
     "react-hooks/set-state-in-effect": {
       "count": 1
