@@ -27,7 +27,8 @@ export function IntroStep({ day, circleStudy, members, onReady }: StepProps) {
   const finished = members
     .filter((m) => m.user_id !== userId && isDayDone(done, m.user_id, day.day_number))
     .map((m) => firstName(m.profile?.display_name))
-  const slipped = slippedYesterday(done, userId, day.day_number)
+  // Wait for completions: an empty list while loading would read as "slipped".
+  const slipped = completions.data ? slippedYesterday(done, userId, day.day_number) : false
   const ref = formatRef({
     bookId: day.book_id,
     chapter: day.chapter,
