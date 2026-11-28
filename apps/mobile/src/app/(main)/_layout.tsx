@@ -89,6 +89,7 @@ export default function MainLayout() {
         <Stack.Screen name="prayer" options={{ presentation: 'modal', headerShown: true, title: 'Prayer request' }} />
         <Stack.Screen name="verse-reflections" options={{ presentation: 'modal', headerShown: true, title: 'Circle reflections' }} />
         <Stack.Screen name="paywall" options={{ presentation: 'fullScreenModal' }} />
+        <Stack.Screen name="guided" options={{ presentation: 'fullScreenModal', gestureEnabled: false }} />
         <Stack.Screen name="celebrate" options={{ presentation: 'fullScreenModal', animation: 'fade', gestureEnabled: false }} />
         <Stack.Screen name="profile" options={{ headerShown: true, title: 'Profile', headerBackTitle: 'Home' }} />
         <Stack.Screen name="chat" options={{ headerShown: true, title: 'Scripture', headerBackTitle: 'Home' }} />
