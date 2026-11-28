@@ -28,6 +28,17 @@ jest.mock('../../lib/celebrations', () => ({
 }))
 jest.mock('@expo/vector-icons/Ionicons', () => ({ __esModule: true, default: () => null }))
 jest.mock('../ui/LambView', () => ({ LambView: () => null }))
+// ReflectStep has its own test; here it only needs to unlock Continue.
+jest.mock('./steps/ReflectStep', () => {
+  const { useEffect } = require('react')
+  const { Text } = require('react-native')
+  return {
+    ReflectStep: ({ onReady }: { onReady: (r: boolean) => void }) => {
+      useEffect(() => onReady(true), [onReady])
+      return <Text>Reflect</Text>
+    },
+  }
+})
 
 const day = { day_number: 2 } as StudyDay
 const cs = { id: 'cs1' } as CircleStudy
