@@ -29,6 +29,13 @@ jest.mock('../../lib/celebrations', () => ({
 jest.mock('@expo/vector-icons/Ionicons', () => ({ __esModule: true, default: () => null }))
 jest.mock('../ui/LambView', () => ({ LambView: () => null }))
 // The real step has its own test; here only the shell's flow matters.
+jest.mock('./steps/IntroStep', () => ({
+  IntroStep: ({ onReady }: { onReady: (r: boolean) => void }) => {
+    const { Text } = jest.requireActual<typeof import('react-native')>('react-native')
+    onReady(true)
+    return <Text>Intro</Text>
+  },
+}))
 jest.mock('./steps/ReadStep', () => ({
   ReadStep: ({ onReady }: { onReady: (r: boolean) => void }) => {
     const { Text } = jest.requireActual<typeof import('react-native')>('react-native')
