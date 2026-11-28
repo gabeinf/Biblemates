@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native'
 import { space } from '../theme'
-import { AppText, Card, Chibi, ChunkyButton, type ChibiMood } from './ui'
+import { AppText, Card, ChunkyButton } from './ui'
 
 export type TodayTaskState =
   | { kind: 'start' }
@@ -17,18 +17,10 @@ type Props = {
   onOpenBible: () => void
 }
 
-const MOOD: Record<TodayTaskState['kind'], ChibiMood> = {
-  start: 'idle',
-  continue: 'reading',
-  waiting: 'waiting',
-  allDone: 'cheer',
-}
-
-/** The Today hero: chibi, day title, passage, minutes, and the one call to action for the current state. */
+/** The Today hero (text only, no lamb): day title, passage, minutes, and the one call to action for the current state. */
 export function TodayTaskCard({ title, passage, minutes, state, onStart, onOpenBible }: Props) {
   return (
     <Card style={styles.card}>
-      <Chibi mood={MOOD[state.kind]} size={120} />
       <View style={styles.text}>
         <AppText variant="headline" style={styles.center}>
           {title}

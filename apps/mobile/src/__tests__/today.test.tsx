@@ -146,14 +146,20 @@ describe('Today', () => {
     expect(screen.getByText("Ann will know you're praying for them.")).toBeTruthy()
   })
 
-  it('shows one lamb in the empty prayer list, and none once a request exists', async () => {
+  it('shows no lamb or chibi anywhere: hero, empty prayers, slipped banner, no study', async () => {
+    mockStartedDaysAgo = 2
+    const { unmount } = await render(<Today />)
+    expect(screen.getByTestId('slipped-banner')).toBeTruthy()
+    expect(within(screen.getByTestId('prayer-empty')).getByText('No open requests')).toBeTruthy()
+    expect(screen.queryByLabelText('A lamb')).toBeNull()
+    await unmount()
+    mockNoStudy = true
     await render(<Today />)
-    const empty = within(screen.getByTestId('prayer-empty'))
-    expect(empty.getAllByLabelText('A lamb')).toHaveLength(1)
-    expect(empty.getByText('No open requests')).toBeTruthy()
+    expect(screen.getByText('No study yet')).toBeTruthy()
+    expect(screen.queryByLabelText('A lamb')).toBeNull()
   })
 
-  it('hides the prayer lamb when there are open requests', async () => {
+  it('hides the empty prayer state when there are open requests', async () => {
     mockPrayers = [{ id: 'p1', user_id: 'u2', body: 'Pray for my exam', created_at: new Date().toISOString(), encouragements: [] }]
     await render(<Today />)
     expect(screen.getByText('Pray for my exam')).toBeTruthy()

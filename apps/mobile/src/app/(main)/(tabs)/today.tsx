@@ -33,7 +33,6 @@ import {
   Card,
   EmptyState,
   Eyebrow,
-  LambView,
   Muted,
   Pill,
   SectionTitle,
@@ -42,6 +41,9 @@ import {
 } from '../../../components/ui'
 import { colors, radii, spacing, typography } from '../../../theme/tokens'
 import { useTheme } from '../../../theme'
+
+// EmptyState falls back to a lamb when none is passed; Today shows no lamb anywhere.
+const noLamb = <View />
 
 export default function Today() {
   const router = useRouter()
@@ -141,8 +143,6 @@ export default function Today() {
         <View style={styles.body}>
           {slipped && (
             <View testID="slipped-banner" style={[styles.banner, { backgroundColor: theme.surfaceSunken }]}>
-              {/* Lamb slot: sitting/idle pose swaps in with Rive (see ASSET_REQUEST.md) */}
-              <LambView view="side" size={48} />
               <View style={{ flex: 1 }}>
                 <AppText variant="callout">Welcome back</AppText>
                 <AppText variant="caption" color="textSecondary">
@@ -164,6 +164,7 @@ export default function Today() {
             />
           ) : (
             <EmptyState
+              lamb={noLamb}
               headline="No study yet"
               body="Pick a journey for your circle to read together."
               cta={{ label: 'Choose a study', onPress: () => router.navigate('/study') }}
@@ -294,7 +295,7 @@ export default function Today() {
           {prayers.isSuccess && !prayers.data.length && (
             <View testID="prayer-empty">
               <EmptyState
-                lamb={<LambView view="front" size={96} />}
+                lamb={noLamb}
                 headline="No open requests"
                 body="Share what's on your heart."
               />
