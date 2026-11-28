@@ -70,6 +70,9 @@ describe('TogetherStep', () => {
     expect(screen.getByText('Shared answer')).toBeTruthy()
     expect(screen.queryByText('Secret answer')).toBeNull()
     expect(screen.queryByText('My own answer')).toBeNull()
+    // Avatar row lists finished members only.
+    expect(screen.getAllByText('Sam')).toHaveLength(2) // avatar caption + answer label
+    expect(screen.queryByText('Amy')).toBeNull()
     expect(screen.getByText('chibi:think:Waiting on Amy')).toBeTruthy()
     expect(screen.queryByText('Pray for Sam')).toBeNull()
 

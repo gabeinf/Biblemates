@@ -59,22 +59,14 @@ export function TogetherStep({ day, circleStudy, members, onReady }: StepProps) 
       ) : (
         <>
           <View style={styles.row}>
-            {members.map((m) => {
-              const finished = m.user_id === userId || isDayDone(done, m.user_id, day.day_number)
-              return (
+            {members
+              .filter((m) => m.user_id === userId || isDayDone(done, m.user_id, day.day_number))
+              .map((m) => (
                 <View key={m.user_id} style={styles.person}>
-                  <Avatar
-                    name={m.profile?.display_name}
-                    uri={m.profile?.avatar_url}
-                    size={44}
-                    dim={!finished}
-                  />
-                  <AppText variant="caption" color={finished ? 'text' : 'textSecondary'}>
-                    {firstName(m.profile?.display_name)}
-                  </AppText>
+                  <Avatar name={m.profile?.display_name} uri={m.profile?.avatar_url} size={44} />
+                  <AppText variant="caption">{firstName(m.profile?.display_name)}</AppText>
                 </View>
-              )
-            })}
+              ))}
           </View>
           {answers.map((r, i) => (
             <Reveal key={r.id} delay={i * 80}>
