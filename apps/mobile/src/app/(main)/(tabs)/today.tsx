@@ -34,11 +34,9 @@ import {
   Eyebrow,
   LambView,
   Muted,
-  PastureView,
   Pill,
   ProgressBar,
   SectionTitle,
-  Sheet,
   StreakWeek,
   type DayState,
 } from '../../../components/ui'
@@ -109,29 +107,26 @@ export default function Today() {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.Gold} />}
       >
-        {/* Pasture header: one lamb per circle member, the header floats over the sky */}
-        <PastureView lambCount={memberList.length} style={styles.pasture}>
-          <View style={[styles.topBar, { paddingTop: insets.top + spacing.xs }]}>
-            <Pressable hitSlop={8} onPress={() => router.push('/profile')} accessibilityLabel="Profile">
-              <Avatar name={profile?.display_name} uri={profile?.avatar_url} size={40} />
-            </Pressable>
-            <View style={{ flex: 1 }}>
-              <AppText variant="title" accessibilityRole="header">
-                Today
-              </AppText>
-              <AppText variant="caption" color="textSecondary">
-                {longDate()}
-              </AppText>
-            </View>
-            {streak > 0 && <Pill kind="streak" value={streak} />}
-            <Pill kind="friends" value={`${activeToday.length}/${memberList.length}`} />
-            <Pressable hitSlop={8} onPress={() => router.push('/chat')} accessibilityLabel="Scripture chat" style={styles.chat}>
-              <Ionicons name="chatbubbles-outline" size={26} color={colors.Ink} />
-            </Pressable>
+        <View style={[styles.topBar, { paddingTop: insets.top + spacing.xs }]}>
+          <Pressable hitSlop={8} onPress={() => router.push('/profile')} accessibilityLabel="Profile">
+            <Avatar name={profile?.display_name} uri={profile?.avatar_url} size={40} />
+          </Pressable>
+          <View style={{ flex: 1 }}>
+            <AppText variant="title" accessibilityRole="header">
+              Today
+            </AppText>
+            <AppText variant="caption" color="textSecondary">
+              {longDate()}
+            </AppText>
           </View>
-        </PastureView>
+          {streak > 0 && <Pill kind="streak" value={streak} />}
+          <Pill kind="friends" value={`${activeToday.length}/${memberList.length}`} />
+          <Pressable hitSlop={8} onPress={() => router.push('/chat')} accessibilityLabel="Scripture chat" style={styles.chat}>
+            <Ionicons name="chatbubbles-outline" size={26} color={colors.Ink} />
+          </Pressable>
+        </View>
 
-        <Sheet style={styles.sheet}>
+        <View style={styles.body}>
           {wholeFlockRead && (
             <View style={[styles.banner, { backgroundColor: theme.primaryTint }]}>
               <LambView view="side" size={48} />
@@ -319,7 +314,7 @@ export default function Today() {
             </View>
           )}
         </View>
-        </Sheet>
+        </View>
       </ScrollView>
       <NudgeSheet name={nudged} onClose={() => setNudged(null)} />
     </View>
@@ -329,8 +324,7 @@ export default function Today() {
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.paper },
   content: { paddingBottom: spacing.xxl },
-  pasture: { aspectRatio: undefined, height: 380 },
-  sheet: { marginTop: -spacing.xl, gap: spacing.lg },
+  body: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: spacing.lg },
   banner: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, borderRadius: radii.lg, paddingHorizontal: spacing.md, paddingVertical: spacing.xs },
   chat: { width: 44, height: 44, alignItems: 'center', justifyContent: 'center' },
   topBar: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.md },
