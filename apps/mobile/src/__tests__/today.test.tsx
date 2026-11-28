@@ -24,8 +24,12 @@ let mockCompleted: string[] = []
 let mockStartedDaysAgo = 0
 let mockPrayers: unknown[] = []
 let mockNoStudy = false
+let mockCompletionsLoading = false
+let mockCircle: Record<string, unknown> = {}
+let mockSeeds: number | undefined
 jest.mock('../hooks/queries', () => ({
-  useCircle: () => ({ id: 'c1', name: 'Grace Group', invite_code: 'ABC123' }),
+  useCircle: () => ({ id: 'c1', name: 'Grace Group', invite_code: 'ABC123', ...mockCircle }),
+  useSeedBalance: () => mockQuery(mockSeeds),
   useMembers: () =>
     mockQuery([
       { user_id: 'u1', profile: { display_name: 'Me Self' } },
@@ -51,7 +55,7 @@ jest.mock('../hooks/queries', () => ({
       },
     }),
   useCompletions: () =>
-    mockQuery(mockCompleted.map((u) => ({ user_id: u, day_number: mockStartedDaysAgo + 1, completed_at: new Date().toISOString() }))),
+    mockQuery(mockCompletionsLoading ? undefined : mockCompleted.map((u) => ({ user_id: u, day_number: mockStartedDaysAgo + 1, completed_at: new Date().toISOString() }))),
   usePrayerRequests: () => mockQuery(mockPrayers),
   useDayReflections: () => mockQuery([]),
   useEncourage: () => ({
@@ -67,6 +71,10 @@ describe('Today', () => {
     mockStartedDaysAgo = 0
     mockPrayers = []
     mockNoStudy = false
+    mockCircle = {}
+    mockCompletionsLoading = false
+    mockSeeds = undefined
+    jest.useRealTimers()
     store.clear()
     mockNavigate.mockClear()
     mockPush.mockClear()
@@ -164,5 +172,67 @@ describe('Today', () => {
     await render(<Today />)
     expect(screen.getByText('Pray for my exam')).toBeTruthy()
     expect(screen.queryByTestId('prayer-empty')).toBeNull()
+  })
+
+  it('shows the seeds balance pill once it has loaded', async () => {
+    mockSeeds = 25
+    await render(<Today />)
+    expect(screen.getByLabelText('25 seeds')).toBeTruthy()
+  })
+
+  it('hides the seeds pill while the balance is loading', async () => {
+    await render(<Today />)
+    expect(screen.queryByLabelText(/ seeds$/)).toBeNull()
+  })
+
+  describe('accountability strip', () => {
+    // Thursday 2026-11-26: a 5-day goal needs 3 done days by now (Mon–Wed).
+    const thursday = new Date(2026, 10, 26, 9)
+    const behindCircle = { goal_days_per_week: 5, stakes_label: 'Coffee on me' }
+    const fakeDate = () =>
+      jest.useFakeTimers({
+        now: thursday,
+        doNotFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'setImmediate', 'clearImmediate', 'nextTick', 'queueMicrotask', 'requestAnimationFrame', 'cancelAnimationFrame', 'performance'],
+      })
+
+    it('shows the week and the stakes line when behind pace', async () => {
+      fakeDate()
+      mockCircle = behindCircle
+      await render(<Today />)
+      const strip = within(screen.getByTestId('week-goal'))
+      expect(strip.getByText('0 of 5 days')).toBeTruthy()
+      expect(strip.getByLabelText('0 of 7 days done this week')).toBeTruthy()
+      expect(strip.getByText('Miss your goal and you owe: Coffee on me')).toBeTruthy()
+    })
+
+    it('hides it when on pace', async () => {
+      fakeDate()
+      mockCompleted = ['u1']
+      mockCircle = { goal_days_per_week: 1, stakes_label: 'Coffee on me' }
+      await render(<Today />)
+      expect(screen.queryByTestId('week-goal')).toBeNull()
+    })
+
+    it('hides it while completions are still loading', async () => {
+      fakeDate()
+      mockCircle = behindCircle
+      mockCompletionsLoading = true
+      await render(<Today />)
+      expect(screen.queryByTestId('week-goal')).toBeNull()
+    })
+
+    it('hides it when the circle has no goal', async () => {
+      fakeDate()
+      await render(<Today />)
+      expect(screen.queryByTestId('week-goal')).toBeNull()
+    })
+
+    it('leaves the stakes line out when no stakes were set', async () => {
+      fakeDate()
+      mockCircle = { goal_days_per_week: 5 }
+      await render(<Today />)
+      expect(screen.getByTestId('week-goal')).toBeTruthy()
+      expect(screen.queryByText(/you owe/)).toBeNull()
+    })
   })
 })
