@@ -1,7 +1,7 @@
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useState } from 'react'
-import { useRouter } from 'expo-router'
+import { useCallback, useReducer, useState } from 'react'
+import { useFocusEffect, useRouter } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import {
   useActivity,
@@ -16,12 +16,14 @@ import {
 } from '../../../hooks/queries'
 import { useAuthContext, useUserId } from '../../../hooks/use-auth-context'
 import { currentDay, currentDayNumber, isDayDone } from '../../../lib/study-day'
+import { GUIDED_STEPS, loadGuidedStep } from '../../../lib/guided-session'
 import { currentStreak } from '../../../lib/streak'
 import { slippedYesterday } from '../../../lib/missed-day'
 import { firstName, longDate, timeAgo } from '../../../lib/format'
 import { formatRef } from '../../../constants/books'
 import ActivityRow from '../../../components/ActivityRow'
 import { NudgeSheet } from '../../../components/NudgeSheet'
+import { TodayTaskCard, type TodayTaskState } from '../../../components/TodayTaskCard'
 import { CardSkeleton, HomeSkeleton, RowSkeleton } from '../../../components/Skeleton'
 import {
   AppText,
@@ -29,13 +31,11 @@ import {
   AvatarStack,
   Button,
   Card,
-  ChunkyButton,
   EmptyState,
   Eyebrow,
   LambView,
   Muted,
   Pill,
-  ProgressBar,
   SectionTitle,
   StreakWeek,
   type DayState,
@@ -56,6 +56,9 @@ export default function Today() {
   const completions = useCompletions(cs.data?.id)
   const prayers = usePrayerRequests(circle.id)
   const encourage = useEncourage()
+  // The guided step is persisted outside React Query: re-read it whenever Today regains focus.
+  const [, refreshStep] = useReducer((n: number) => n + 1, 0)
+  useFocusEffect(useCallback(() => refreshStep(), []))
   const [nudged, setNudged] = useState<string | null>(null)
   const answered = useMarkPrayerAnswered(circle.id)
 
@@ -73,7 +76,6 @@ export default function Today() {
   const iAnswered = (dayReflections.data ?? []).some((r) => r.user_id === userId)
   // shortcut: streak counts this study's completions only; a cross-study streak needs its own query.
   const streak = currentStreak(done.filter((c) => c.user_id === userId).map((c) => c.completed_at))
-  const wholeFlockRead = memberList.length > 1 && activeToday.length === memberList.length
   const slipped = !!dayNumber && slippedYesterday(done, userId, dayNumber)
   const journey: DayState[] = (cs.data?.study.days ?? []).map((d) =>
     isDayDone(done, userId, d.day_number)
@@ -84,6 +86,16 @@ export default function Today() {
           ? 'missed'
           : 'future',
   )
+
+  const waitingOn = memberList.find((m) => !(dayNumber && isDayDone(done, m.user_id, dayNumber)))
+  const guidedStep = cs.data && day ? loadGuidedStep(cs.data.id, day.day_number) : 0
+  const taskState: TodayTaskState = !iAmDone
+    ? guidedStep > 0
+      ? { kind: 'continue', step: guidedStep + 1, of: GUIDED_STEPS.length }
+      : { kind: 'start' }
+    : waitingOn
+      ? { kind: 'waiting', name: firstName(waitingOn.profile?.display_name) }
+      : { kind: 'allDone' }
 
   const refreshing = members.isRefetching || activity.isRefetching || cs.isRefetching
   const onRefresh = () => {
@@ -127,15 +139,6 @@ export default function Today() {
         </View>
 
         <View style={styles.body}>
-          {wholeFlockRead && (
-            <View style={[styles.banner, { backgroundColor: theme.primaryTint }]}>
-              <LambView view="side" size={48} />
-              <AppText variant="callout" color="primaryLip" style={{ flex: 1 }}>
-                Your whole flock read today.
-              </AppText>
-            </View>
-          )}
-
           {slipped && (
             <View testID="slipped-banner" style={[styles.banner, { backgroundColor: theme.surfaceSunken }]}>
               {/* Lamb slot: sitting/idle pose swaps in with Rive (see ASSET_REQUEST.md) */}
@@ -149,32 +152,16 @@ export default function Today() {
             </View>
           )}
 
-          {/* Today's shared reading */}
+          {/* Today's hero */}
           {cs.data && day ? (
-            <View style={{ gap: spacing.xs }}>
-              <Eyebrow right={`Day ${day.day_number} of ${cs.data.study.total_days}`}>Today's reading</Eyebrow>
-              <AppText variant="title">
-                {formatRef({ bookId: day.book_id, chapter: day.chapter, verseStart: day.verse_start, verseEnd: day.verse_end })}
-              </AppText>
-              <Muted>
-                {day.title} · {day.read_minutes} min read
-              </Muted>
-              <Muted>
-                {activeToday.length} of {memberList.length} {memberList.length === 1 ? 'member has' : 'members have'} read today
-              </Muted>
-              <ProgressBar
-                value={memberList.length ? activeToday.length / memberList.length : 0}
-                label={`${activeToday.length} of ${memberList.length} read today`}
-              />
-              {iAmDone ? (
-                <View style={styles.doneRow}>
-                  <Ionicons name="checkmark-circle" size={18} color={colors.success} />
-                  <Text style={styles.doneText}>You've read today</Text>
-                </View>
-              ) : (
-                <ChunkyButton label={slipped ? 'Read now' : 'Continue reading'} onPress={openReading} style={{ marginTop: spacing.xs }} />
-              )}
-            </View>
+            <TodayTaskCard
+              title={day.title}
+              passage={formatRef({ bookId: day.book_id, chapter: day.chapter, verseStart: day.verse_start, verseEnd: day.verse_end })}
+              minutes={day.read_minutes}
+              state={taskState}
+              onStart={() => router.push('/guided')}
+              onOpenBible={openReading}
+            />
           ) : (
             <EmptyState
               headline="No study yet"
@@ -330,8 +317,6 @@ const styles = StyleSheet.create({
   topBar: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs, paddingHorizontal: spacing.md },
   headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   circleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  doneRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.xs },
-  doneText: { fontFamily: typography.fontFamily.body, color: colors.success },
   question: { fontFamily: typography.fontFamily.display, fontSize: 22, lineHeight: 28, color: colors.Ink },
   encourageChip: {
     flexDirection: 'row',
