@@ -59,9 +59,11 @@ describe('Today', () => {
     mockNavigate.mockClear()
   })
 
-  it('shows the pasture, friends pill, reading card and a working CTA', async () => {
+  it('shows the slim top bar (no pasture), friends pill, reading card and a working CTA', async () => {
     await render(<Today />)
-    expect(screen.getByLabelText('Your flock, 2 lambs')).toBeTruthy()
+    expect(screen.queryByLabelText(/Your flock/)).toBeNull()
+    expect(screen.getByLabelText('Profile')).toBeTruthy()
+    expect(screen.getByLabelText('Scripture chat')).toBeTruthy()
     expect(screen.getByLabelText('0/2 friends')).toBeTruthy()
     expect(screen.queryByLabelText(/day streak/)).toBeNull()
     expect(screen.getByText('Today')).toBeTruthy()
