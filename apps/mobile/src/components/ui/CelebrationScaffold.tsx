@@ -23,16 +23,19 @@ type Props = {
   primary: Action
   secondary?: Action
   share?: Action
+  /** Skip the on-mount success haptic (the seeds phase fires its own as the count lands). */
+  silent?: boolean
 }
 
 /** Full-screen success layout: lamb → headline @120ms → tiles +80ms each → CTA @500ms. Reduce Motion: all at once. */
-export function CelebrationScaffold({ lamb, eyebrow, headline, body, tiles = [], primary, secondary, share }: Props) {
+export function CelebrationScaffold({ lamb, eyebrow, headline, body, tiles = [], primary, secondary, share, silent }: Props) {
   const reduce = useReducedMotion()
   const at = (ms: number) => (reduce ? 0 : ms)
   useEffect(() => {
+    if (silent) return
     const t = setTimeout(haptic.success, reduce ? 0 : motion.celebrate.headline)
     return () => clearTimeout(t)
-  }, [reduce])
+  }, [reduce, silent])
   return (
     <ScreenScaffold
       scroll={false}

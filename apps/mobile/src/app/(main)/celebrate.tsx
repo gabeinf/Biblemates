@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { useReducedMotion } from 'react-native-reanimated'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { CelebrationScaffold, Chibi, LambView, SeedIcon, type Tile } from '../../components/ui'
+import { CelebrationScaffold, Chibi, haptic, LambView, SeedIcon, type Tile } from '../../components/ui'
 import { useCircle, useCircleStudy, useCompletions, useMembers, useSeedsEarnedToday } from '../../hooks/queries'
 import { useUserId } from '../../hooks/use-auth-context'
 import { formatRef } from '../../constants/books'
@@ -8,9 +9,50 @@ import { currentDay, currentDayNumber, isDayDone } from '../../lib/study-day'
 import { currentStreak } from '../../lib/streak'
 import { celebrationClosed } from '../../lib/celebrations'
 
+const COUNT_MS = 700
+const MAX_STEPS = 14
+
+/** 0 → `target` in even steps: a light tick per step, success on the last. Reduce Motion: `target` at once, one success. */
+function useSeedCount(target: number) {
+  const reduce = useReducedMotion()
+  const [n, setN] = useState(reduce ? target : 0)
+  useEffect(() => {
+    if (reduce) {
+      haptic.success()
+      return
+    }
+    const steps = Math.min(target, MAX_STEPS)
+    let i = 0
+    const timer = setInterval(() => {
+      i += 1
+      setN(Math.round((target * i) / steps))
+      if (i >= steps) {
+        clearInterval(timer)
+        haptic.success()
+      } else haptic.tap()
+    }, COUNT_MS / steps)
+    return () => clearInterval(timer)
+  }, [reduce, target])
+  return n
+}
+
+function SeedsPhase({ seeds, onContinue }: { seeds: number; onContinue: () => void }) {
+  const count = useSeedCount(seeds)
+  return (
+    <CelebrationScaffold
+      silent
+      lamb={<SeedIcon size={120} />}
+      eyebrow="Seeds earned"
+      headline={`+${count}`}
+      body="For showing up today."
+      primary={{ label: 'Continue', onPress: onContinue }}
+    />
+  )
+}
+
 /**
  * Full-screen success moment. `kind=checkin`: I just marked today's reading read (after
- * `useMarkDayComplete`). `kind=study`: the whole circle finished the study (activity `milestone`).
+ * `useMarkDayComplete`): congrats first, then a seeds phase, then the Pasture tab. `kind=study`: the whole circle finished the study (activity `milestone`).
  */
 export default function Celebrate() {
   const router = useRouter()
@@ -30,13 +72,13 @@ export default function Celebrate() {
   const streak = currentStreak(done.filter((c) => c.user_id === userId).map((c) => c.completed_at))
   const shown = kind === 'study' ? 'study' : 'checkin'
   useEffect(() => () => celebrationClosed(shown), [shown])
-  const onContinue = () => router.dismissTo('/today')
+  const [phase, setPhase] = useState<'congrats' | 'seeds'>('congrats')
+  const toPasture = () => router.dismissTo('/pasture')
+  const onContinue = shown === 'checkin' && seeds > 0 && phase === 'congrats' ? () => setPhase('seeds') : toPasture
+  if (phase === 'seeds') return <SeedsPhase seeds={seeds} onContinue={toPasture} />
 
   const tiles: Tile[] = []
   if (kind !== 'study' && streak > 0) tiles.push({ kind: 'streak', label: 'Streak', value: streak })
-  if (kind !== 'study' && seeds > 0) {
-    tiles.push({ kind: 'seed', label: 'Seeds', value: seeds, icon: <SeedIcon size={22} />, countUp: true })
-  }
   if (memberList.length > 0) {
     const value = kind === 'study' ? String(memberList.length) : `${readToday}/${memberList.length}`
     tiles.push({ kind: 'friends', label: kind === 'study' ? 'Finished together' : 'Friends read', value })
