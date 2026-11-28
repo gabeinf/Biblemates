@@ -33,9 +33,9 @@ export async function getCompletions(circleStudyId: string): Promise<DayCompleti
   return data;
 }
 
-export async function markDayComplete(circleStudyId: string, dayNumber: number) {
+export async function markDayComplete(circleStudyId: string, dayNumber: number, species = 'sprout') {
   const { error } = await supabase
     .from('day_completions')
-    .upsert({ circle_study_id: circleStudyId, day_number: dayNumber }, { ignoreDuplicates: true });
+    .upsert({ circle_study_id: circleStudyId, day_number: dayNumber, species }, { ignoreDuplicates: true });
   if (error) throw new Error(error.message);
 }

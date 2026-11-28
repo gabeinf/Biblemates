@@ -4,7 +4,7 @@
  */
 import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { getLastPosition, getLastTranslation } from '../lib/reader-prefs'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Image } from 'react-native'
 import { currentDayNumber } from '../lib/study-day'
 import { supabase } from '../lib/supabase'
@@ -18,6 +18,8 @@ import * as notif from '../services/notifications'
 import * as scripture from '../services/scripture'
 import * as chat from '../services/chat'
 import * as seeds from '../services/seeds'
+import * as growth from '../services/growth'
+import { DEFAULT_SPECIES, getChosenSpecies, setChosenSpecies } from '../lib/species'
 import { getChapter } from '../services/bibleAPI'
 import type { TranslationId } from '../types/bible'
 import type { NotificationPrefs } from '../types/db'
@@ -42,6 +44,7 @@ export const qk = {
   conversations: ['conversations'] as const,
   messages: (conversationId: string) => ['messages', conversationId] as const,
   seeds: ['seeds'] as const,
+  species: ['species'] as const,
 }
 
 // ---------------------------------------------------------------- circle
@@ -162,17 +165,22 @@ export function useCompletions(csId: string | undefined) {
   })
 }
 
+/** A bare day number plants the default sprout; pass `{ day, species }` to plant another. */
+type DayArg = number | { day: number; species: string }
+const dayOf = (v: DayArg) => (typeof v === 'number' ? v : v.day)
+const speciesOf = (v: DayArg) => (typeof v === 'number' ? DEFAULT_SPECIES : v.species)
+
 /** Marking a study day as read is the app's "completed reading": it can open the one-time paywall. */
 export function useMarkDayComplete(csId: string) {
   const qc = useQueryClient()
   const userId = useUserId()
   const showPaywall = useShowPaywallAfterFirstReading()
   return useMutation({
-    mutationFn: (day: number) => study.markDayComplete(csId, day),
+    mutationFn: (v: DayArg) => study.markDayComplete(csId, dayOf(v), speciesOf(v)),
     onSuccess: () => {
       void showPaywall()
     },
-    onMutate: async (day) => {
+    onMutate: async (v) => {
       // Optimistic: the checkmark should feel instant.
       const key = qk.completions(csId)
       await qc.cancelQueries({ queryKey: key })
@@ -181,8 +189,9 @@ export function useMarkDayComplete(csId: string) {
         {
           user_id: userId,
           circle_study_id: csId,
-          day_number: day,
+          day_number: dayOf(v),
           completed_at: new Date().toISOString(),
+          species: speciesOf(v),
         },
       ])
     },
@@ -192,6 +201,40 @@ export function useMarkDayComplete(csId: string) {
         qc.invalidateQueries({ queryKey: qk.seeds }),
       ]),
   })
+}
+
+// ---------------------------------------------------------------- species (unlocked with seeds)
+
+export function useUnlockedSpecies() {
+  const userId = useUserId()
+  return useQuery({
+    queryKey: [...qk.species, userId],
+    queryFn: growth.getUnlockedSpecies,
+    enabled: !!userId,
+  })
+}
+
+export function useUnlockSpecies() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (species: string) => growth.unlockSpecies(species),
+    onSettled: () =>
+      Promise.all([
+        qc.invalidateQueries({ queryKey: qk.species }),
+        qc.invalidateQueries({ queryKey: qk.seeds }),
+      ]),
+  })
+}
+
+/** The species the next planted day uses, remembered per user on this device. */
+export function useChosenSpecies() {
+  const userId = useUserId()
+  const [species, setSpecies] = useState(() => getChosenSpecies(userId))
+  const choose = (id: string) => {
+    setSpecies(id)
+    setChosenSpecies(userId, id)
+  }
+  return [species, choose] as const
 }
 
 // ---------------------------------------------------------------- seeds (server-awarded ledger)

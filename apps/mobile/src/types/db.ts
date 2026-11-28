@@ -58,6 +58,7 @@ export type DayCompletion = {
   circle_study_id: string;
   day_number: number;
   completed_at: string;
+  species: string;
 };
 
 export type Visibility = 'private' | 'circle';
