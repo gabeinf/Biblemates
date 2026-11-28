@@ -53,7 +53,13 @@ export default function Bible() {
     setPos({ bookId: params.book!, chapter: Number(params.chapter), verseStart: params.verse ? Number(params.verse) : null })
   }
   const saved = savedPosition.data
-  const pos = picked ?? (savedPosition.isPending ? null : saved ? { bookId: saved.book_id, chapter: saved.chapter } : { bookId: 'JHN', chapter: 1 })
+  // memoized: pos is an effect dependency below, a fresh object each render would re-save forever
+  const savedBook = saved?.book_id
+  const savedChapter = saved?.chapter
+  const pos = useMemo<PassageRef | null>(
+    () => picked ?? (savedPosition.isPending ? null : savedBook ? { bookId: savedBook, chapter: savedChapter! } : { bookId: 'JHN', chapter: 1 }),
+    [picked, savedPosition.isPending, savedBook, savedChapter],
+  )
 
   const bookId = pos?.bookId ?? 'JHN'
   const chapterNum = pos?.chapter ?? 1
