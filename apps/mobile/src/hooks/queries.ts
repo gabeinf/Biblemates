@@ -17,6 +17,7 @@ import * as notes from '../services/annotations'
 import * as notif from '../services/notifications'
 import * as scripture from '../services/scripture'
 import * as chat from '../services/chat'
+import * as seeds from '../services/seeds'
 import { getChapter } from '../services/bibleAPI'
 import type { TranslationId } from '../types/bible'
 import type { NotificationPrefs } from '../types/db'
@@ -40,6 +41,7 @@ export const qk = {
   prefs: (userId: string) => ['prefs', userId] as const,
   conversations: ['conversations'] as const,
   messages: (conversationId: string) => ['messages', conversationId] as const,
+  seeds: ['seeds'] as const,
 }
 
 // ---------------------------------------------------------------- circle
@@ -184,7 +186,31 @@ export function useMarkDayComplete(csId: string) {
         },
       ])
     },
-    onSettled: () => qc.invalidateQueries({ queryKey: qk.completions(csId) }),
+    onSettled: () =>
+      Promise.all([
+        qc.invalidateQueries({ queryKey: qk.completions(csId) }),
+        qc.invalidateQueries({ queryKey: qk.seeds }),
+      ]),
+  })
+}
+
+// ---------------------------------------------------------------- seeds (server-awarded ledger)
+
+export function useSeedBalance() {
+  const userId = useUserId()
+  return useQuery({
+    queryKey: [...qk.seeds, 'balance', userId],
+    queryFn: seeds.getSeedBalance,
+    enabled: !!userId,
+  })
+}
+
+export function useSeedsEarnedToday() {
+  const userId = useUserId()
+  return useQuery({
+    queryKey: [...qk.seeds, 'today', userId],
+    queryFn: seeds.getSeedsEarnedToday,
+    enabled: !!userId,
   })
 }
 
@@ -209,7 +235,11 @@ export function useCreateReflection() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: refl.createReflection,
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['reflections'] }),
+    onSuccess: () =>
+      Promise.all([
+        qc.invalidateQueries({ queryKey: ['reflections'] }),
+        qc.invalidateQueries({ queryKey: qk.seeds }),
+      ]),
   })
 }
 
