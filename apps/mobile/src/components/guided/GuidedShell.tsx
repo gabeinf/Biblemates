@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react'
+import { useCallback, useEffect, useReducer } from 'react'
 import { Alert, Pressable, StyleSheet, View } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useRouter } from 'expo-router'
@@ -45,7 +45,7 @@ export function GuidedShell({ day, circleStudy, members }: Omit<StepProps, 'onRe
     saveGuidedStep(circleStudy.id, day.day_number, state.index)
   }, [circleStudy.id, day.day_number, state.index])
 
-  const onReady = (ready: boolean) => dispatch({ type: 'ready', ready })
+  const onReady = useCallback((ready: boolean) => dispatch({ type: 'ready', ready }), [])
 
   const confirmClose = () =>
     Alert.alert(
