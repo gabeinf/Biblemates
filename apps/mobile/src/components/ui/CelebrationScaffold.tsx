@@ -10,7 +10,7 @@ import { ScreenScaffold } from './ScreenScaffold'
 import { StatTile } from './StatTile'
 import type { PillKind } from './Pill'
 
-export type Tile = { kind: PillKind; label: string; value: string | number; icon?: ReactNode }
+export type Tile = { kind: PillKind; label: string; value: string | number; icon?: ReactNode; countUp?: boolean }
 type Action = { label: string; onPress: () => void }
 
 type Props = {
