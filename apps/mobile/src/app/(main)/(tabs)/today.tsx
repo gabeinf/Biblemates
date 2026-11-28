@@ -13,13 +13,16 @@ import {
   useMarkPrayerAnswered,
   useMembers,
   usePrayerRequests,
+  useSeedBalance,
 } from '../../../hooks/queries'
 import { useAuthContext, useUserId } from '../../../hooks/use-auth-context'
 import { currentDay, currentDayNumber, isDayDone } from '../../../lib/study-day'
 import { GUIDED_STEPS, loadGuidedStep } from '../../../lib/guided-session'
 import { currentStreak } from '../../../lib/streak'
 import { slippedYesterday } from '../../../lib/missed-day'
+import { weekGoal } from '../../../lib/week-goal'
 import { firstName, longDate, timeAgo } from '../../../lib/format'
+import { weekdayInitials } from '../../../lib/weekdays'
 import { formatRef } from '../../../constants/books'
 import ActivityRow from '../../../components/ActivityRow'
 import { NudgeSheet } from '../../../components/NudgeSheet'
@@ -58,6 +61,7 @@ export default function Today() {
   const completions = useCompletions(cs.data?.id)
   const prayers = usePrayerRequests(circle.id)
   const encourage = useEncourage()
+  const seeds = useSeedBalance()
   // The guided step is persisted outside React Query: re-read it whenever Today regains focus.
   const [, refreshStep] = useReducer((n: number) => n + 1, 0)
   useFocusEffect(useCallback(() => refreshStep(), []))
@@ -76,8 +80,11 @@ export default function Today() {
     (dayReflections.data ?? []).filter((r) => r.visibility === 'circle').map((r) => r.user_id),
   ).size
   const iAnswered = (dayReflections.data ?? []).some((r) => r.user_id === userId)
-  // shortcut: streak counts this study's completions only; a cross-study streak needs its own query.
-  const streak = currentStreak(done.filter((c) => c.user_id === userId).map((c) => c.completed_at))
+  // shortcut: streak and week goal count this study's completions only; a cross-study count needs its own query.
+  const myCompletions = done.filter((c) => c.user_id === userId).map((c) => c.completed_at)
+  const streak = currentStreak(myCompletions)
+  // Not before completions load: an empty list would read as a missed week.
+  const goal = circle.goal_days_per_week && completions.data ? weekGoal(myCompletions, circle.goal_days_per_week) : null
   const slipped = !!dayNumber && slippedYesterday(done, userId, dayNumber)
   const journey: DayState[] = (cs.data?.study.days ?? []).map((d) =>
     isDayDone(done, userId, d.day_number)
@@ -133,6 +140,7 @@ export default function Today() {
               {longDate()}
             </AppText>
           </View>
+          {seeds.data !== undefined && <Pill kind="seed" value={seeds.data} />}
           {streak > 0 && <Pill kind="streak" value={streak} />}
           <Pill kind="friends" value={`${activeToday.length}/${memberList.length}`} />
           <Pressable hitSlop={8} onPress={() => router.push('/chat')} accessibilityLabel="Scripture chat" style={styles.chat}>
@@ -169,6 +177,19 @@ export default function Today() {
               body="Pick a journey for your circle to read together."
               cta={{ label: 'Choose a study', onPress: () => router.navigate('/study') }}
             />
+          )}
+
+          {goal?.behind && (
+            <View testID="week-goal">
+              <Card>
+                <Eyebrow>This week</Eyebrow>
+                <AppText variant="callout">
+                  {goal.done} of {goal.goal} days
+                </AppText>
+                <StreakWeek days={goal.days} labels={weekdayInitials()} />
+                {circle.stakes_label ? <Muted>Miss your goal and you owe: {circle.stakes_label}</Muted> : null}
+              </Card>
+            </View>
           )}
 
           {/* Circle */}

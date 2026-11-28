@@ -13,6 +13,9 @@ export type Circle = {
   invite_code: string;
   created_by: string;
   created_at: string;
+  /** Set by onboarding; null for circles created before it. */
+  goal_days_per_week?: number | null;
+  stakes_label?: string | null;
 };
 
 export type CircleMember = {
