@@ -4,8 +4,8 @@ import { fireEvent, render, screen } from '@testing-library/react-native'
 import { setTabBarHidden } from '../../lib/tab-bar'
 import { AppTabBar } from './AppTabBar'
 
-const NAMES = ['bible', 'pasture', 'today', 'study', 'circle']
-function setup(index = 2, todayProgress?: number) {
+const NAMES = ['pasture', 'today', 'study']
+function setup(index = 1, todayProgress?: number) {
   const navigate = jest.fn()
   const props = {
     state: { index, routes: NAMES.map((name) => ({ key: `${name}-k`, name })) },
@@ -20,18 +20,18 @@ function setup(index = 2, todayProgress?: number) {
 describe('AppTabBar', () => {
   afterEach(() => setTabBarHidden(false))
 
-  it('renders the five labelled tabs in order, with the current one selected', async () => {
-    await render(setup(2).ui)
+  it('renders the three labelled tabs in order, with the current one selected', async () => {
+    await render(setup(1).ui)
     const tabs = screen.getAllByRole('tab')
-    expect(tabs.map((t) => t.props.accessibilityLabel)).toEqual(['Bible', 'Pasture', 'Today', 'Study', 'Circle'])
-    expect(tabs.map((t) => t.props.accessibilityState.selected)).toEqual([false, false, true, false, false])
+    expect(tabs.map((t) => t.props.accessibilityLabel)).toEqual(['Pasture', 'Today', 'Study'])
+    expect(tabs.map((t) => t.props.accessibilityState.selected)).toEqual([false, true, false])
   })
 
   it('navigates on press, and does nothing for the selected tab', async () => {
-    const { navigate, ui } = setup(2)
+    const { navigate, ui } = setup(1)
     await render(ui)
-    await fireEvent.press(screen.getByLabelText('Circle'))
-    expect(navigate).toHaveBeenCalledWith('circle-k')
+    await fireEvent.press(screen.getByLabelText('Study'))
+    expect(navigate).toHaveBeenCalledWith('study-k')
     await fireEvent.press(screen.getByLabelText('Today'))
     expect(navigate).toHaveBeenCalledTimes(1)
   })
@@ -43,7 +43,7 @@ describe('AppTabBar', () => {
   })
 
   it('the Today ring reports progress in quarters', async () => {
-    await render(setup(2, 0.5).ui)
+    await render(setup(1, 0.5).ui)
     expect(screen.getByTestId('today-ring').props.accessibilityValue.now).toBe(2)
   })
 })

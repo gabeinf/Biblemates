@@ -8,17 +8,15 @@ import { haptic } from './haptics'
 
 type Icon = React.ComponentProps<typeof Ionicons>['name']
 const ITEMS: { name: string; label: string; icon: Icon; active: Icon }[] = [
-  { name: 'bible', label: 'Bible', icon: 'book-outline', active: 'book' },
   { name: 'pasture', label: 'Pasture', icon: 'leaf-outline', active: 'leaf' },
   { name: 'today', label: 'Today', icon: 'sunny-outline', active: 'sunny' },
   { name: 'study', label: 'Study', icon: 'library-outline', active: 'library' },
-  { name: 'circle', label: 'Circle', icon: 'people-outline', active: 'people' },
 ]
 const DT_CAP = 1.2
 const RING = 52
 
 /**
- * Opaque 5-tab bar. Today (center) is raised and wears a progress ring.
+ * Opaque 3-tab bar. Today (center) is raised and wears a progress ring.
  * `todayProgress` is 0..1 (tasks done / tasks). shortcut: the ring fills in quarters (border sides, no SVG dependency), upgrade to an arc when react-native-svg lands.
  */
 export function AppTabBar({ state, emitter, navigateToTab, insets, todayProgress = 0 }: BottomTabBarProps & { todayProgress?: number }) {

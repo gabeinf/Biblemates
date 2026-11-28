@@ -85,6 +85,7 @@ export default function MainLayout() {
 
       <Stack.Protected guard={hasCircle}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="bible" />
         <Stack.Screen name="reflect" options={{ presentation: 'modal', headerShown: true, title: 'Reflect' }} />
         <Stack.Screen name="prayer" options={{ presentation: 'modal', headerShown: true, title: 'Prayer request' }} />
         <Stack.Screen name="verse-reflections" options={{ presentation: 'modal', headerShown: true, title: 'Circle reflections' }} />
