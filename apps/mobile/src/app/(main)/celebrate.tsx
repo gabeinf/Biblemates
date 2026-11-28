@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { CelebrationScaffold, LambView, type Tile } from '../../components/ui'
-import { useCircle, useCircleStudy, useCompletions, useMembers } from '../../hooks/queries'
+import { CelebrationScaffold, Chibi, LambView, SeedIcon, type Tile } from '../../components/ui'
+import { useCircle, useCircleStudy, useCompletions, useMembers, useSeedsEarnedToday } from '../../hooks/queries'
 import { useUserId } from '../../hooks/use-auth-context'
 import { formatRef } from '../../constants/books'
 import { currentDay, currentDayNumber, isDayDone } from '../../lib/study-day'
@@ -21,6 +21,7 @@ export default function Celebrate() {
   const cs = useCircleStudy(circle.id)
   const completions = useCompletions(cs.data?.id)
 
+  const seeds = useSeedsEarnedToday().data ?? 0
   const memberList = members.data ?? []
   const done = completions.data ?? []
   const day = cs.data ? currentDay(cs.data) : undefined
@@ -33,6 +34,9 @@ export default function Celebrate() {
 
   const tiles: Tile[] = []
   if (kind !== 'study' && streak > 0) tiles.push({ kind: 'streak', label: 'Streak', value: streak })
+  if (kind !== 'study' && seeds > 0) {
+    tiles.push({ kind: 'seed', label: 'Seeds', value: seeds, icon: <SeedIcon size={22} />, countUp: true })
+  }
   if (memberList.length > 0) {
     const value = kind === 'study' ? String(memberList.length) : `${readToday}/${memberList.length}`
     tiles.push({ kind: 'friends', label: kind === 'study' ? 'Finished together' : 'Friends read', value })
@@ -52,7 +56,7 @@ export default function Celebrate() {
   }
   return (
     <CelebrationScaffold
-      lamb={<LambView view="front" />}
+      lamb={<Chibi mood="cheer" />}
       eyebrow={cs.data && day ? `Day ${day.day_number} of ${cs.data.study.total_days}` : undefined}
       headline="Faithful today!"
       body={

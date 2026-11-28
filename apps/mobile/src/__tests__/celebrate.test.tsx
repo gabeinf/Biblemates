@@ -17,6 +17,7 @@ jest.mock('react-native/Libraries/Modal/Modal', () => {
 })
 jest.mock('../hooks/use-auth-context', () => ({ useUserId: () => 'u1' }))
 
+let mockSeeds = 10
 const mockQuery = <T,>(data: T) => ({ data, isPending: false })
 jest.mock('../hooks/queries', () => ({
   useCircle: () => ({ id: 'c1', name: 'Grace Group' }),
@@ -33,6 +34,7 @@ jest.mock('../hooks/queries', () => ({
         ],
       },
     }),
+  useSeedsEarnedToday: () => mockQuery(mockSeeds),
   useCompletions: () => mockQuery([{ user_id: 'u1', day_number: 1, completed_at: new Date().toISOString() }]),
 }))
 
@@ -48,6 +50,7 @@ describe('Celebrate', () => {
     expect(screen.getByText('Day 1 of 7')).toBeTruthy()
     expect(screen.getByLabelText('Streak 1')).toBeTruthy()
     expect(screen.getByLabelText('Friends read 1/2')).toBeTruthy()
+    expect(screen.getByLabelText('Seeds 10')).toBeTruthy()
     await fireEvent.press(screen.getByRole('button', { name: 'Continue' }))
     expect(mockDismissTo).toHaveBeenCalledWith('/today')
   })
@@ -58,6 +61,15 @@ describe('Celebrate', () => {
     expect(screen.getByText('Study complete!')).toBeTruthy()
     expect(screen.getByText('Faith Over Fear, together.')).toBeTruthy()
     expect(screen.queryByLabelText(/^Streak/)).toBeNull()
+    expect(screen.queryByLabelText(/^Seeds/)).toBeNull()
+  })
+
+  it('check-in: no seeds tile when nothing was earned', async () => {
+    mockKind = 'checkin'
+    mockSeeds = 0
+    await render(<Celebrate />)
+    expect(screen.queryByLabelText(/^Seeds \d/)).toBeNull()
+    mockSeeds = 10
   })
 })
 
