@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { FlatList, Pressable, StyleSheet, Text, View, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router'
-import { setTabBarHidden } from '../../../lib/tab-bar'
+import { setTabBarHidden } from '../../lib/tab-bar'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import {
   useBookmarks,
@@ -16,19 +16,19 @@ import {
   useReadingPosition,
   useSetHighlight,
   useToggleBookmark,
-} from '../../../hooks/queries'
-import { useUserId } from '../../../hooks/use-auth-context'
-import { getBook, nextChapter, prevChapter } from '../../../constants/books'
-import { saveReadingPosition } from '../../../services/annotations'
-import { currentDay, isDayDone } from '../../../lib/study-day'
-import BookPicker from '../../../components/bible/BookPicker'
-import VerseActionSheet from '../../../components/bible/VerseActionSheet'
-import { ErrorState } from '../../../components/ui'
-import { BibleSkeleton, VersesSkeleton } from '../../../components/Skeleton'
-import { showCelebration } from '../../../lib/celebrations'
-import { getLastPosition, getLastTranslation, setLastTranslation } from '../../../lib/reader-prefs'
-import type { BibleVerse, PassageRef, TranslationId } from '../../../types/bible'
-import { colors, highlightColors, radii, spacing, typography, type HighlightColor } from '../../../theme/tokens'
+} from '../../hooks/queries'
+import { useUserId } from '../../hooks/use-auth-context'
+import { getBook, nextChapter, prevChapter } from '../../constants/books'
+import { saveReadingPosition } from '../../services/annotations'
+import { currentDay, isDayDone } from '../../lib/study-day'
+import BookPicker from '../../components/bible/BookPicker'
+import VerseActionSheet from '../../components/bible/VerseActionSheet'
+import { ErrorState } from '../../components/ui'
+import { BibleSkeleton, VersesSkeleton } from '../../components/Skeleton'
+import { showCelebration } from '../../lib/celebrations'
+import { getLastPosition, getLastTranslation, setLastTranslation } from '../../lib/reader-prefs'
+import type { BibleVerse, PassageRef, TranslationId } from '../../types/bible'
+import { colors, highlightColors, radii, spacing, typography, type HighlightColor } from '../../theme/tokens'
 
 export default function Bible() {
   const router = useRouter()
@@ -40,23 +40,26 @@ export default function Bible() {
   const [translation, setTranslation] = useState<TranslationId>(getLastTranslation)
   // Open instantly on the on-device last position (its chapter was prefetched
   // during the splash); fall back to the server copy on a new device.
-  const [pos, setPos] = useState<PassageRef | null>(getLastPosition)
+  const [picked, setPos] = useState<PassageRef | null>(getLastPosition)
   const [selected, setSelected] = useState<BibleVerse | null>(null)
   const [pickerOpen, setPickerOpen] = useState(false)
   const listRef = useRef<FlatList<BibleVerse>>(null)
 
   // Deep-link from Home/Study wins; otherwise resume where the user left off.
-  useEffect(() => {
-    if (params.book && params.chapter) {
-      setPos({ bookId: params.book, chapter: Number(params.chapter), verseStart: params.verse ? Number(params.verse) : null })
-    }
-  }, [params.book, params.chapter, params.verse])
-
-  useEffect(() => {
-    if (pos || savedPosition.isPending) return
-    const p = savedPosition.data
-    setPos(p ? { bookId: p.book_id, chapter: p.chapter } : { bookId: 'JHN', chapter: 1 })
-  }, [savedPosition.isPending, savedPosition.data, pos])
+  const link = params.book && params.chapter ? `${params.book}/${params.chapter}/${params.verse ?? ''}` : ''
+  const [seenLink, setSeenLink] = useState('')
+  if (link && link !== seenLink) {
+    setSeenLink(link)
+    setPos({ bookId: params.book!, chapter: Number(params.chapter), verseStart: params.verse ? Number(params.verse) : null })
+  }
+  const saved = savedPosition.data
+  // memoized: pos is an effect dependency below, a fresh object each render would re-save forever
+  const savedBook = saved?.book_id
+  const savedChapter = saved?.chapter
+  const pos = useMemo<PassageRef | null>(
+    () => picked ?? (savedPosition.isPending ? null : savedBook ? { bookId: savedBook, chapter: savedChapter! } : { bookId: 'JHN', chapter: 1 }),
+    [picked, savedPosition.isPending, savedBook, savedChapter],
+  )
 
   const bookId = pos?.bookId ?? 'JHN'
   const chapterNum = pos?.chapter ?? 1

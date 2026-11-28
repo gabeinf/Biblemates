@@ -1,18 +1,8 @@
 {
-  "src/app/(main)/(tabs)/bible.tsx": {
-    "react-hooks/set-state-in-effect": {
-      "count": 2
-    }
-  },
   "src/app/(main)/(tabs)/study.tsx": {
     "react-hooks/set-state-in-effect": {
       "count": 2
     },
-    "react/no-unescaped-entities": {
-      "count": 1
-    }
-  },
-  "src/app/(main)/(tabs)/today.tsx": {
     "react/no-unescaped-entities": {
       "count": 1
     }

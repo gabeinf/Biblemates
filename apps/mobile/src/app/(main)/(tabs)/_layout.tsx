@@ -5,11 +5,9 @@ import { AppTabBar } from '../../../components/ui/AppTabBar'
 export default function TabsLayout() {
   return (
     <Tabs tabBar={(p) => <AppTabBar {...p} />} screenOptions={{ headerShown: false }}>
-      <Tabs.Screen name="bible" />
       <Tabs.Screen name="pasture" />
       <Tabs.Screen name="today" />
       <Tabs.Screen name="study" />
-      <Tabs.Screen name="circle" />
       {/* Redirect only; never shown in the bar (AppTabBar renders a fixed list). */}
       <Tabs.Screen name="home" options={{ href: null }} />
     </Tabs>
