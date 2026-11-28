@@ -1,6 +1,7 @@
 // Screen test for the Today (home) tab. Lives outside app/ so expo-router doesn't treat it as a route.
 import { beforeEach, describe, expect, it, jest } from '@jest/globals'
-import { fireEvent, render, screen, within } from '@testing-library/react-native'
+import { ScrollView } from 'react-native'
+import { fireEvent, render, screen } from '@testing-library/react-native'
 import Today from '../app/(main)/(tabs)/today'
 
 const mockNavigate = jest.fn()
@@ -41,6 +42,7 @@ jest.mock('../hooks/queries', () => ({
       id: 'cs1',
       started_on: require('../lib/study-day').todayIso(new Date(Date.now() - mockStartedDaysAgo * 86_400_000)),
       study: {
+        title: 'Journey',
         total_days: 7,
         days: Array.from({ length: 7 }, (_, i) => ({
           day_number: i + 1,
@@ -80,98 +82,103 @@ describe('Today', () => {
     mockPush.mockClear()
   })
 
-  it('shows the slim top bar (no pasture), friends pill and the hero with a working Start', async () => {
+  it('shows the slim top bar and the study line, with no friends pill or Today title', async () => {
     await render(<Today />)
-    expect(screen.queryByLabelText(/Your flock/)).toBeNull()
     expect(screen.getByLabelText('Profile')).toBeTruthy()
     expect(screen.getByLabelText('Scripture chat')).toBeTruthy()
-    expect(screen.getByLabelText('0/2 friends')).toBeTruthy()
+    expect(screen.getByText('Journey, Day 1 of 7')).toBeTruthy()
+    expect(screen.queryByLabelText(/friends/)).toBeNull()
     expect(screen.queryByLabelText(/day streak/)).toBeNull()
-    expect(screen.getByText('Today')).toBeTruthy()
-    expect(screen.getByText('God so loved')).toBeTruthy()
-    expect(screen.getByText('John 3:1–21 · 5 min read')).toBeTruthy()
-    await fireEvent.press(screen.getByRole('button', { name: "Start today's reading" }))
-    expect(mockPush).toHaveBeenCalledWith('/guided')
-    expect(screen.queryByRole('button', { name: /Continue reading|Read now/ })).toBeNull()
+    expect(screen.queryByLabelText(/Your flock/)).toBeNull()
   })
 
-  it('offers Continue with the persisted step, and goes to /guided', async () => {
+  it('draws one node per day and starts the guided session from today’s node', async () => {
+    await render(<Today />)
+    expect(screen.getByLabelText('Day 1, today')).toBeTruthy()
+    expect(screen.getByLabelText('Day 2, locked')).toBeTruthy()
+    expect(screen.getByText('Start')).toBeTruthy()
+    await fireEvent.press(screen.getByRole('button', { name: 'Day 1, today' }))
+    expect(mockPush).toHaveBeenCalledWith('/guided')
+  })
+
+  it('shows the in-progress bubble with the persisted step', async () => {
     store.set('guided:cs1:1', '2')
     await render(<Today />)
-    await fireEvent.press(screen.getByRole('button', { name: 'Continue, step 3 of 4' }))
+    expect(screen.getByText('Continue, step 3 of 4')).toBeTruthy()
+    await fireEvent.press(screen.getByRole('button', { name: 'Day 1, today' }))
     expect(mockPush).toHaveBeenCalledWith('/guided')
   })
 
-  it('says it is waiting on a partner once I am done', async () => {
+  it('marks earlier unread days as missed, kindly', async () => {
+    mockStartedDaysAgo = 2
+    await render(<Today />)
+    expect(screen.getByLabelText('Day 1, missed')).toBeTruthy()
+    expect(screen.getByLabelText('Day 2, missed')).toBeTruthy()
+    expect(screen.getByLabelText('Day 3, today')).toBeTruthy()
+    expect(screen.queryByTestId('slipped-banner')).toBeNull()
+  })
+
+  it('captions the node when I am done and a partner is still reading', async () => {
     mockCompleted = ['u1']
     await render(<Today />)
-    expect(screen.getByText('Done! Waiting on Ann')).toBeTruthy()
-    expect(screen.queryByRole('button', { name: /Start|Continue/ })).toBeNull()
+    expect(screen.getByText('Done, waiting on Ann')).toBeTruthy()
+    expect(screen.getByLabelText('Day 1, done')).toBeTruthy()
+    expect(screen.queryByText('Start')).toBeNull()
     expect(screen.getByLabelText('1 day streak')).toBeTruthy()
   })
 
-  it('celebrates when the whole flock has read', async () => {
+  it('captions the whole flock and sits the partner on the node', async () => {
     mockCompleted = ['u1', 'u2']
     await render(<Today />)
     expect(screen.getByText('Whole flock read today')).toBeTruthy()
-    expect(screen.getByLabelText('2/2 friends')).toBeTruthy()
+    expect(screen.getByLabelText('Ann Lee finished')).toBeTruthy()
   })
 
   it('shows the empty state when there is no study', async () => {
     mockNoStudy = true
     await render(<Today />)
     expect(screen.getByText('No study yet')).toBeTruthy()
-    expect(screen.queryByRole('button', { name: "Start today's reading" })).toBeNull()
+    expect(screen.queryByTestId('learning-path')).toBeNull()
+    expect(screen.queryByLabelText('A lamb')).toBeNull()
   })
 
-  it('keeps a secondary Open in Bible link', async () => {
+  it('keeps a small Open in Bible link under the path', async () => {
     await render(<Today />)
     await fireEvent.press(screen.getByLabelText('Open in Bible'))
     expect(mockNavigate).toHaveBeenCalledWith(expect.objectContaining({ pathname: '/bible' }))
   })
 
-  it('greets kindly when yesterday slipped by', async () => {
+  it('drops the feed, group question, encourage chips, circle card, banners and prayer list', async () => {
     mockStartedDaysAgo = 2
+    mockPrayers = [{ id: 'p1', user_id: 'u2', body: 'Pray for my exam', created_at: new Date().toISOString(), encouragements: [] }]
     await render(<Today />)
-    expect(within(screen.getByTestId('slipped-banner')).getByText('Welcome back')).toBeTruthy()
+    for (const gone of [/Your circle today/, /group question/i, /Pray for/, /Encourage someone/, /Grace Group/, /Welcome back/, /Prayer requests/, /Pray for my exam/, /No open requests/, /Start today/]) {
+      expect(screen.queryByText(gone)).toBeNull()
+    }
+    expect(screen.queryByTestId('prayer-empty')).toBeNull()
   })
 
-  it('shows no kind banner on the first day', async () => {
-    await render(<Today />)
-    expect(screen.queryByTestId('slipped-banner')).toBeNull()
-  })
-
-  it('hides the kind banner once today is read', async () => {
-    mockStartedDaysAgo = 2
-    mockCompleted = ['u1']
-    await render(<Today />)
-    expect(screen.queryByTestId('slipped-banner')).toBeNull()
-  })
-
-  it('shows the Hooray sheet with the friend\'s first name after a nudge', async () => {
-    await render(<Today />)
-    await fireEvent.press(screen.getByText('🙏 Pray for Ann'))
-    expect(screen.getByText("Ann will know you're praying for them.")).toBeTruthy()
-  })
-
-  it('shows no lamb or chibi anywhere: hero, empty prayers, slipped banner, no study', async () => {
-    mockStartedDaysAgo = 2
+  it('shows no lamb or chibi, with or without a study', async () => {
     const { unmount } = await render(<Today />)
-    expect(screen.getByTestId('slipped-banner')).toBeTruthy()
-    expect(within(screen.getByTestId('prayer-empty')).getByText('No open requests')).toBeTruthy()
     expect(screen.queryByLabelText('A lamb')).toBeNull()
+    expect(screen.queryByLabelText(/chibi/i)).toBeNull()
     await unmount()
     mockNoStudy = true
     await render(<Today />)
-    expect(screen.getByText('No study yet')).toBeTruthy()
     expect(screen.queryByLabelText('A lamb')).toBeNull()
   })
 
-  it('hides the empty prayer state when there are open requests', async () => {
-    mockPrayers = [{ id: 'p1', user_id: 'u2', body: 'Pray for my exam', created_at: new Date().toISOString(), encouragements: [] }]
+  it('scrolls once so today’s node is centred', async () => {
+    mockStartedDaysAgo = 4
+    const scrollTo = jest.spyOn(ScrollView.prototype, 'scrollTo').mockImplementation(() => undefined)
     await render(<Today />)
-    expect(screen.getByText('Pray for my exam')).toBeTruthy()
-    expect(screen.queryByTestId('prayer-empty')).toBeNull()
+    await fireEvent(screen.getByTestId('today-scroll'), 'layout', { nativeEvent: { layout: { x: 0, y: 0, width: 390, height: 800 } } })
+    await fireEvent(screen.getByTestId('learning-path').parent!, 'layout', { nativeEvent: { layout: { x: 0, y: 100, width: 390, height: 900 } } })
+    await fireEvent(screen.getByTestId('path-day-5'), 'layout', { nativeEvent: { layout: { x: 0, y: 700, width: 100, height: 100 } } })
+    expect(scrollTo).toHaveBeenCalledTimes(1)
+    // path top 100 + node centre 750 - half the 800 viewport
+    expect(scrollTo).toHaveBeenCalledWith({ y: 450, animated: false })
+    scrollTo.mockRestore()
   })
 
   it('shows the seeds balance pill once it has loaded', async () => {
@@ -195,14 +202,11 @@ describe('Today', () => {
         doNotFake: ['setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'setImmediate', 'clearImmediate', 'nextTick', 'queueMicrotask', 'requestAnimationFrame', 'cancelAnimationFrame', 'performance'],
       })
 
-    it('shows the week and the stakes line when behind pace', async () => {
+    it('shows the stakes line when behind pace', async () => {
       fakeDate()
       mockCircle = behindCircle
       await render(<Today />)
-      const strip = within(screen.getByTestId('week-goal'))
-      expect(strip.getByText('0 of 5 days')).toBeTruthy()
-      expect(strip.getByLabelText('0 of 7 days done this week')).toBeTruthy()
-      expect(strip.getByText('Miss your goal and you owe: Coffee on me')).toBeTruthy()
+      expect(screen.getByTestId('week-goal')).toHaveTextContent('Miss your goal and you owe: Coffee on me')
     })
 
     it('hides it when on pace', async () => {
@@ -227,11 +231,11 @@ describe('Today', () => {
       expect(screen.queryByTestId('week-goal')).toBeNull()
     })
 
-    it('leaves the stakes line out when no stakes were set', async () => {
+    it('shows no stakes line when none were set', async () => {
       fakeDate()
       mockCircle = { goal_days_per_week: 5 }
       await render(<Today />)
-      expect(screen.getByTestId('week-goal')).toBeTruthy()
+      expect(screen.queryByTestId('week-goal')).toBeNull()
       expect(screen.queryByText(/you owe/)).toBeNull()
     })
   })
