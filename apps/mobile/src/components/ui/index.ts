@@ -1,5 +1,6 @@
 export { AppText } from './AppText'
 export { Card } from './Card'
+export { Chibi, type ChibiMood } from './Chibi'
 export { CelebrationScaffold, type Tile } from './CelebrationScaffold'
 export { ChunkyButton, type ChunkyVariant } from './ChunkyButton'
 export { EmptyState } from './EmptyState'
@@ -17,4 +18,14 @@ export { SpeechBubble } from './SpeechBubble'
 export { StatTile } from './StatTile'
 export { StreakWeek, type DayState } from './StreakWeek'
 // Legacy helpers (Button, Eyebrow, Avatar…) that screens still import; migrated screen by screen.
-export { Avatar, AvatarStack, Button, ErrorState, Eyebrow, Loading, Muted, ProgressTrack, SectionTitle } from './legacy'
+export {
+  Avatar,
+  AvatarStack,
+  Button,
+  ErrorState,
+  Eyebrow,
+  Loading,
+  Muted,
+  ProgressTrack,
+  SectionTitle,
+} from './legacy'
