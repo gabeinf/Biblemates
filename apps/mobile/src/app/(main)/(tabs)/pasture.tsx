@@ -1,13 +1,36 @@
-import { View } from 'react-native'
-import { EmptyState } from '../../../components/ui'
-import { useTheme } from '../../../theme'
+import { useState } from 'react'
+import { RefreshControl, ScrollView } from 'react-native'
+import { AppText, PastureView } from '../../../components/ui'
+import { useCircle, useMembers, useMyCircle } from '../../../hooks/queries'
+import { space, useTheme } from '../../../theme'
 
-// Placeholder so the tab shell runs; the real screen replaces it.
 export default function Pasture() {
   const theme = useTheme()
+  const circle = useCircle()
+  const members = useMembers(circle.id)
+  const myCircle = useMyCircle()
+  const [refreshing, setRefreshing] = useState(false)
+
+  const onRefresh = async () => {
+    setRefreshing(true)
+    try {
+      await Promise.all([myCircle.refetch(), members.refetch()])
+    } finally {
+      setRefreshing(false)
+    }
+  }
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', backgroundColor: theme.bg }}>
-      <EmptyState headline="Your pasture is coming" body="Check back soon." />
-    </View>
+    <ScrollView
+      testID="pasture-scroll"
+      style={{ backgroundColor: theme.bg }}
+      contentContainerStyle={{ gap: space.md }}
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    >
+      <PastureView lambCount={members.data?.length ?? 0} />
+      <AppText variant="title" style={{ paddingHorizontal: space.lg }}>
+        {circle.name}
+      </AppText>
+    </ScrollView>
   )
 }
