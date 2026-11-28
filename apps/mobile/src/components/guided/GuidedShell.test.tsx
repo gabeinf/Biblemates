@@ -36,6 +36,13 @@ jest.mock('./steps/IntroStep', () => ({
     return <Text>Intro</Text>
   },
 }))
+jest.mock('./steps/ReadStep', () => ({
+  ReadStep: ({ onReady }: { onReady: (r: boolean) => void }) => {
+    const { Text } = jest.requireActual<typeof import('react-native')>('react-native')
+    onReady(true)
+    return <Text>Read</Text>
+  },
+}))
 jest.mock('./steps/ReflectStep', () => ({
   ReflectStep: ({ onReady }: { onReady: (r: boolean) => void }) => {
     const { Text } = jest.requireActual<typeof import('react-native')>('react-native')

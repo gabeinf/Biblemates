@@ -9,12 +9,14 @@ import {
   useCompletions,
   useDayReflections,
   useMembers,
+  useReadingPosition,
   useStartStudy,
   useStudies,
 } from '../../../hooks/queries'
 import { useUserId } from '../../../hooks/use-auth-context'
 import { currentDayNumber, isDayDone, percentComplete } from '../../../lib/study-day'
-import { formatRef } from '../../../constants/books'
+import { formatRef, getBook, TRANSLATIONS } from '../../../constants/books'
+import { getLastTranslation } from '../../../lib/reader-prefs'
 import ReflectionCard from '../../../components/ReflectionCard'
 import { Button, Card, ErrorState, Eyebrow, LambView, Muted, ProgressTrack, SectionTitle } from '../../../components/ui'
 import { RowSkeleton, StudySkeleton } from '../../../components/Skeleton'
@@ -33,7 +35,7 @@ function Step({ done, title, sub, onPress }: { done: boolean; title: string; sub
   )
 }
 
-export default function Study() {
+function Plans() {
   const router = useRouter()
   const userId = useUserId()
   const circle = useCircle()
@@ -58,7 +60,7 @@ export default function Study() {
 
   if (!cs.data || cs.data.status === 'completed') {
     return (
-      <SafeAreaView style={styles.screen} edges={['top']}>
+      <SafeAreaView style={styles.screen} edges={[]}>
         <ScrollView contentContainerStyle={styles.content}>
           <LambView view="front" size={120} style={{ alignSelf: 'center' }} />
           <Eyebrow>Your study</Eyebrow>
@@ -97,7 +99,7 @@ export default function Study() {
   const openReflect = () => router.push({ pathname: '/reflect', params: { mode: 'day', day: String(viewDay) } })
 
   return (
-    <SafeAreaView style={styles.screen} edges={['top']}>
+    <SafeAreaView style={styles.screen} edges={[]}>
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={
@@ -204,7 +206,69 @@ export default function Study() {
   )
 }
 
+function BibleRow({ icon, label, value, onPress }: { icon: keyof typeof Ionicons.glyphMap; label: string; value: string; onPress: () => void }) {
+  return (
+    <Pressable style={styles.step} onPress={onPress} accessibilityRole="button" accessibilityLabel={label}>
+      <Ionicons name={icon} size={22} color={colors.Gold} />
+      <View style={{ flex: 1, gap: 2 }}>
+        <Text style={styles.stepTitle}>{label}</Text>
+        <Muted>{value}</Muted>
+      </View>
+      <Ionicons name="chevron-forward" size={16} color={colors.inactive} />
+    </Pressable>
+  )
+}
+
+function BiblePanel() {
+  const router = useRouter()
+  const position = useReadingPosition().data
+  const open = (params?: { book: string; chapter: string }) => router.push({ pathname: '/bible', params })
+  const translation = TRANSLATIONS.find((t) => t.id === getLastTranslation())?.name ?? 'World English Bible'
+  return (
+    <ScrollView contentContainerStyle={styles.content}>
+      <Card style={{ gap: 0, paddingVertical: spacing.xs }}>
+        <BibleRow
+          icon="book-outline"
+          label="Continue where you left off"
+          value={position ? `${getBook(position.book_id).name} ${position.chapter}` : 'John 1'}
+          onPress={() => open(position ? { book: position.book_id, chapter: String(position.chapter) } : undefined)}
+        />
+        <View style={styles.divider} />
+        <BibleRow icon="list-outline" label="Choose a book" value="Browse all 66 books" onPress={() => open()} />
+        <View style={styles.divider} />
+        <BibleRow icon="language-outline" label="Translation" value={translation} onPress={() => open()} />
+      </Card>
+    </ScrollView>
+  )
+}
+
+export default function Study() {
+  const [tab, setTab] = useState<'plans' | 'bible'>('plans')
+  return (
+    <SafeAreaView style={styles.screen} edges={['top']}>
+      <View style={styles.segments}>
+        {(['plans', 'bible'] as const).map((t) => (
+          <Pressable
+            key={t}
+            onPress={() => setTab(t)}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: tab === t }}
+            style={[styles.segment, tab === t && styles.segmentActive]}
+          >
+            <Text style={[styles.segmentText, tab === t && { color: colors.surface }]}>{t === 'plans' ? 'Plans' : 'Bible'}</Text>
+          </Pressable>
+        ))}
+      </View>
+      {tab === 'plans' ? <Plans /> : <BiblePanel />}
+    </SafeAreaView>
+  )
+}
+
 const styles = StyleSheet.create({
+  segments: { flexDirection: 'row', margin: spacing.lg, marginBottom: 0, borderRadius: radii.full, borderWidth: 1, borderColor: colors.Gold, overflow: 'hidden' },
+  segment: { flex: 1, alignItems: 'center', paddingVertical: spacing.xs },
+  segmentActive: { backgroundColor: colors.Gold },
+  segmentText: { fontFamily: typography.fontFamily.body, fontSize: 14, color: colors.Gold },
   screen: { flex: 1, backgroundColor: colors.paper },
   content: { padding: spacing.lg, gap: spacing.lg, paddingBottom: spacing.xxl },
   hero: { fontFamily: typography.fontFamily.display, fontSize: typography.fontSize.title, color: colors.Ink },
