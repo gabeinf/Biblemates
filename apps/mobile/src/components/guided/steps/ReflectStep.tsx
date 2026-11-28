@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Pressable, StyleSheet, TextInput, View } from 'react-native'
 import { useCircle, useCreateReflection } from '../../../hooks/queries'
 import { SEEDS_PER_REFLECTION } from '../../../lib/seeds'
-import { radius, space, useTheme } from '../../../theme'
+import { radius, space, type, useTheme } from '../../../theme'
 import type { Visibility } from '../../../types/db'
 import { AppText, ChunkyButton, SeedIcon } from '../../ui'
 import type { StepProps } from './types'
@@ -101,8 +101,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: radius.md,
     padding: space.md,
-    fontSize: 17,
-    lineHeight: 24,
+    ...type.body,
     textAlignVertical: 'top',
   },
   toggle: { flexDirection: 'row', borderRadius: radius.pill, padding: 3 },
