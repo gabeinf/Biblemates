@@ -27,10 +27,10 @@ export default function Pasture() {
       contentContainerStyle={{ gap: space.md }}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
     >
-      <PastureView lambCount={members.data?.length ?? 0} />
       <AppText variant="title" style={{ paddingHorizontal: space.lg }}>
         {circle.name}
       </AppText>
+      <PastureView lambCount={members.data?.length ?? 0} />
     </ScrollView>
   )
 }
