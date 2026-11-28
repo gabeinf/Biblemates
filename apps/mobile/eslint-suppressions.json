@@ -1,9 +1,4 @@
 {
-  "src/app/(main)/(tabs)/bible.tsx": {
-    "react-hooks/set-state-in-effect": {
-      "count": 2
-    }
-  },
   "src/app/(main)/(tabs)/study.tsx": {
     "react-hooks/set-state-in-effect": {
       "count": 2

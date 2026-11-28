@@ -1,7 +1,7 @@
 // Screen test: marking today's reading done opens the check-in celebration. Lives outside app/ so expo-router doesn't treat it as a route.
 import { describe, expect, it, jest } from '@jest/globals'
 import { fireEvent, render, screen } from '@testing-library/react-native'
-import Bible from '../app/(main)/(tabs)/bible'
+import Bible from '../app/(main)/bible'
 
 const mockPush = jest.fn()
 jest.mock('expo-router', () => ({

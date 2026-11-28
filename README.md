@@ -33,7 +33,7 @@ apps/mobile/src
     (main)/_layout.tsx      guard: no circle -> circle-setup, else tabs; push registration; realtime
     (main)/circle-setup     create a circle or join with a 6-char invite code
     (main)/(tabs)/home      shared reading, circle activity, group question, encouragement, prayer
-    (main)/(tabs)/bible     reader: translations, chapter nav, reference search, highlights, bookmarks,
+    (main)/bible            reader: translations, chapter nav, reference search, highlights, bookmarks,
                             private notes, circle reflections per verse, "mark today read"
     (main)/(tabs)/study     7-day journey: Read -> Reflect -> Connect, reflection reveal
     (main)/reflect          modal: answer the day's question or reflect on a verse (private/circle)
